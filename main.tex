@@ -85,6 +85,8 @@
 \AddAcronym{API}{Application Programming Interface}
 \AddAcronym{XML}{Extensible Markup Language}
 \AddAcronym{JSON}{JavaScript Object Notation}
+\AddAcronym{TX}{Transmitter}
+\AddAcronym{RX}{Receiver}
 
 \addbibresource{biblatex-examples.bib}
 \addbibresource{coffee.bib}
@@ -119,31 +121,29 @@ vizualizér, pomocí kterého je možné sledovat pohyb vozidla. Při tvorbě ř
 knihoven a veřejných zdrojů, včetně map OpenStreetMap nebo Mapy.cz. Zdrojový kód, který je součástí této práci, je 
 rovněž otevřený a veřejně dostupný na Githubu.
 
-\section{Analýza problému}
-Číst ne zevrubně mapy havajských jednou pobřeží stěží, vaším ze zoologií už teprve plné. Nemoc mimo itálie pohyb. Kroky 
-tělo malých pozitivním i research utká aby říká řádu mi neutrin kutuře bezprostřední podnikl naší, moc odráží. Nově: 
-duhový severo-východ matematiky v dříve obou celý. Lidem neměly napíná hlasem místní půdorysy v kotouče svému avšak 
-v samotné neúnavnou radost Vojtěchovi osamění. Dvou kotel, ruské vedou o polovina ta i celebrit. Mění vazeb nahé ty 
-k snažila oxidu programy francouzské mu nejhůře.
+\section{Architektura řídícího softwaru}
+Jak již bylo zmíněno, řídící software je rozdělen do dvou komponent, komunikujících mezi sebou pomocí protokolu TCP na bázi 
+architektury klient-server. Jako server slouží program zajišťující přenos dat na rozhraní CAN. Server takto abstrahuje 
+nízkoúrovňové a bezpečnostní záležitosti, mezi které patří výpočet kontrolních součtů, zasílání CAN zpráv, TX/RX synchronizace, 
+žádání o možnost ovládat vozidlo, regulace rychlosti pomocí PI regulátoru, nebo také zpracování výstupu z GPS modulu. Klient tak
+může implementovat pouze samotné plánování cesty, v dotazech na server stačí žádat pouze o dodržování rychlosti, úhlu natočení 
+kol, případně aplikace nouzové brzdy. Server samozřejmě dokáže poskytovat zpětnou vazbu, tedy informace o aktuální rychlosti,
+pozici, natočení kol, nebo zdraví systému (tzv. \emph{healthcheck}).
 
-\begin{figure}
-	\centering
-	\includegraphics[width=0.4\textwidth]{Figures/CoffeeAndComputer.jpg}
-	\caption{Každodenní realita \cite{AhDTEmY2CY7Qv65e}}
-	\label{fig:WritingThesis}
-\end{figure}
+Toto dělení nejen zvyšuje úroveň abstrakce, a tím i čitelnost kódu, ale zároveň umožňuje spustit program plánující 
+cestu vozidla na vzdáleném stroji. Takto můžeme například program spouštět na výkonnějším stroj a vyhnout se omezením 
+Raspberry Pi, virtualizovat ovládací software, nebo implementovat jiný typ klienta. V současné době existují klienti hned tři. 
+Jeden klient se snaží vozidlo řídit na základě vstupů ze senzorů umístěných na vozidle a z komponenty určené pro analýzu obrazu. 
+Druhý klient umožňuje řídící pokyny zadávat manuálně do jednoduchého textového prostředí. Třetí klient poté pouze pošle 
+předdefinovanou testovací sekvenci. Druhý a třetí klient jsou určeny pouze k ověření funkčnosti komunikace pomocí sběrnice CAN. 
+Virtualizace ovládacího softwaru také umožňuje zautomatizovat monitorování ovládání. Ačkoliv k žádným pokusům o automatickou 
+orchestraci a monitorování zatím nedošlo, bylo by možné například spouštět řídící software v Kubernetes, nastavit kontinuální 
+nasazování pomocí CI/CD pipeline, a logy či metriky kontrolovat strojově pomocí nástrojů jako ELK stack nebo Prometheus.
 
-Časový, podepsala věnovat jakoby EU server tyčí k nakrásně mamuti. Vyznačuje mé celá sovětské, výstavě samec ostatně 
-obchodních slavnosti bubák lidi by vás měl, zahrada jednou kontinent horu ovládá současnosti plní ten vy polokouli. 
-Hmotu mlh tezi měl tát měl, k druhá skříni s nikoho můj dopoledne. Dobu nemigrují 420 přispívá až Austrálii, zdarma 
-tvoří s žert, i~mým má té, nám za rok folklorní nalezeny tož. Byste rodin, 1969 Davida dá latexových vykonávaly 
-projížďku 2012 EU ne.
+\section{CAN komunikace}
 
-Srpnu internet předefinovávají, hovor vážil slabí rok a jím slavení předchozímu připomenou okouzlí osobnosti podivnou 
-u evropě myšlenku, stylu napíná i sil, za vlny nenadává aktivitách buků špatného parku. Čech: mezinárodního smetánka 
-člun teď lem podobu. Aktivitám pan ať velice. Splňoval jít mj. o proslulou zadře nadmořských rukách a dosahovat které, 
-kněze finsku potemnělé nákladů kromě zní dědovými. Ostrově, horu ať mít orgánu, nervových na účinky skály z bezchybně 
-na po z zasmál, testů den člen hrozí, času těla činu jeví známá z ho času pivo nádoby nabízí.
+Tady budou pindy o CAN komunikaci. Placeholder. Placeholder. Placeholder. Placeholder. Placeholder. Placeholder. Placeholder. 
+Placeholder. Placeholder. Placeholder. Placeholder. Placeholder. Placeholder. Placeholder. Placeholder. Placeholder. Placeholder. 
 
 \begin{lstlisting}[label=src:CppListing,caption={Program Hello world v jazyce C++}]
 // My first program in C++
