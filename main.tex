@@ -87,6 +87,7 @@
 \AddAcronym{JSON}{JavaScript Object Notation}
 \AddAcronym{TX}{Transmitter}
 \AddAcronym{RX}{Receiver}
+\AddAcronym{RPC}{Remote Procedure Call}
 
 \addbibresource{biblatex-examples.bib}
 \addbibresource{coffee.bib}
@@ -128,11 +129,13 @@ nízkoúrovňové a bezpečnostní záležitosti, mezi které patří výpočet 
 žádání o možnost ovládat vozidlo, regulace rychlosti pomocí PI regulátoru, nebo také zpracování výstupu z GPS modulu. Klient tak
 může implementovat pouze samotné plánování cesty, v dotazech na server stačí žádat pouze o dodržování rychlosti, úhlu natočení 
 kol, případně aplikace nouzové brzdy. Server samozřejmě dokáže poskytovat zpětnou vazbu, tedy informace o aktuální rychlosti,
-pozici, natočení kol, nebo zdraví systému (tzv. \emph{healthcheck}).
+pozici, natočení kol, nebo zdraví systému (tzv. \emph{healthcheck}). Server je většinou spouštěn na Raspberry Pi, ačkoliv může
+být spouštěn na libovolné jednotce připojené k rozhraní CAN samořiditelné platformy, za předpokladu, že je na dané jednotce
+nainstalován interpreter jazyka Python.
 
 Toto dělení nejen zvyšuje úroveň abstrakce, a tím i čitelnost kódu, ale zároveň umožňuje spustit program plánující 
 cestu vozidla na vzdáleném stroji. Takto můžeme například program spouštět na výkonnějším stroj a vyhnout se omezením 
-Raspberry Pi, virtualizovat ovládací software, nebo implementovat jiný typ klienta. V současné době existují klienti hned tři. 
+Raspberry Pi, virtualizovat ovládací software, nebo implementovat jiný typ klienta, které v současné době existují tři.
 Jeden klient se snaží vozidlo řídit na základě vstupů ze senzorů umístěných na vozidle a z komponenty určené pro analýzu obrazu. 
 Druhý klient umožňuje řídící pokyny zadávat manuálně do jednoduchého textového prostředí. Třetí klient poté pouze pošle 
 předdefinovanou testovací sekvenci. Druhý a třetí klient jsou určeny pouze k ověření funkčnosti komunikace pomocí sběrnice CAN. 
@@ -140,10 +143,40 @@ Virtualizace ovládacího softwaru také umožňuje zautomatizovat monitorován�
 orchestraci a monitorování zatím nedošlo, bylo by možné například spouštět řídící software v Kubernetes, nastavit kontinuální 
 nasazování pomocí CI/CD pipeline, a logy či metriky kontrolovat strojově pomocí nástrojů jako ELK stack nebo Prometheus.
 
-\section{CAN komunikace}
+\section{Server a CAN komunikace}
 
-Tady budou pindy o CAN komunikaci. Placeholder. Placeholder. Placeholder. Placeholder. Placeholder. Placeholder. Placeholder. 
-Placeholder. Placeholder. Placeholder. Placeholder. Placeholder. Placeholder. Placeholder. Placeholder. Placeholder. Placeholder. 
+\subsection{Sběrnice CAN}
+
+Controller Area Network, zkráceně CAN, je standard poskytující určitý základ pro komunikaci na sběrnici. Standard definuje
+fyzické požadavky na sběrnici a formát zpráv. Součástí zprávy je osm bytů vyhrazených pro data. Sběrnice CAN je, mimo jiné, hojně
+využívána právě v automobilovém průmyslu.
+
+\subsubsection{Vlastní specifikace}
+Standard sice přiřazuje každé zprávě osmibytové pole vyhrazené pro data, již však nedefinuje, jaká data mají zprávy obsahovat, 
+v jakém formátu mají být data posílána, nebo jak se s nimi má pracovat. Obsah zpráv tak musel být vydefinován vlastní specifikací, 
+která prošla hned několika iteracemi, a jejíž finální podoba je výsledkem úzké spolupráce konstruktérů fyzické platformy a tvůrců 
+řídícího softwaru. Specifikace byla navrhována tak, aby umožnila dostatečně jemné řízení vozidla, poskytovala řídícímu softwaru
+všechna potřebná jízdní data a zahrnovala množství prostředků pro kontrolu integrity zprávy, rychlé zachycení chyb či reportování
+problémů. Na chyby nebo problémy je samozřejmě důležité reagovat, v krajních případech až nouzovým zastavením vozidla. Software
+pro ovládání platformy byl již několikrát přepisován na základě upravené specifikace, nejaktuálnější verze software však 
+implementuje nejnovější verzi specifikace.
+
+\subsection{TCP server a jeho metody}
+
+Za účelem zvýšení abstrakce a zjednoduššení ovládání vozidla, ale také aby bylo umožněno vzdálené ovládání platformy
+a zjednodušila se výměna způsobů ovládání, je nízkoúrovňové řízení CAN zprávami abstrahováno a obaleno jednoduchým TCP serverem.
+Při vývoji serveru se přirozeně nabídla možnost implementace REST API a využití protokolu HTTP, nebo využití jednoho z rozšířených
+RPC prokolů, jako jsou XMLRPC nebo gRPC. Ačkoliv validní, tyto způsob, implementace se jevily jako neefektivní -- rozhraní 
+poskytované serverem je velmi jednoduché, plaintextový protokol HTTP nebo variace protokolů RPC tak působily až zbytečně 
+komplikovaně. Pro komunikaci byl nakonec použit vlastní binární protokol a jeho implementace přímo nad TCP sockety. 
+Výhodou je rychlost a jednoduchost implementace, úspornost a výkonnost řešení v reálném provozu, nebo fakt, že toto řešení 
+nevyžaduje žádné externí závislosti nad rámec standardní knihovny jazyka Python. Nevýhody současného řešení by se projevily 
+pouze při výrazném nárůstu komplexity poskytovaného rozhraní. Tento scénář by mohl vést k znepřehlednění současného řešení. 
+Nutnosti zvyšování komplexity rozhraní ovšem v současné době nic nenasvědčuje. 
+
+\subsection{Regulace PI regulátorem}
+
+\subsection{Python implementace}
 
 \begin{lstlisting}[label=src:CppListing,caption={Program Hello world v jazyce C++}]
 // My first program in C++
