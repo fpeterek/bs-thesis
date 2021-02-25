@@ -174,6 +174,36 @@ nevyžaduje žádné externí závislosti nad rámec standardní knihovny jazyka
 pouze při výrazném nárůstu komplexity poskytovaného rozhraní. Tento scénář by mohl vést k znepřehlednění současného řešení. 
 Nutnosti zvyšování komplexity rozhraní ovšem v současné době nic nenasvědčuje. 
 
+Aktuální verze serveru implementuje celkem pět metod. Na vstupu přijímá celkem tři byty. První byte je vyhrazen pro identifikaci 
+metody serveru. Následující dva byty dotazu obsahují data. Klient musí vždy poslat minimálně tři byty, na vstupu jsou, nezávisle
+na metodě, pokaždé očekávány tři byty. Jestliže klient pošle v dotazu více než dva datové byty, budou nadbytečná data ignorována.
+
+Jako identifikátor metody je využito celé nezáporné číslo. V případě, že první byte zprávy obsahuje identifikátor nepříslušící 
+žádné metodě, je dotaz ignorován. Obsah datových bytů je určen danou metodou serveru. Pokud pro danou funkcionalitu není třeba 
+předávat serveru žádná data, může být obsah datových bytů libovolný, data budou ignorována. 
+
+\subsubsection{Metoda \emph{drive}}
+Metoda \emph{drive} slouží k předání požadované rychlosti vozidla a natočení kol. Obsah první datového bytu je interpretován jako 
+rychlost, druhý datový byte reprezentuje natočení předních kol. Oba datové byty jsou interpretovány jako celá znaménková čísla. 
+
+Fyzická změna rychlosti nebo natočení kol samozřejmě nemůže nastat okamžitě, rychlost změny je omezena fyzikálními vlastnostmi 
+konstrukce i PI regulátorem, proto nelze vrátit klientu potvrzení o provedené změně. Odpovědí metody je ekvivalentní s metodou 
+\emph{healthcheck}. \emph{Healthcheck} v odpovědi slouží jako potvrzení přijetí dotazu a schopnosti dotazu vyhovět. V případě, 
+že klient potřebuje potvrzení o dosažení požadované rychlosti nebo úhlu natočení kol, je možné po zavolání metody \emph{drive} 
+opakovaně volat metodu \emph{info}.
+
+\subsubsection{Metoda \emph{healthcheck}}
+Metoda \emph{healthcheck} slouží k ověření \emph{živosti} systému. \emph{Živost} je binární stav, systém je buď \emph{živý}, nebo
+\emph{mrtvý}. Server je považován za \emph{živý}, jestliže je schopen zpracovávat TCP spojení, a zároveň má plnou kontrolu 
+nad vozidlem. V opačném případě je server považován za \emph{mrtvý}. 
+
+Metoda \{healthcheck} ve své odpovědi posílá pouze jeden byte. Pokud je server živý, obsahuje odpověď nenulovou hodnotu. V opačném
+případě vrátí server nulu, nebo neodpoví vůbec.
+
+\subsubsection{Metoda \emph{info}}
+\subsubsection{Metoda \emph{ebrake}}
+\subsubsection{Metoda \emph{position}}
+
 \subsection{Regulace PI regulátorem}
 
 \subsection{Python implementace}
@@ -183,10 +213,10 @@ Nutnosti zvyšování komplexity rozhraní ovšem v současné době nic nenasv�
 // Příšerně žluťoučký kůň úpěl ďábelské ódy
 #include <iostream>
 
-int main()
-{
-	std::cout << "Hello World!";
+int main(int argc, const char * argv[]) {
+	std::cout << "Hello World!" << std::endl;
 }
+
 \end{lstlisting}
 
 \begin{lstlisting}[language=Python,label=src:PythonListing,caption={Program Hello world v jazyce Python}]
