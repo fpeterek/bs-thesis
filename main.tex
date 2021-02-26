@@ -195,13 +195,28 @@ opakovaně volat metodu \emph{info}.
 \subsubsection{Metoda \emph{healthcheck}}
 Metoda \emph{healthcheck} slouží k ověření \emph{živosti} systému. \emph{Živost} je binární stav, systém je buď \emph{živý}, nebo
 \emph{mrtvý}. Server je považován za \emph{živý}, jestliže je schopen zpracovávat TCP spojení, a zároveň má plnou kontrolu 
-nad vozidlem. V opačném případě je server považován za \emph{mrtvý}. 
+nad vozidlem. V opačném případě je server považován za \emph{mrtvý}. Metoda nepřijímá žádný vstup, datové byty jsou ignorovány.
 
-Metoda \{healthcheck} ve své odpovědi posílá pouze jeden byte. Pokud je server živý, obsahuje odpověď nenulovou hodnotu. V opačném
+\emph{Healthcheck} ve své odpovědi posílá pouze jeden byte. Pokud je server živý, obsahuje odpověď nenulovou hodnotu. V opačném
 případě vrátí server nulu, nebo neodpoví vůbec.
 
 \subsubsection{Metoda \emph{info}}
+\emph{Info} metoda TCP serveru se využívá k získání aktuálních jízdních dat vozidla. Na vstupu nepřijímá žádné parametry, všechny
+datové byty jsou tedy ignorovány. Na výstupu server vrátí tři byty. První dva byty reprezentují znaménková celá čísla. Obsahem
+prvního bytu je aktuální rychlost vozidla. Druhý byte obsahuje úhel natočení kol. Poslední byte poté obsahuje logickou hodnotu
+značící stav nouzové brzdy. Jestliže je hodnota třetího bytu nulová, nouzová brzda není aktivována. Nenulová hodnota značí, 
+že došlo k aktivaci nouzového brždění, a bude třeba jej deaktivovat, pokud chceme pokračovat v jízdě.
+
 \subsubsection{Metoda \emph{ebrake}}
+\emph{Ebrake}, nebo-li \emph{'Emergency Brake'}, česky 'nouzová brzda', slouží k ovládání nouzového brždění. První byte vstupu
+je serverem interpretován jako logická hodnota značící požadovaný stav nouzové brzdy. Nenulovou hodnotu server považuje za signál
+k aktivaci nouzového brždění. Při přijetí nulové hodnoty na vstupu poté dochází k deaktivaci nouzové brzdy. Druhý byte vstupu 
+je ignorován.
+
+Výstup metody \emph{ebrake} je opět ekvivalentní výstupu metody \emph{healthcheck}. Nenulová hodnota na výstupu značí, že server
+požadavek přijal a je schopen jej zpracovat. Nula reprezentuje stav, kdy server nemá kontrolu nad vozidlem a není schopen 
+nouzovou brzdu aktivovat. Pokud však ke ztrátě kontroly došlo důsledkem chyby, vozidlo začne nouzově brzdit samo.
+
 \subsubsection{Metoda \emph{position}}
 
 \subsection{Regulace PI regulátorem}
