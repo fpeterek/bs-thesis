@@ -219,6 +219,18 @@ nouzovou brzdu aktivovat. Pokud však ke ztrátě kontroly došlo důsledkem chy
 
 \subsubsection{Metoda \emph{position}}
 
+\emph{Position} využijeme, chceme-li zjistit geografickou polohu vozidla. Tato metoda, která neakceptuje žádný vstup, ve svém 
+17 bytovém výstupu vrací tři hodnoty. 
+
+První byte obsahuje logickou hodnotu značící, zda je geografická poloha věrohodná. Nulový
+byte značí polohu nevěrohodnou, nenulový byte věrohodnou. Poloha je považována za nevěrohodnou např. pokud nedojde ke správné
+inicializaci vozidla, GPS modul nedokáže zaměřit pozici, apod. 
+
+V následujících osmi bytech je zakódována zeměpisná šířka (latitude), v posledních osmi bytech pak zeměpisná délka (longitude). 
+Ačkoliv se jedná o desetinná čísla, pro zjednodušení jsou zakódována jako čísla celá. Skutečná hodnota zeměpisné šířky a délky 
+je vynásobena číslem $10^{10}$ a převedena na celé číslo. Výsledné číslo je poté zakódováno kódováním little endian. Klient tedy 
+nesmí při zpracování odpovědi opomenout číslo správně dekódovat.
+
 \subsection{Regulace PI regulátorem}
 
 \subsection{Python implementace}
