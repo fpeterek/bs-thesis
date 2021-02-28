@@ -222,16 +222,26 @@ nouzovou brzdu aktivovat. Pokud však ke ztrátě kontroly došlo důsledkem chy
 \emph{Position} využijeme, chceme-li zjistit geografickou polohu vozidla. Tato metoda, která neakceptuje žádný vstup, ve svém 
 17 bytovém výstupu vrací tři hodnoty. 
 
-První byte obsahuje logickou hodnotu značící, zda je geografická poloha věrohodná. Nulový
-byte značí polohu nevěrohodnou, nenulový byte věrohodnou. Poloha je považována za nevěrohodnou např. pokud nedojde ke správné
-inicializaci vozidla, GPS modul nedokáže zaměřit pozici, apod. 
+První byte obsahuje logickou hodnotu značící, zda je geografická poloha věrohodná. Nulový byte značí polohu nevěrohodnou, 
+nenulový byte věrohodnou. Poloha je považována za nevěrohodnou např. pokud nedojde ke správné inicializaci vozidla, GPS modul 
+nedokáže zaměřit pozici, apod. 
 
 V následujících osmi bytech je zakódována zeměpisná šířka (latitude), v posledních osmi bytech pak zeměpisná délka (longitude). 
 Ačkoliv se jedná o desetinná čísla, pro zjednodušení jsou zakódována jako čísla celá. Skutečná hodnota zeměpisné šířky a délky 
-je vynásobena číslem $10^{10}$ a převedena na celé číslo. Výsledné číslo je poté zakódováno kódováním little endian. Klient tedy 
-nesmí při zpracování odpovědi opomenout číslo správně dekódovat.
+je vynásobena číslem $10^{10}$ a převedena na celé číslo. Výsledné číslo je poté odesláno ve formátu little endian. Při zpracování
+odpovědi serveru si tedy klient musí dát pozor na endianitu a správně dekódovat přijatou hodnotu.
 
 \subsection{Regulace PI regulátorem}
+Elektrický motor vozidla samozřejmě koncept rychlosti nezná. Elektrický motor je schopen vydávat určitý točivý moment, o který
+je samozřejmě možné si zažádat. Mezi točivým momentem a rychlostí vozidla ovšem neexistuje lineární závislost. Rychlost vozidla
+může ovlivnit více faktorů. Např. při vysokém konstatním točivém momentu na vodorovné nebo svažující se vozovce by vozidlo mohlo 
+neustále zrychlovat, minimálně dokud by nedosáhlo rychlosti nebezpečné nejen pro samotnou platformu, ale především pro své okolí. 
+Naopak při stoupání by vozidlo mohlo na rychlosti ztrácet.
+
+O vydání určitého točivého momentu je možné požádat za pomocí CAN sběrnice. Řídící software vyšle CAN zprávu s požadovanou
+rychlostí. Kontrolní jednotka vozidla zprávu zpracuje, zkontroluje, a předá požadavek elektromotoru, který upraví svůj výstup.
+Při ovládání vozidla ovšem není určování momentu vhodné. Podstatně jednodušší by bylo žádat o dodržování konkrétní rychlosti, 
+ne momentu. Proto je kroutivý moment třeba regulovat. A právě zde se jako řešení nabízí využití PID regulátoru.
 
 \subsection{Python implementace}
 
