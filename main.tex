@@ -260,6 +260,33 @@ jednoduchá.
 
 \subsection{Python implementace}
 
+Pro implementaci kódu byl zvolen jazyk Python 3.6. Server má pouze dvě externí závislosti, a to knihovny \emph{python-can} a
+\emph{gpsd-py3}. Dále je samozřejmě extenzivně využívána standardní knihovna jazyka Python.
+
+\subsubsection{Konfigurace}
+Ke konfiguraci komponenty jsou využívány systémové enviromentální proměnné, a to zejména kvůli jednoduchosti řešení a konzistence 
+s ostatními komponentami. Jelikož je program spouštěn pouze na Raspberry Pi fyzicky připojenému ke CAN sběrnici vozidla,
+k virtualizaci pomocí orchestračních nástrojů, jako je třeba Kubernetes, pravděpodobně nikdy nedojde. Argument o jednoduchosti
+konfigurace za využití proměnných prostředí při virtualizaci tak u této komponenty neplatí.
+
+\subsubsection{TCP server}
+K vytvoření TCP serveru byl využit modul \emph{socketserver}, který náleží ke standardním modulům patřícím do jazyka Python.
+Server funguje na synchronní bázi a na zpracování probíhá pouze na jednom vlákně. K serveru je v jednom momentě připojen vždy jen
+jeden klient, jenž posílá pouze relativně malé množství dotazů. Asynchronní nebo vícevláknová implementace tak není potřeba, 
+pouze by zapříčinila znepřehlednění kódu, a to s velmi nízkými až dokonce žádnými benefity. Server naslouchá na konfigurovatelném
+portu. Instanci rozhraní vozidla nebo port lze serveru předat parametrem při inicializaci. Pokud tak uživatel neučinní, rozhraní
+vozidla je vytvořeno automaticky a číslo portu je vyčteno z enviromentální proměnné \emph{SERVER\_PORT}.
+
+\subsubsection{Rozhraní vozidla}
+Rozhraní vozidla, v kódu třída \emph{Car}, představuje abstrakci nad sběrnicí CAN, a to aby samotný TCP server nemusel pracovat
+přímo s CAN zprávami. Instance třídy \emph{Car} umožňují TCP serveru nastavovat nebo získávat hodnotu úhlu zatočení předních kol,
+rychlost, záchrannou brzdu, případně získat GPS pozici vozidla, aniž by TCP server musel počítat s momentem, CAN hodnotami, nebo
+pracovat s hardwarovými moduly.
+
+
+
+\subsubsection{CAN komunikace}
+
 \begin{table}
 	\centering
 	\caption[Krátký popisek dvou tabulek]{Ukázka dvou velice malých tabulek a způsob, jak je sdružit dohromady}
