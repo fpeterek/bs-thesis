@@ -152,14 +152,18 @@ fyzické požadavky na sběrnici a formát zpráv. Součástí zprávy je osm by
 využívána právě v automobilovém průmyslu.
 
 \subsubsection{Vlastní specifikace}
-Standard sice přiřazuje každé zprávě osmibytové pole vyhrazené pro data, již však nedefinuje, jaká data mají zprávy obsahovat, 
-v jakém formátu mají být data posílána, nebo jak se s nimi má pracovat. Obsah zpráv tak musel být vydefinován vlastní specifikací, 
-která prošla hned několika iteracemi, a jejíž finální podoba je výsledkem úzké spolupráce konstruktérů fyzické platformy a tvůrců 
-řídícího softwaru. Specifikace byla navrhována tak, aby umožnila dostatečně jemné řízení vozidla, poskytovala řídícímu softwaru
-všechna potřebná jízdní data a zahrnovala množství prostředků pro kontrolu integrity zprávy, rychlé zachycení chyb či reportování
-problémů. Na chyby nebo problémy je samozřejmě důležité reagovat, v krajních případech až nouzovým zastavením vozidla. Software
-pro ovládání platformy byl již několikrát přepisován na základě upravené specifikace, nejaktuálnější verze software však 
-implementuje nejnovější verzi specifikace.
+Standard sice přiřazuje každé zprávě pole o velikosti osm bytů vyhrazené pro data, již však nedefinuje, jaká data mají zprávy 
+obsahovat, v jakém formátu mají být data posílána, nebo jak se s nimi má pracovat. Obsah zpráv tak musel být vydefinován vlastní 
+specifikací, která prošla hned několika iteracemi, a jejíž finální podoba je výsledkem úzké spolupráce konstruktérů fyzické 
+platformy a tvůrců řídícího softwaru. Specifikace byla navrhována tak, aby umožnila dostatečně jemné řízení vozidla, poskytovala 
+řídícímu softwaru všechna potřebná jízdní data a zahrnovala množství prostředků pro kontrolu integrity zprávy, rychlé zachycení 
+chyb či reportování problémů. Na chyby nebo problémy je samozřejmě důležité reagovat, v krajních případech až nouzovým zastavením
+vozidla. Software pro ovládání platformy byl již několikrát přepisován na základě upravené specifikace, nejaktuálnější verze 
+software však implementuje nejnovější verzi specifikace.
+
+Specifikace, kromě formátu a obsahu dat, určuje také formát, jakým je kódována rychlost vozidla nebo natočení předních kol. Tyto
+hodnoty jsou kódovány a uloženy v jednom bytu. Při práci s CAN sběrnicí tak je nutné data správně přepočíst a zakódovat, případně
+dekódovat a převést do formátu IEEE 754.
 
 \subsection{TCP server a jeho metody}
 
@@ -282,6 +286,18 @@ Rozhraní vozidla, v kódu třída \emph{Car}, představuje abstrakci nad sběrn
 přímo s CAN zprávami. Instance třídy \emph{Car} umožňují TCP serveru nastavovat nebo získávat hodnotu úhlu zatočení předních kol,
 rychlost, záchrannou brzdu, případně získat GPS pozici vozidla, aniž by TCP server musel počítat s momentem, CAN hodnotami, nebo
 pracovat s hardwarovými moduly.
+
+Za účelem práce s CAN sběrnicí byly implementovány třídy \emph{Transmitter} a \emph{Receiver}, které slouží k přijímání a vysílání
+zpráv. Interně třídy využívají prostředky poskytované modulem \emph{python-can}, zvenčí představují především abstrakci 
+nad nízkoúrovňovými CAN záležitostmi. \emph{Transmitter} na sběrnici vysílá zprávy \emph{DriveMessage} a \emph{ControlMessage}.
+\emph{Receiver} přijímá zprávu \emph{CarData}. Data po přijetí zpracuje a předá za pomocí callbacku třídě \emph{Car}. Ke konverzi
+mezi CAN hodnotami a formátem IEEE 754 slouží pomocné třídy \emph{Driving} a \emph{Steering}. GPS souřadnice jsou z fyzického GPS
+modulu připojeneho k Raspberry Pi získávány za využití modulu \emph{gpsd-py3}.
+
+CAN zprávy jsou posílány periodicky. K zajištění periodicity je využita knihovna \emph{python-can}, která zvládne periodické
+zasílání zpráv zajistit. Zasílaná data lze libovolně měnit za využití rozhraní abstraktní třídy \emph{ModifiableCyclicTaskABC} 
+poskytované modulem \emph{python-can}. Knihovna dokáže zajistit pravidelné opakované vysílání zpráv na separátním vlákně. V kódu
+tak stačí vytvořit periodickou úlohu a pouze podle potřeby upravovat požadovaná jízdní data či kontrolní součty.
 
 
 
