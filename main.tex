@@ -299,9 +299,28 @@ zasílání zpráv zajistit. Zasílaná data lze libovolně měnit za využití 
 poskytované modulem \emph{python-can}. Knihovna dokáže zajistit pravidelné opakované vysílání zpráv na separátním vlákně. V kódu
 tak stačí vytvořit periodickou úlohu a pouze podle potřeby upravovat požadovaná jízdní data či kontrolní součty.
 
+\section{Simulátor vozidla}
 
+Simulátor vozidla, taktéž implementovaný v Pythonu, má za cíl nahradit a nasimulovat server běžící na Raspberry Pi připojeném
+k autonomní platformě. Simulátor implementuje naprosto stejné API jako skutečný server. Fyzické vozidlo je však nahrazeno pouhou
+virtuální aproximací. Simulace samozřejmě určitým způsobem počítá s fyzikálními reáliemi vozidla -- natočení přední soupravy 
+určitou dobu trvá, akcelerace není lineární, vozidlo samovolně zpomaluje, pokud motor neposkytuje dostatečný výkon. Přesto je 
+simulace zjednodušená a počítá pouze s elementárními fyzikálními zákony. Simulátor vznikl s cílem umožnit jednoduché a rychlé 
+testování jednotlivých částí řídícho softwaru. Realistická a přesná simulace by byla pro tento účel příliš složitá a silně 
+překračovala rozsah a cíl projektu.
 
-\subsubsection{CAN komunikace}
+Program po spuštění vytvoří TCP server a inicializuje vozidlo ve výchozí pozici. Na základě vstupu TCP serveru je poté vozidlo 
+ovládáno. Geografická poloha simulované platformy je automaticky aktualizována s pohybem, aby výstup metody \emph{drive} TCP 
+serveru odpovídal reálnému výstupu v praktickém zapojení. Klientu je tak poskytnut ekvivalent skutečného vozidla. 
+
+Kód simulátoru nemá žádné závislosti. Využívá pouze standardní knihovnu jazyka Python verze 3.6. Ke konfiguraci lze využít 
+proměnné prostředí systému. V konfiguraci lze specifikovat port, na kterém má TCP server naslouchat, zapnout debugovací funkce, 
+nebo také nastavit výchozí pozici vozidla.
+
+Simulátor je využíván například při testování práce s mapovými podklady, jako je vyhledávání a plánování cesty, hledání nejbližší
+využitelné vozovky, při vývoji a testování vizualizéru pohybu vozidla, nebo při vývoji uživatelského rozhraní určenému k ovládání
+vozidla, tedy když realistická simulace není nutná a jednoduchá aproximace více než stačí.
+
 
 \begin{table}
 	\centering
