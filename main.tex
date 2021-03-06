@@ -323,7 +323,19 @@ vozidla, tedy když realistická simulace není nutná a jednoduchá aproximace 
 
 \section{Klient a ovládací software}
 
-\subsection{Řízení vozidla}
+Účelem klienta je plánovat cestu a rozhodovat o chování a pohybu vozidla na základě vysokoúrovňových informací a pomocí 
+vysokoúrovňových příkazů. Komponenta funguje jako klient ve vztahu nejen k serveru zajišťujícímu CAN komunikaci, ale také 
+softwaru zajišťujícímu analýzu okolního prostředí za pomocí soustavy kamer a lidaru. Důvodem volby této architektury bylo 
+zjednodušení softwaru pro plánování cesty. Klient nemusí řešit frekvenci CAN zpráv, analýzu obrazu, ale ani implementovat 
+asynchronní server nebo synchronizaci vláken -- nemůže se například stát, že by se v polovině výpočtu změnil vstup z kamery.
+Klient si všechny informace vyžádá až v momentě, kdy je doopravdy vyžaduje, provede rozhodnutí, a dokud není v cíli, rozhodovací 
+cyklus zase opakuje.
+
+Tato softwarová komponenta tedy zastává primárně roli klienta, to ovšem neznamená, že v roli klienta musí působit ve všech 
+ohledech a aplikacích. Například pokud by došlo k implementaci monitorování pomocí technologie Prometheus, musel by software
+vystavit své metriky pomocí HTTP serveru. Stejně tak by si využití TCP serveru v této komponentě vyžádala i implementace webové 
+aplikace pro zadávání pokynů vozidlu. V takové situaci s největší pravděpodobností dojde ke tvorbě jednoduchého REST API, 
+se kterým bude webová aplikace komunikovat.
 
 \subsection{Komunikace se serverem}
 
@@ -362,6 +374,8 @@ vozidla, tedy když realistická simulace není nutná a jednoduchá aproximace 
 \subsubsection{Cena cesty odvíjející se od denní doby}
 
 \subsection{Ovládání vozidla pomocí webové aplikace}
+
+\subsection{Metriky, chytřejší logování, monitorování}
 
 \section{Závěr}
 
