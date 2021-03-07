@@ -5,6 +5,7 @@
 \usepackage[backend=biber, style=iso-numeric, alldates=iso]{biblatex} % bibliografie
 \usepackage{dcolumn} % sloupce tabulky s ciselnymi hodnotami
 \usepackage{subfig} % makra pro "podobrazky" a "podtabulky"
+\usepackage{hyperref}
 
 % Zadame pozadovane vstupy pro generovani titulnich stran.
 \ThesisAuthor{Filip Peterek}
@@ -165,7 +166,7 @@ Specifikace, kromě formátu a obsahu dat, určuje také formát, jakým je kód
 hodnoty jsou kódovány a uloženy v jednom bytu. Při práci s CAN sběrnicí tak je nutné data správně přepočíst a zakódovat, případně
 dekódovat a převést do formátu IEEE 754.
 
-\subsection{TCP server a jeho metody}
+\subsection{TCP server a jeho metody} \label{server-methods}
 
 Za účelem zvýšení abstrakce a zjednoduššení ovládání vozidla, ale také aby bylo umožněno vzdálené ovládání platformy
 a zjednodušila se výměna způsobů ovládání, je nízkoúrovňové řízení CAN zprávami abstrahováno a obaleno jednoduchým TCP serverem.
@@ -333,23 +334,52 @@ cyklus zase opakuje.
 
 Tato softwarová komponenta tedy zastává primárně roli klienta, to ovšem neznamená, že v roli klienta musí působit ve všech 
 ohledech a aplikacích. Například pokud by došlo k implementaci monitorování pomocí technologie Prometheus, musel by software
-vystavit své metriky pomocí HTTP serveru. Stejně tak by si využití TCP serveru v této komponentě vyžádala i implementace webové 
+vystavit své metriky pomocí HTTP serveru. Stejně tak by si využití HTTP serveru v této komponentě vyžádala i implementace webové 
 aplikace pro zadávání pokynů vozidlu. V takové situaci s největší pravděpodobností dojde ke tvorbě jednoduchého REST API, 
 se kterým bude webová aplikace komunikovat.
 
-\subsection{Komunikace se serverem}
+Komunikace s Raspberry Pi na vozidle probíhá pomocí vlastního binárního protokolu popsaného v části \nameref{server-methods}. 
+Podobně je vlastní protokol využit také při komunikaci s analyzátorem okolního prostředí. V obou případech byl pro přenos dat 
+zvolen protokol TCP, a to především z toho důvodu, že TCP dokáže zajistit doručení všech paketů do cílové destinace. Protokol UDP
+by byl vhodný například pokud by data z kamery byla streamována, nebo pokud by mezi softwarem pro plánování cesty a CAN 
+komunikátorem existoval konstantní proud dat. K tomu ovšem nedochází, řídící software si data vyžaduje teprve v momentě, kdy je
+doopravdy potřebuje. Navíc je při řízení vozidla extrémně důležité, aby nedocházelo ke ztrátě paketů a vozidlo dostalo všechny 
+odeslané pokyny a následně jejich přijetí potvrdilo.
 
-\subsection{Komunikace s kamerami}
+\subsection{Definice cílů cesty vozidla}
 
-\subsection{Vizualizér}
+Mezi nadšenými motoristy se určitě najde řada lidí, kteří rádi jezdí bez jakéhokoliv cíle pouze pro radost z jízdy autem. 
+U autonomního neosazeného vozidla ovšem bezcílné pojíždění nedává žádný smysl. Proto musí být definován určitý cíl cesty, kam
+se má vozidlo dostat, podle kterého poté může plánovací software naplánovat cestu. 
 
-\subsection{Ovládání vizualizérem}
+K definici cíle slouží waypointy. Waypointy, tedy geografické body na mapě, lze zadat pomocí grafického vizualizéru, 
+viz podkapitola \nameref{visualizer}, a v blízké době také pomocí webové aplikace, viz sekce \nameref{web-app}. Waypointů je možné 
+zadat teoreticky neomezené množství, prakticky je samozřejmě množství omezeno pamětí, kterou může plánovací software využít. 
+Po zadání waypointu plánovací software nalezne nejkratší možnou cestu k danému místu na mapě a pokusí se vozidlo navigovat až 
+k požadovanému cíli. Tento postup opakuje postupně pro každý waypoint, a to v takovém pořadí, v jakém je uživatel zadal. 
+Při dosažení posledního waypointu se vozidlo zastaví a čeká na další pokyny. Pokud uživatel zadá nedosažitelný bod, tedy bod, 
+který se nenachází na využitelné vozovce, bere se jako cílový waypoint bod na silnici, který je vstupu uživatele nejblíže.
+
+Jelikož je náročné zastavit přesně v určitém geografickém bodě, už jen kvůli nepřesnosti GPS, počítáme s určitou tolerancí
+v okruhu okolo uživatelem zadaného bodu. Přesná navigace pomocí technologie GPS byla vyzkoušena a je popsána v podkapitole
+\nameref{gps-failure}. Díky relativně vysoké nepřesnosti GPS se tento styl navigace projevil jako nepřesný a náročný na využití.
+Pro přesnou navigaci vozidla a zastavení v přesném bodě by ovšem bylo možné využít vstupu z kamer a po dosažení geografického cíle
+autonomní platformu navigovat pomocí vizuálních prvků, například čar definujících parkovací místo, nebo grafického kódu, dovést
+do přesného bodu. Tato funkcionalita by následně umožnila například automatické strojové vykládání převáženého nákladu. Ačkoliv 
+sice není vyloučena, v současné době, především z časových důvodů, není vyvíjena.
+
+\subsection{Vizualizér} \label{visualizer}
+
+Klient obsahuje jednoduchý vizualizér, pomocí kterého lze zobrazit pozici vozidla na mapě včetně historie pohybu, vykreslit 
+softwaru známé cesty a zvýraznit cestu, po níž se vozidlo aktuálně pohybuje, 
+
+\subsubsection{Ovládání vizualizérem}
 
 \subsection{Python implementace}
 
 \section{Testované způsoby řízení vozidla}
 
-\subsection{Řízení vozidla pomocí GPS}
+\subsection{Řízení vozidla pomocí GPS} \label{gps-failure}
 
 \subsection{Řízení vozidla pomocí detekce grafických kódu}
 
@@ -373,7 +403,7 @@ se kterým bude webová aplikace komunikovat.
 
 \subsubsection{Cena cesty odvíjející se od denní doby}
 
-\subsection{Ovládání vozidla pomocí webové aplikace}
+\subsection{Ovládání vozidla pomocí webové aplikace} \label{web-app}
 
 \subsection{Metriky, chytřejší logování, monitorování}
 
