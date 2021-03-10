@@ -361,7 +361,7 @@ Při dosažení posledního waypointu se vozidlo zastaví a čeká na další po
 který se nenachází na využitelné vozovce, bere se jako cílový waypoint bod na silnici, který je vstupu uživatele nejblíže.
 
 Jelikož je náročné zastavit přesně v určitém geografickém bodě, už jen kvůli nepřesnosti GPS, počítáme s určitou tolerancí
-v okruhu okolo uživatelem zadaného bodu. Přesná navigace pomocí technologie GPS byla vyzkoušena a je popsána v podkapitole
+v okruhu okolo uživatelem zadaného bodu. Přesná navigace pomocí technologie GPS byla vyzkoušena a je popsána v sekci
 \nameref{gps-failure}. Díky relativně vysoké nepřesnosti GPS se tento styl navigace projevil jako nepřesný a náročný na využití.
 Pro přesnou navigaci vozidla a zastavení v přesném bodě by ovšem bylo možné využít vstupu z kamer a po dosažení geografického cíle
 autonomní platformu navigovat pomocí vizuálních prvků, například čar definujících parkovací místo, nebo grafického kódu, dovést
@@ -390,8 +390,9 @@ dvěma geografickými body. Získaná vzdálenost v metrech se poté využívá 
 při převodu geografických souřadnic na souřadnice kartézské, které následně umožňují zjednodušení výpočtů za cenu nižší, ale stále
 naprosto dostačující přesnosti, využití goniometrických souřadnic pro výpočet úhlu, apod.
 
-Poslední využívaná knihovna, \emph{osmium}, slouží k parsování OpenStreetMap dat. Zpracování mapových podkladů se podrobněji
-věnuje kapitola \nameref{osm-chapter}.
+Poslední využívaná knihovna, \emph{osmium}, slouží k parsování OpenStreetMap dat. Modul \emph{osmium} dokáže zpracovat data 
+exportovaná z OpenStreetMap ve formátu XML a převést je na objekty jazyka Python, se kterými lze následně jednoduše pracovat 
+v kódu. Zpracování mapových podkladů se podrobněji věnuje kapitola \nameref{osm-chapter}.
 
 \section{Testované způsoby řízení vozidla}
 
