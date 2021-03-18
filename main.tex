@@ -332,11 +332,10 @@ asynchronní server nebo synchronizaci vláken -- nemůže se například stát,
 Klient si všechny informace vyžádá až v momentě, kdy je doopravdy vyžaduje, provede rozhodnutí, a dokud není v cíli, rozhodovací 
 cyklus zase opakuje.
 
-Tato softwarová komponenta tedy zastává primárně roli klienta, to ovšem neznamená, že v roli klienta musí působit ve všech 
-ohledech a aplikacích. Například pokud by došlo k implementaci monitorování pomocí technologie Prometheus, musel by software
-vystavit své metriky pomocí HTTP serveru. Stejně tak by si využití HTTP serveru v této komponentě vyžádala i implementace webové 
-aplikace pro zadávání pokynů vozidlu. V takové situaci s největší pravděpodobností dojde ke tvorbě jednoduchého REST API, 
-se kterým bude webová aplikace komunikovat.
+Tato softwarová komponenta tedy zastává primárně roli klienta, zejména v relaci k vozidlu, to ovšem neznamená, že v roli klienta 
+musí působit ve všech ohledech a všech aplikacích. Například pokud by došlo k implementaci monitorování pomocí technologie 
+Prometheus, musel by software vystavit své metriky pomocí HTTP serveru. Dále komponenta implementuje jednoduché REST API, které 
+umožňuje vzdálené ovládání za využití protokolu HTTP. API je podrobněji popsáno v sekci \nameref{rest-api}.
 
 Komunikace s Raspberry Pi na vozidle probíhá pomocí vlastního binárního protokolu popsaného v části \nameref{server-methods}. 
 Podobně je vlastní protokol využit také při komunikaci s analyzátorem okolního prostředí. V obou případech byl pro přenos dat 
@@ -375,24 +374,44 @@ softwaru známé cesty, aktivní waypointy a zvýraznit cestu, po níž se vozid
 waypointů levým tlačítkem myši. Vizualizér slouží především k vývojovým a testovacím účelům. V reálném provozu vozidla by měla
 být využívána především webová aplikace. 
 
+\subsection{REST API} \label{rest-api}
+
+REST API slouží ke vzdálenému získávání informací a zadávání pokynů plánovacímu softwaru.
+
+Velkou výhodou architektonického stylu REST, zejména v porovnání s binárními RPC protokoly, vlastními protokoly, apod., je 
+především jednoduchost jeho využití. Využití formátu JSON umožňuje jednodušší ladění a vyhledávání chyb, právě protože je formát
+lidsky čitelný. K využití a zavolání REST API stačí jakýkoliv HTTP klient, proto je jednoduché implementovat klienta v jakémkoliv
+seriózním jazyce. Není třeba doufat, že pro daný jazyk bude existovat implementace Protocol Buffers kompilátoru a gRPC klienta. 
+Dokonce je možné REST API volat i z webového prohlížeče, nebo třeba z terminálu za využití programu \emph{cURL}. Za nevýhodu lze
+považovat nižší výkon a vyšší nároky na přenesený objem dat v porovnání s binárními protokoly, ovšem s nízkým množstvím požadavků
+v současné aplikaci, v kombinaci s rychlostí moderních procesorů, není rychlost zpracování dotazu faktorem.
+
 \subsection{Python implementace}
 
 Software je, konzistentně s ostatními komponentami, vyvíjen v programovacím jazyce Python verze 3.6. Kromě standardních modulů 
-jazyka Python jsou zde využity knihovny \emph{pygame}, \emph{geopy} a \emph{osmium}. 
+jazyka Python jsou zde využity knihovny \emph{Pygame}, \emph{Geopy}, \emph{Osmium} a \emph{Flask}. 
 
-Knihovna \emph{pygame} byla zvolena pro implementaci vizualizéru zejména díky jednoduchému využití a vykreslování grafických 
+Knihovna \emph{Pygame} byla zvolena pro implementaci vizualizéru zejména díky jednoduchému využití a vykreslování grafických 
 podkladů, mezi které patří nejen základní geometrické útvary, jako jsou třeba úsečka, kruh, ale také obrazové podklady a grafické 
 sprity. 
 
-Modul \emph{geopy} je využíván pro své možnosti práce s geografickými souřadnicemi. Důležitou a v kódu často využívanou funkcí 
-knihovny \emph{geopy} je funkce \emph{geopy.distance.distance}, jež poskytuje funkcionalitu pro výpočet fyzické vzdálenosti mezi
+Modul \emph{Geopy} je využíván pro své možnosti práce s geografickými souřadnicemi. Důležitou a v kódu často využívanou funkcí 
+knihovny \emph{Geopy} je funkce \emph{geopy.distance.distance}, jež poskytuje funkcionalitu pro výpočet fyzické vzdálenosti mezi
 dvěma geografickými body. Získaná vzdálenost v metrech se poté využívá například při hledání nejkratší cesty na mapě, nebo také
 při převodu geografických souřadnic na souřadnice kartézské, které následně umožňují zjednodušení výpočtů za cenu nižší, ale stále
 naprosto dostačující přesnosti, využití goniometrických souřadnic pro výpočet úhlu, apod.
 
-Poslední využívaná knihovna, \emph{osmium}, slouží k parsování OpenStreetMap dat. Modul \emph{osmium} dokáže zpracovat data 
+Předposlední využívaná knihovna, \emph{Osmium}, slouží k parsování OpenStreetMap dat. Modul \emph{Osmium} dokáže zpracovat data 
 exportovaná z OpenStreetMap ve formátu XML a převést je na objekty jazyka Python, se kterými lze následně jednoduše pracovat 
 v kódu. Zpracování mapových podkladů se podrobněji věnuje kapitola \nameref{osm-chapter}.
+
+Mikroframework \emph{Flask} není třeba žádnému zkušenějšímu Python programátorovi představovat. Jedná se o knihovnu umožňující 
+tvorbu HTTP serveru a zpracování HTTP dotazů. Jako mikroframework je velmi jednoduchý na využití a relativně drobný. Není proto
+sám o sobě vhodný na tvorbu webových aplikací, za tímto účelem je efektivnější využít technologií stavějících na Flasku, pro
+rychlou tvorbu API je ovšem \emph{Flask} velmi dobrá volba. Nevýhodou \emph{Flasku} je chybějící podpora pro asynchronní 
+zpracování dotazů, proto se dnes často na úkor \emph{Flasku} využívá třeba \emph{Starlette}, nebo z něj vycházející 
+\emph{FastApi}, které díky své asynchronní povaze dokážou zpracovat podstatně vyšší množství dotazů. V současné aplikaci však 
+na API chodí maximálně jednotky dotazů za sekundu a \emph{Flask} stačí více než dostatečně.
 
 \section{Testované způsoby řízení vozidla}
 
