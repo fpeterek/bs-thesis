@@ -376,7 +376,14 @@ být využívána především webová aplikace.
 
 \subsection{REST API} \label{rest-api}
 
-REST API slouží ke vzdálenému získávání informací a zadávání pokynů plánovacímu softwaru.
+REST API slouží ke vzdálenému získávání informací a zadávání pokynů plánovacímu softwaru. API v současné době implementuje čtyři 
+endpointy. Pro předávání dat mezi klientem a serverem je samozřejmě použit formát JSON nebo URI parametry. Data jsou obsažena 
+v těle dotazu klienta nebo odpovědi serveru, nebo přímo v URI, pokud je tento přístup pro daný případ vhodnější.
+
+\subsubsection{Endpoint \emph{/waypoints}}
+\subsubsection{Endpoint \emph{/position}}
+\subsubsection{Endpoint \emph{/heading}}
+\subsubsection{Endpoint \emph{/info}}
 
 Velkou výhodou architektonického stylu REST, zejména v porovnání s binárními RPC protokoly, vlastními protokoly, apod., je 
 především jednoduchost jeho využití. Využití formátu JSON umožňuje jednodušší ladění a vyhledávání chyb, právě protože je formát
