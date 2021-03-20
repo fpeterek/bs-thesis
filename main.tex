@@ -86,9 +86,11 @@
 \AddAcronym{API}{Application Programming Interface}
 \AddAcronym{XML}{Extensible Markup Language}
 \AddAcronym{JSON}{JavaScript Object Notation}
+\AddAcronym{YAML}{YAML Ain't a Markup Language}
 \AddAcronym{TX}{Transmitter}
 \AddAcronym{RX}{Receiver}
 \AddAcronym{RPC}{Remote Procedure Call}
+\AddAcronym{REST}{Representational state transfer}
 
 \addbibresource{biblatex-examples.bib}
 \addbibresource{coffee.bib}
@@ -378,12 +380,47 @@ být využívána především webová aplikace.
 
 REST API slouží ke vzdálenému získávání informací a zadávání pokynů plánovacímu softwaru. API v současné době implementuje čtyři 
 endpointy. Pro předávání dat mezi klientem a serverem je samozřejmě použit formát JSON nebo URI parametry. Data jsou obsažena 
-v těle dotazu klienta nebo odpovědi serveru, nebo přímo v URI, pokud je tento přístup pro daný případ vhodnější.
+v těle dotazu klienta nebo odpovědi serveru, případně přímo v URI, pokud je tento přístup pro daný případ vhodnější.
 
 \subsubsection{Endpoint \emph{/waypoints}}
+
+Endpoint \emph{/waypoints} slouží k práci s waypointy. Podporuje tři metody standardu HTTP, konkrétně GET, POST a DELETE. 
+
+Metoda GET slouží k získání seznamu všech aktuálních waypointů. Server po přijetí požadavku naformátuje seznam waypointů a vrátí 
+jej jako JSON pole ve své odpovědi.
+
+Metoda POST se využívá k vytváření waypointů. Server v těle požadavku očekává jeden JSON objekt se dvěma atributy, \emph{latitude}
+a \emph{longitude}. Po přijetí dotazu je JSON rozparsován a na základě obsahu objektu je vozidlu přidán nový waypoint.
+
+Metoda DELETE je přirozeně využita k mazání waypointů. Jedním dotazem je možné smazat jeden waypoint. Metoda DELETE očekává jeden
+parametr, index, který značí index waypointu, který má být smazán. V případě metody DELETE je parametr očekáván již v URI, obsah
+těla nebere API u této metody v potaz. Indexování probíhá přirozeně od nuly. 
+
 \subsubsection{Endpoint \emph{/position}}
+
+\emph{/position} slouží k získání geografické pozice autonomního vozidla. Implementuje metodu GET a nepřijímá žádné parametry. 
+V těle odpovědi vrací jeden JSON objekt s atributy \emph{latitude} a \emph{longitude}, představující aktuální umístění vozidla.
+
 \subsubsection{Endpoint \emph{/heading}}
+
+GET dotaz na endpoint \emph{/heading} umožňuje získat aktuální natočení vozidla. Natočení je uvedeno ve stupních a odpovídá 
+natočení v kartézském souřadnicovém systému, není tak relativní k pólům planety Země. Tato funkce slouží především k vykreslování
+vozidla na mapě, která je samozřejmě projekcí glóbu do kartézského systému. Odpověď zde také představuje JSON objekt s jedním 
+atributem, pojmenovaným \emph{heading}. 
+
+Jiné metody standardu HTTP endpoint \emph{/heading} nepodporuje.
+
 \subsubsection{Endpoint \emph{/info}}
+
+Endpoint \emph{/info} také využívá pouze metodu GET a veškerý vstup ignoruje. Ve své odpovědi vrací pozici, vozidla, jeho 
+natočení, ale také seznam waypointů. Slouží tedy jako ekvivalent k GET dotazu na všechny tři předchozí endpointy. Hlavní výhodou
+využití endpointu \emph{/info} je samozřejmě nižší množství TCP spojení oproti volání alespoň dvou ze tří předchozích endpointů 
+najednou.
+
+Odpověď serveru obsahuje objekt se třemi atributy. Atribut \emph{position} představuje objekt geografického bodu. Atribut 
+\emph{heading} je pouze primitivní desetinné číslo. Pod atributem \emph{waypoints} se poté skrývá pole waypointů.
+
+\subsubsection{Výhody a nevýhody REST API}
 
 Velkou výhodou architektonického stylu REST, zejména v porovnání s binárními RPC protokoly, vlastními protokoly, apod., je 
 především jednoduchost jeho využití. Využití formátu JSON umožňuje jednodušší ladění a vyhledávání chyb, právě protože je formát
@@ -396,7 +433,24 @@ v současné aplikaci, v kombinaci s rychlostí moderních procesorů, není ryc
 \subsection{Python implementace}
 
 Software je, konzistentně s ostatními komponentami, vyvíjen v programovacím jazyce Python verze 3.6. Kromě standardních modulů 
-jazyka Python jsou zde využity knihovny \emph{Pygame}, \emph{Geopy}, \emph{Osmium} a \emph{Flask}. 
+jazyka Python jsou zde využity knihovny \emph{Pygame}, \emph{Geopy}, \emph{Osmium} a \emph{Flask}.
+
+\subsubsection{Konfigurace}
+
+Program lze konfigurovat pomocí proměnných prostředí operačního systému. V případě řídícího softwaru už může být řeč o možné
+virtualizaci. V takovém případě je samozřejmě tento způsob konfigurace vhodný zejména kvůli své jednoduchosti v kombinaci 
+technologiemi, jako je Docker nebo Kubernetes, které využití tohoto způsobu konfiguraci samy podporují. Samozřejmě v některých 
+případech může být tento způsob konfigurace až příliš jednoduchý, a to třeba pokud potřebujeme vyjádřit například objekty 
+se zanořenými atributy, seznamy, apod. V takovém případě by určitě bylo vhodnější využít například Kubernetes konfigurační mapy 
+a pro konfiguraci využít třeba formát YAML nebo JSON.
+
+\subsubsection{TCP klient}
+
+\subsubsection{REST API}
+
+\subsubsection{Organizace kódu}
+
+\subsubsection{Využité knihovny}
 
 Knihovna \emph{Pygame} byla zvolena pro implementaci vizualizéru zejména díky jednoduchému využití a vykreslování grafických 
 podkladů, mezi které patří nejen základní geometrické útvary, jako jsou třeba úsečka, kruh, ale také obrazové podklady a grafické 
@@ -419,6 +473,8 @@ rychlou tvorbu API je ovšem \emph{Flask} velmi dobrá volba. Nevýhodou \emph{F
 zpracování dotazů, proto se dnes často na úkor \emph{Flasku} využívá třeba \emph{Starlette}, nebo z něj vycházející 
 \emph{FastApi}, které díky své asynchronní povaze dokážou zpracovat podstatně vyšší množství dotazů. V současné aplikaci však 
 na API chodí maximálně jednotky dotazů za sekundu a \emph{Flask} stačí více než dostatečně.
+
+\subsubsection{}
 
 \section{Testované způsoby řízení vozidla}
 
