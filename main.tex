@@ -446,9 +446,34 @@ a pro konfiguraci využít třeba formát YAML nebo JSON.
 
 \subsubsection{TCP klient}
 
+Implementace TCP klienta využívá modul \emph{socket} standardní knihovny jazyka Python. Funkce pro komunikaci pomocí protokolu TCP
+se nachází v souboru \emph{client.py}. Využití je velmi jednoduché, při překladu souboru interpreterem se načte konfigurace 
+z enviromentálních proměnných. Proto stačí pouze importovat daný soubor, nebo jen požadované funkce, a ty poté volat s případnými
+argumenty. Není třeba klienta konfigurovat v kódu, vytvářet instance, apod. 
+
+Klient samozřejmě využívá vlastní protokol popsaný v sekci \nameref{server-methods}. K volání funkcí serveru implementuje pět
+metod, \emph{drive}, \emph{healthcheck}, \emph{info}, \emph{position} a \emph{ebrake}, které volají stejnojmenné funkce serveru.
+
+Dále implementuje funkci \emph{camera\_info}, jež se nedovolává na řídící server, ale na server provádějící analýzu vstupu 
+z kamery. V tomto případě ovšem server nevrací informace o okolním prostředí, tato funkce slouží pouze k získání pozice 
+detekovaného grafického kódu. Funkce \emph{camera\_info} je tedy využívána především při následování kódů, ne při navigaci pomocí
+geografických waypointů.
+
 \subsubsection{REST API}
 
-\subsubsection{Organizace kódu}
+REST API je implementováno jako velmi jednoduchá Flask aplikace. Narozdíl od klienta musí být API inicializováno zavoláním funkce
+\emph{init}, jíž je v argumentu předán ukazatel na instanci třídy \emph{CarController}, která zajišťuje řízení vozidla. Předání
+tohoto objektu je potřeba proto, aby API mohlo interagovat s řídícím kódem. API se spouští na separátním vlákně, třída 
+\emph{CarController} proto musí být thread-safe. V opačném případě by mohlo dojít např. ke konkurentnímu přístupu k atributům.
+
+\subsubsection{Řídící kód}
+
+K ovládání vozidla slouží především třídy \emph{CarController} a \emph{PathPlanner}.
+
+Třída \emph{CarController} slouží k vysokoúrovňovému ovládání vozidla. Pomocí této třídy lze například nastavit waypointy, nebo
+zapnout sledování grafických kódů. Dále také agreguje a spravuje instance pomocných tříd, jako jsou \emph{PositionTracker} 
+a \emph{PositionFetcher}, sloužící k získávání a sledování pozice vozidla, \emph{Visualizer}, třídu umožňující grafickou 
+vizualizaci, nebo instanci třídy \emph{Map}, obsahující mapové podklady univerzitního kampusu.
 
 \subsubsection{Využité knihovny}
 
@@ -473,8 +498,6 @@ rychlou tvorbu API je ovšem \emph{Flask} velmi dobrá volba. Nevýhodou \emph{F
 zpracování dotazů, proto se dnes často na úkor \emph{Flasku} využívá třeba \emph{Starlette}, nebo z něj vycházející 
 \emph{FastApi}, které díky své asynchronní povaze dokážou zpracovat podstatně vyšší množství dotazů. V současné aplikaci však 
 na API chodí maximálně jednotky dotazů za sekundu a \emph{Flask} stačí více než dostatečně.
-
-\subsubsection{}
 
 \section{Testované způsoby řízení vozidla}
 
