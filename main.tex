@@ -471,9 +471,14 @@ tohoto objektu je potřeba proto, aby API mohlo interagovat s řídícím kódem
 K ovládání vozidla slouží především třídy \emph{CarController} a \emph{PathPlanner}.
 
 Třída \emph{CarController} slouží k vysokoúrovňovému ovládání vozidla. Pomocí této třídy lze například nastavit waypointy, nebo
-zapnout sledování grafických kódů. Dále také agreguje a spravuje instance pomocných tříd, jako jsou \emph{PositionTracker} 
-a \emph{PositionFetcher}, sloužící k získávání a sledování pozice vozidla, \emph{Visualizer}, třídu umožňující grafickou 
+zapnout sledování grafických kódů. Dále také agreguje a spravuje instance pomocných tříd, jako jsou \emph{PositionFetcher} 
+a \emph{PositionTracker}, sloužící k získávání a sledování pozice vozidla, \emph{Visualizer}, třídu umožňující grafickou 
 vizualizaci, nebo instanci třídy \emph{Map}, obsahující mapové podklady univerzitního kampusu.
+
+\emph{PathPlanner} poté rozhoduje o pohybu vozidla. Na základě poskytnutých informací, jako jsou například mapové podklady, vstup
+z GPS nebo detekce obrazu, apod., rozhoduje jak o okamžitých akcích, tak o dlouhodobém pohybu a dráze vozidla, za účelem dovedení
+vozidla do cíle. Za účelem plánování cesty bylo vyzkoušeno hned několik způsobů. Zkoušeným způsobům, poznatkům ze zkoušení 
+postupů, nalezeným problémům a výsledkům výzkumu se podrobněji věnuje kapitola \nameref{driving-methods}.
 
 \subsubsection{Využité knihovny}
 
@@ -499,7 +504,14 @@ zpracování dotazů, proto se dnes často na úkor \emph{Flasku} využívá tř
 \emph{FastApi}, které díky své asynchronní povaze dokážou zpracovat podstatně vyšší množství dotazů. V současné aplikaci však 
 na API chodí maximálně jednotky dotazů za sekundu a \emph{Flask} stačí více než dostatečně.
 
-\section{Testované způsoby řízení vozidla}
+\section{Testované způsoby řízení vozidla} \label{driving-methods}
+
+Při vývoji softwaru byly vyzkoušeny hned tři způsoby řízení vozidla, a to řízení čistě pomocí GPS, řízení pouze pomocí grafických
+kódu, a nakonec kombinace řízení pomocí vstupů z GPS, kamery, a případně také Lidaru. První dva způsoby se projevily jako v praxi 
+téměř nevyužitelné, alespoň samy o sobě. I přesto výzkum těchto technik řízení přinesl spoustu poznatků, objevů, zkušeností, ale 
+také technologického progresu a kódu, proto výzkum nelze považovat za neúspěšný. Ačkoliv jsou totiž techniky řízení nepraktické
+samy o sobě, lze je zkombinovat s jinými technikami, a tím vytvořit spolehlivý software schopný bezpečně řídit vozidlo. K tomuto
+účelu lze samozřejmě také využít zdrojových kódu napsaných při provádění výzkumu.
 
 \subsection{Řízení vozidla pomocí GPS} \label{gps-failure}
 
