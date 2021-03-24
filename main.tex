@@ -31,7 +31,6 @@
 % Pokud toto makro zapoznamkujeme sazi se cisty text prohlaseni.
 \AuthorDeclarationImageFile{Figures/AuthorDeclaration.jpg}
 
-
 % Zadame soubor s digitalizovanou podobou souhlasu spolupracujici prav. nebo fyz. osoby.
 % Pokud toto makro zapoznamkujeme sazi se cisty text souhlasu.
 \CooperatingPersonsDeclarationImageFile{Figures/CoopPersonDeclaration.jpg}
@@ -515,6 +514,64 @@ samy o sobě, lze je zkombinovat s jinými technikami, a tím vytvořit spolehli
 
 \subsection{Řízení vozidla pomocí GPS} \label{gps-failure}
 
+První pokusy o řízení proběhly za pomocí technologie GPS. Při testování se nepočítalo ani s mapovými podklady, autonomní platforma
+měla jezdit pouze po omezené ploše, aby se vyzkoušela možnost tohoto způsobu řízení. K vozidlu byl připojen GPS modul, pomocí
+kterého Raspberry Pi server určoval aktuální geolokaci vozidla. Řídící kód byl naprogramován tak, aby vozidlo vedl přímo 
+k nejbližšímu waypointy. Nastavení waypointů tuto skutečnost reflektovalo -- waypointy byly rozmístěny tak, aby vozidlu nestála 
+v cestě žádná překážka, budova, obrubník, apod. Navigace ve 2D prostoru bez žádných překážek není nic složitého, na první pohled
+by úspěchu nic bránit nemělo. Přesto se ovšem objevilo několik problémů, které bylo třeba řešit.
+
+\subsubsection{Kalibrace GPS}
+
+První problém se projevil hned při spuštění serveru a inicializaci GPS modulu -- zaměření vozidla pomocí GPS ve venkovním 
+prostředí nějakou dobu trvá, ve vnitřních prostorech GPS modul nedokáže pozici určit vůbec.
+
+Pomalé zaměření vozidla ve venkovních prostorech je efekt nežádaný, ovšem ne neřešitelný. Řídící kód byl upraven tak, aby tuto 
+skutečnost bral v potaz, a před rozjezdem alespoň deset sekund čekal, aby měl GPS modul možnost pozici správně určit, a aby se 
+omezila oscilace naměřených hodnot, které jsou při zaměřování velmi nepřesné. Navíc není předpokládáno, že by v případném reálném 
+provozu docházelo k častému vypínání vozidla, a tím i GPS modulu. Také lze projevy problému omezit například nákupem dražšího 
+hardwaru, nebo neustálým napájením GPS, a to i v momentě, kdy je vozidlo vypnuté. V současném stavu ovšem krátké čekání 
+po spuštění vozidla nevadí, proto tato řešení nejsou nyní využívána v praxi.
+
+Nezaměřitelnost vozidla ve vnitřních prostorech je problém podstatně větší. Platforma stavěná za účelem rozvozu materiálu 
+v industriálních prostorech pohybu uvnitř musí být schopna, v opačném případě bude její využití velmi omezené. A jelikož má
+vozidlo být co nejjednodušší na využití, a nemělo by vyžadovat stavbu dodatečné infrastruktury umožňující zaměření ve vnitřních
+prostorech, bylo už v tomto momentě rozhodnuto o tom, že bude třeba implementovat také řízení pomocí systému kamer, Lidarů, nebo
+kombinace obojího.
+
+\subsubsection{Směr natočení vozidla}
+
+Pro úspěšnou navigaci v prostoru je samozřejmě také nutné vědět, kterým směrem je vozidlo natočeno a kterým směrem se pohybuje.
+
+Na platformě ovšem nebyl umístěn kompas. Proto bylo třeba improvizovat. Řídící kód byl znovu upraven, tentokrát takovým způsobem,
+aby směr, kterým se vozidlo pohybuje, určoval podle změny v naměřených GPS souřadnicích. 
+
+Zde ovšem vyvstal nový problém, vycházející z nedokonalosti a nepřesnosti GPS. GPS nedokáže zaměřit pozici se 100\% přesností, 
+vždy dojde k naměření s určitou odchylkou, která musí být při práci s naměřenými souřadnicemi započítána. Tato odchylka může 
+vozidlo na mapě umístit jinam, než kde ve skutečnosti je. Při vysokých rychlostech, kdy dochází k velkým změnám souřadnic, 
+je odchylka relativně k absolutní změně zanedbatelná a odchylka mezi reálným a vypočítaným směrem pohybu dosahuje pouze 
+zanedbatelných hodnot. Vozidlo, jež je subjektem této práce, ovšem dosahuje pouze relativně nízkých rychlostí, převážně kvůli 
+bezpečnosti provozu. V nízkých rychlostech je samozřejmě absolutní změna souřadnic podstatně menší, odchylka způsobená nepřesností
+GPS je tedy relativně o hodně vyšší, již není zanedbatelná, a odchylka mezi reálným a vypočítaným směrem pohybu je schopná 
+dosahovat hodnoty až $180^{\circ}$. Hodnoty s tak vysokými odchylkami jsou samozřejmě v praxi nevyužitelné. Problematice 
+nepřesnosti GPS se dále věnuje sekce \nameref{gps-inaccuracy}. 
+
+Dalším problémem, který s sebou tento přístup určení směru přinesl, byla nemožnost určit směr natočení vozidla, když se vozidlo 
+nehýbalo. Tento problém měl nežádoucí projevy zejména po startu vozidla, kdy nebylo možné určit, kterým směrem musí platforma jet,
+aby dosáhla cíle, a zda potřebuje zatáčet. V průběhu jízdy lze tento problém samozřejmě odstranit pamatováním si posledního 
+naměřeného směru před případným dočasným zastavením vozidla. Problém byl řešen obyčejným rozjetím autonomní platformy rovně 
+dopředu. Z naměřeného pohybu byl dopočten směr, a teprve poté došlo k umožnění zatáčení v řídícím softwaru.
+
+Samotný výpočet úhlu je velmi jednoduchý.
+% TODO: Opravit v kódu, nevyužívá kartézské souřadnice
+
+\subsubsection{GPS souřadnice a (nejen) goniometrické funkce} \label{cartesian-coordinates}
+
+\subsubsection{Pomalá odezva GPS}
+
+\subsubsection{Nepřesnost GPS} \label{gps-inaccuracy}
+
+
 \subsection{Řízení vozidla pomocí detekce grafických kódu}
 
 \subsection{Řízení vozidla kombinací vstupů z GPS, kamery, a za využití mapových podkladů}
@@ -578,6 +635,8 @@ pdflatex main
 \end{verbatim}
 
 \printbibliography[title={Literatura}, heading=bibintoc]
+% https://www.csselectronics.com/screen/page/simple-intro-to-can-bus/language/en
+%
 
 \appendix
 \section{Plné tkví drah pokles průběhu}
