@@ -562,8 +562,14 @@ aby dosáhla cíle, a zda potřebuje zatáčet. V průběhu jízdy lze tento pro
 naměřeného směru před případným dočasným zastavením vozidla. Problém byl řešen obyčejným rozjetím autonomní platformy rovně 
 dopředu. Z naměřeného pohybu byl dopočten směr, a teprve poté došlo k umožnění zatáčení v řídícím softwaru.
 
-Samotný výpočet úhlu je velmi jednoduchý.
-% TODO: V kódu opraveno, dopsat text
+Samotný výpočet úhlu je velmi jednoduchý. Za pomocí naměřených GPS souřadnic zjistíme, jaký pohyb vozidlo vykonalo. Z předchozí
+a nově naměřené hodnoty vyčteme rozdíl v zeměpisné šířce i délce. Pomocí knihovny \emph{geopy} převedeme rozdíl uvedený 
+v zeměpisné šířce a délce na metry, a převedeme tak globální světové souřadnice na souřadnice kartézské. To nám umožní využít
+goniometrické funkce a zjednoduššit výpočty, viz sekce \nameref{cartesian-coordinates}. Dále za využití Pythagorovy věty
+vypočteme celkovou vzdálenost, jakou vozidlo překonalo. Tímto získáme pravoúhlý trojúhelník, jehož přepona je dráha
+pohybu vozidla, odvěsny poté reprezentují rozdíly v zeměpisné šířce a v zeměpisné délce. Následně stačí rozdíl v zeměpisné šířce
+uvedený v metrech vydělit celkovou vzdáleností. Touto operací získáme kosinus úhlu. Na získaný kosinus aplikujeme funkci arkus
+kosinus, tedy funkci kosinu inverzní, čímž získáme úhel v rozsahu prvního a druhého kvadrantu. 
 
 \subsubsection{GPS souřadnice a (nejen) goniometrické funkce} \label{cartesian-coordinates}
 
