@@ -521,6 +521,7 @@ k nejbližšímu waypointy. Nastavení waypointů tuto skutečnost reflektovalo 
 v cestě žádná překážka, budova, obrubník, apod. Navigace ve 2D prostoru bez žádných překážek není nic složitého, na první pohled
 by úspěchu nic bránit nemělo. Přesto se ovšem objevilo několik problémů, které bylo třeba řešit.
 
+
 \subsubsection{Kalibrace GPS}
 
 První problém se projevil hned při spuštění serveru a inicializaci GPS modulu -- zaměření vozidla pomocí GPS ve venkovním 
@@ -539,7 +540,7 @@ vozidlo být co nejjednodušší na využití, a nemělo by vyžadovat stavbu do
 prostorech, bylo už v tomto momentě rozhodnuto o tom, že bude třeba implementovat také řízení pomocí systému kamer, Lidarů, nebo
 kombinace obojího.
 
-\subsubsection{Směr natočení vozidla}
+\subsubsection{Směr natočení vozidla} \label{directions-and-angles}
 
 Pro úspěšnou navigaci v prostoru je samozřejmě také nutné vědět, kterým směrem je vozidlo natočeno a kterým směrem se pohybuje.
 
@@ -562,16 +563,39 @@ aby dosáhla cíle, a zda potřebuje zatáčet. V průběhu jízdy lze tento pro
 naměřeného směru před případným dočasným zastavením vozidla. Problém byl řešen obyčejným rozjetím autonomní platformy rovně 
 dopředu. Z naměřeného pohybu byl dopočten směr, a teprve poté došlo k umožnění zatáčení v řídícím softwaru.
 
-Samotný výpočet úhlu je velmi jednoduchý. Za pomocí naměřených GPS souřadnic zjistíme, jaký pohyb vozidlo vykonalo. Z předchozí
-a nově naměřené hodnoty vyčteme rozdíl v zeměpisné šířce i délce. Pomocí knihovny \emph{geopy} převedeme rozdíl uvedený 
-v zeměpisné šířce a délce na metry, a převedeme tak globální světové souřadnice na souřadnice kartézské. To nám umožní využít
-goniometrické funkce a zjednoduššit výpočty, viz sekce \nameref{cartesian-coordinates}. Dále za využití Pythagorovy věty
-vypočteme celkovou vzdálenost, jakou vozidlo překonalo. Tímto získáme pravoúhlý trojúhelník, jehož přepona je dráha
+Samotný výpočet směru pohybu vozidla je velmi jednoduchý. Za pomocí naměřených GPS souřadnic zjistíme, jaký pohyb vozidlo 
+vykonalo. Z předchozí a nově naměřené hodnoty vyčteme rozdíl v zeměpisné šířce i délce. Pomocí knihovny \emph{geopy} převedeme 
+rozdíl uvedený v zeměpisné šířce a délce na metry, a převedeme tak globální světové souřadnice na souřadnice kartézské. To nám 
+umožní využít goniometrické funkce a zjednoduššit výpočty, viz sekce \nameref{cartesian-coordinates}. Dále za využití Pythagorovy 
+věty vypočteme celkovou vzdálenost, jakou vozidlo překonalo. Tímto získáme pravoúhlý trojúhelník, jehož přepona je dráha
 pohybu vozidla, odvěsny poté reprezentují rozdíly v zeměpisné šířce a v zeměpisné délce. Následně stačí rozdíl v zeměpisné šířce
 uvedený v metrech vydělit celkovou vzdáleností. Touto operací získáme kosinus úhlu. Na získaný kosinus aplikujeme funkci arkus
-kosinus, tedy funkci kosinu inverzní, čímž získáme úhel v rozsahu prvního a druhého kvadrantu. 
+kosinus, tedy funkci kosinu inverzní, čímž získáme úhel v rozsahu prvního a druhého kvadrantu. Jelikož však úhel může patřit do
+třetího nebo čtvrtého kvadrantu kruhu, je třeba zkontrolovat, jestli je vozidlo pohybovalo směrem na západ. Jestliže je nová 
+lokalita vozidla západněji, provedla autonomní platforma pohyb vlevo v kartézských souřadnicích. V takovém případě pouze stačí
+odečíst vypočítaný úhel od úhlu $360^{\circ}$. Tak získáme směr, kterým se v kartézských souřadnicích vozidlo pohybuje a zároveň
+kterým směrem je momentálně natočeno.
+
+Výpočet požadovaného směru pohybu je analogický, pouze se při výpočtu využije aktuální pozice vozidla a souřadnice waypointu. 
+
+Na základě vypočtených směrů je poté vypočítáno natočení kol, aby autonomní platforma svým pohybem mířila k cílovému waypointu. 
+Samotný výpočet požadovaného natočení kol je jednoduchý, jakmile známe směr, kterým se vozidlo momentálně pohybuje, a směr, kterým
+by se vozidlo mělo pohybovat, aby dosáhlo svého cíle. Prostým odečtením těchto směrů od sebe získáme odchylku mezi požadovaným 
+a aktuálním směrem pohybu. Natočení kol následně může mít vůči rozdílu směrů lineární závislost, případně lze nastavit krokové 
+změny při určitých hodnotách odchylky.
 
 \subsubsection{GPS souřadnice a (nejen) goniometrické funkce} \label{cartesian-coordinates}
+
+Jak již bylo předestřeno dříve, v této práci se často převádí geografické souřadnice na souřadnice kartézské. Díky elipsoidní 
+nátuře tvaru planety Země totiž nemusí jeden stupeň zeměpisné šířky odpovídat jednomu stupni zeměpisné délky relativně 
+k vzdálenosti. Navíc mezi vzdáleností vyjadřovanou jedním stupněm zeměpisné šířky a jedním stupněm zeměpisné délky neexistuje
+univerzální poměr, neboť se poměr mezi těmito hodnotami mění na základě aktuální zeměpisné šířky.
+
+Samozřejmě univerzitní kampus, pro který je autonomní platforma stavěna, není rozlohou nijak veliký, proto se nabízela možnost
+pracovat s geografickými souřadnicemi jako by byly ekvivalentní souřadnicím kartézským, a předpokládat, že chyba způsobená tímto
+zjednodušením bude zanedbatelná. Problémy s touto doměnkou ovšem byly odhaleny velmi rychle. Velikost chyby často přesahovala 
+rozumné hodnoty. Projev chyby bylo možné zachytit nejen při testování softwaru, ale také při pouhém umístění vlastních značek
+v libovolné veřejné mapové službě (při práci na projektu byly využívány služby OpenStreetMap a Mapy.cz). 
 
 \subsubsection{Pomalá odezva GPS}
 
@@ -613,14 +637,6 @@ kosinus, tedy funkci kosinu inverzní, čímž získáme úhel v rozsahu prvníh
 Odborné texty, mezi které lze počítat i bakalářské, diplomové a disertační práce, obvykle obsahují množství křížových odkazů odkazující na nejrůznější části textu:
 \begin{description}
 	\item [kapitoly] -- například odkaz na kapitolu \ref{sec:Uherske}. Pokud odkazujeme na kapitolu, která je značně vzdálená od současné stránky, bývá dobrým zvykem k odkazu na číslo kapitoly přidat ještě i odpovídající číslo stránky, jako například pokud odkazujeme na kapitolu \ref{sec:Introduction} na straně \pageref{sec:Introduction}.
-
-	\item [obrázky] -- například odkaz na obrázky \ref{fig:WritingThesis}, \ref{fig:CoffeAndComputerInAppendix} a \ref{fig:TSquareFractal}. Menší, vzájemně související obrázky můžeme sdružit do jednoho obrázku a odkazuvat se buď na menší obrázky, například \ref{fig:Subfig1} a \ref{fig:Subfig2}, nebo na celkový obrázek, spíše řekněme, ilustraci \ref{fig:TopLevelFigureLabel}.
-
-	\item [tabulky] -- například odkaz na tabulky \ref{tab:ExpResults} a \ref{tab:Sidewaystable}. Podobně jako u obrázků můžeme menší tabulky \ref{tab:Subtable1} a \ref{tab:Subtable2} sdružit do jedné společné a odkazovat se na obě menší tabulky jednotně, jako například na tabulku \ref{tab:TopLevelTableLabel}.
-
-	\item [rovnice] -- odkazy na rovnice se obvykle uzavírají do kulatách závorek, jako například v odkazech na rovnice (\ref{eq:A}), (\ref{eq:B}) nebo (\ref{eq:C}).
-
-	\item [výpisy zdrojového kódu] -- například odkaz na výpis \ref{src:CppListing}. Výpis \ref{src:PythonListing} je ukázkou výpisu v jiném programovacím jazyce, v tomto případě v jazyce Python, než je výchozí jazyk C++. Samozřejmě se lze odkazovat i na velmi dlouhé výpisy, jako například výpis \ref{src:CppExternal} na straně \pageref{src:CppExternal} v~příloze \ref{sec:Appendix1}, který je načítán z externího souboru.
 \end{description}
 
 \subsection{Jak citovat}
@@ -631,15 +647,6 @@ Pro odkazy v textu používáme číselné označení citací dokumentů ohrani�
 \subsubsection{Seznam citací}
 Seznam citací je umístěn na konci závěrečné práce, před přílohami, a musí obsahovat všechny citace na které je v textu práce odkazováno.
 
-\subsection{Překlad}
-Kompilaci této ukázkové práce je možné provést pomocí několika volání pdf\LaTeX{}u a programu Biber v následujícím pořadí:
-\begin{verbatim}
-pdflatex main
-biber main
-pdflatex main
-pdflatex main
-\end{verbatim}
-
 \printbibliography[title={Literatura}, heading=bibintoc]
 % https://www.csselectronics.com/screen/page/simple-intro-to-can-bus/language/en
 %
@@ -647,5 +654,5 @@ pdflatex main
 \appendix
 \section{Plné tkví drah pokles průběhu}
 
-
 \end{document}
+
