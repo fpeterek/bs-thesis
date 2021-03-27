@@ -237,7 +237,7 @@ Ačkoliv se jedná o desetinná čísla, pro zjednodušení jsou zakódována ja
 je vynásobena číslem $10^{10}$ a převedena na celé číslo. Výsledné číslo je poté odesláno ve formátu little endian. Při zpracování
 odpovědi serveru si tedy klient musí dát pozor na endianitu a správně dekódovat přijatou hodnotu.
 
-\subsection{Regulace PI regulátorem}
+\subsection{Regulace PI regulátorem} \label{pi-controller}
 Elektrický motor vozidla samozřejmě koncept rychlosti nezná. Elektrický motor je schopen vydávat určitý točivý moment, o který
 je samozřejmě možné si zažádat. Mezi točivým momentem a rychlostí vozidla ovšem neexistuje lineární závislost. Rychlost vozidla
 může ovlivnit více faktorů. Např. při vysokém konstatním točivém momentu na vodorovné nebo svažující se vozovce by vozidlo mohlo 
@@ -521,7 +521,6 @@ k nejbližšímu waypointy. Nastavení waypointů tuto skutečnost reflektovalo 
 v cestě žádná překážka, budova, obrubník, apod. Navigace ve 2D prostoru bez žádných překážek není nic složitého, na první pohled
 by úspěchu nic bránit nemělo. Přesto se ovšem objevilo několik problémů, které bylo třeba řešit.
 
-
 \subsubsection{Kalibrace GPS}
 
 První problém se projevil hned při spuštění serveru a inicializaci GPS modulu -- zaměření vozidla pomocí GPS ve venkovním 
@@ -579,12 +578,16 @@ kterým směrem je momentálně natočeno.
 Výpočet požadovaného směru pohybu je analogický, pouze se při výpočtu využije aktuální pozice vozidla a souřadnice waypointu. 
 
 Na základě vypočtených směrů je poté vypočítáno natočení kol, aby autonomní platforma svým pohybem mířila k cílovému waypointu. 
-Samotný výpočet požadovaného natočení kol je jednoduchý, jakmile známe směr, kterým se vozidlo momentálně pohybuje, a směr, kterým
+Výpočet požadovaného natočení kol není vůbec složitý, jakmile známe směr, kterým se vozidlo momentálně pohybuje, a směr, kterým
 by se vozidlo mělo pohybovat, aby dosáhlo svého cíle. Prostým odečtením těchto směrů od sebe získáme odchylku mezi požadovaným 
 a aktuálním směrem pohybu. Natočení kol následně může mít vůči rozdílu směrů lineární závislost, případně lze nastavit krokové 
 změny při určitých hodnotách odchylky.
 
-\subsubsection{GPS souřadnice a (nejen) goniometrické funkce} \label{cartesian-coordinates}
+\subsubsection{Pomalá odezva GPS}
+
+\subsubsection{Nepřesnost GPS} \label{gps-inaccuracy}
+
+\subsubsection{Práce s 2D prostorem} \label{cartesian-coordinates}
 
 Jak již bylo předestřeno dříve, v této práci se často převádí geografické souřadnice na souřadnice kartézské. Díky elipsoidní 
 nátuře tvaru planety Země totiž nemusí jeden stupeň zeměpisné šířky odpovídat jednomu stupni zeměpisné délky relativně 
@@ -597,12 +600,45 @@ zjednodušením bude zanedbatelná. Problémy s touto doměnkou ovšem byly odha
 rozumné hodnoty. Projev chyby bylo možné zachytit nejen při testování softwaru, ale také při pouhém umístění vlastních značek
 v libovolné veřejné mapové službě (při práci na projektu byly využívány služby OpenStreetMap a Mapy.cz). Samozřejmě bude umístění
 značek opticky zkreslené, protože kreslíme na 2D projekci sférické planety. Toto zkreslení vytváří optickou chybu, jež nebude mít
-na samotné výpočty vliv, i tak lze ale velmi dobře vidět, % TODO: Finish this somehow, idk
+na samotné výpočty vliv, i tak lze ale velmi dobře vidět nepřesnost námi využitého zjednodušení. Při umístění bodů na mapu tak,
+aby hodnoty geografických souřadnic tvořily čtverec v souřadnicích kartézských, tedy dva sousedící body mají vždy jednu souřadnici
+stejnou, a rozdíl lišící se geografické souřadnice byl pro všechny čtyři strany stejný. Již na první pohled lze vidět, že body 
+tvoří lichoběžník, ne čtverec, ačkoliv je lichoběžník také velmi zkreslený právě projekcí glóbu do 2D prostoru.
 
-\subsubsection{Pomalá odezva GPS}
+Po odhalení nepřesnosti tohoto zjednodušení bylo tedy rozhodnuto, že bude vyzkoušen jiný způsob zjednodušení výpočtů.  Ačkoliv by 
+totiž správná práce s geografickými souřadnice elipsoidní planety byla nejpřesnější, pro relativně malý univerzitní kampus, který 
+lze navíc v řídícím softwaru považovat za 2D plochu, je implementace tohoto řešení zbytečně časově náročná s ohledem na relativně 
+nízký benefit v daném měřítku. Proto momentální verze softwaru převádí geografické souřadnice na lokální kartézský systém. Tento
+systém se prokázal jako dostatečně přesný v měřítku kampusu Vysoké školy báňské, a ačkoliv samozřejmě není přesný a přináší 
+s sebou také určitou chybu, díky využití lokálního kartézského systému je chyba dostatečně nízká.
 
-\subsubsection{Nepřesnost GPS} \label{gps-inaccuracy}
+Převod do lokálního souřadnicového systému je řešen způsobem předestřeným dříve v sekci \nameref{directions-and-angles}. Dva 
+geografické body se považují za úhlopříčku obdélníku. Délky stran obdélníku vypočteme aplikací funkce 
+\emph{geopy.distance.distance}. Dva body obdélníku již samozřejmě známe, zbylé dva body získáme tak, že vezmeme zeměpisné šířky
+známých bodů, a zkombinujeme je se zeměpisnými délkami opačného bodu.
 
+Vypočítané délky stran nám tak definují vektor, jenž odpovídá úhlopříčce obdélníku. Následně využijeme faktu, že obdélník lze 
+definovat také kombinací bodu a vektoru. Jeden vrchol obdélníku umístíme do bodu (0, 0). Když k tomuto bodu poté přičteme 
+vypočtený vektor, získáme opačný vrchol. Tyto vrcholy nám nyní reprezentují geografické souřadnice v lokálním kartézském systému.
+
+Délku úhlopříčky samozřejmě můžeme spočítat buď aplikací Pythagorovy věty, nebo funkcí \emph{geopy.distance.distance}. Využití 
+zmíněné funkce z knihovny \emph{geopy} bude pravděpodobně přesnější, Pythagorovu větu ovšem naopak můžeme aplikovat i v případě, 
+kdy neznáme původní geografické body, které byly převedeny do kartézského souřadnicového systému. Takový případ může nastat třeba 
+po zavolání funkce, jež jako své argumenty přijímá pouze kartézské souřadnice. Zdrojový kód funkce, ale ani funkce nebo metody 
+touto funkcí volané, již k původním geografickým souřadnicím nemají jak přistoupit.
+
+Nespornou výhodou kartézského souřadnicového systému je jednoduchost jeho využití. V kartézském souřadnicovém systému lze také
+bez jakýchkoliv problémů aplikovat funkce sinus a kosinus, které jsou samozřejmě kritické při práci s úhly. Dále na počtech 
+s kartézskými souřadnicemi často není nic složitého. Díky jejich přímočarosti tak zdrojový kód zůstává jednoduchý, čitelný,
+vývoj je rychlejší a také je sníženo riziko výskytu chyb.
+
+Při navigaci vozidla, a zejména při práci s mapovými podklady, je univerzitní kampus považován za 2D plochu. Areál možná nelze
+považovat za vodorovný, zároveň jej ale nikdo nemůže nazvat kopcovitým, nebo dokonce hornatým. Výškové rozdíly napříč areálem jsou
+dostatečně nízké, aby se daly považovat za zanedbatelné. Při navigaci tedy není třeba plánovat cestu tak, aby vozidlo nemuselo
+podstupovat dlouhé stoupání do kopce a zbytečně plýtvat energií. Občasné krátké stoupání pak může způsobit zpomalení pohybu 
+vozidla, za takovým účelem je ale na ovládacím serveru běžícím na autonomní platformě samotné implementován PI regulátor, který
+právě v takovémto případě zaznamenaný pokles rychlosti vykompenzuje zvýšením kroutivého momentu elektromotoru, aby udržel rychlost
+na požadované hodnotě. PI regulace je probrána v sekci \nameref{pi-controller}.
 
 \subsection{Řízení vozidla pomocí detekce grafických kódu}
 
