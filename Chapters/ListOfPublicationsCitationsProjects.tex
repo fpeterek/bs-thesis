@@ -1,0 +1,82 @@
+\chapter*{Seznam vlastních publikací a ostatních výstupů}
+\label{sec:ListOfStudentsOwnPublicationActivitiesAndOtherOutcomes}
+\addcontentsline{toc}{chapter}{\nameref{sec:ListOfStudentsOwnPublicationActivitiesAndOtherOutcomes}}
+Pro sestavení seznamu vlastních publikací a ostatních výstupů, ať už souvisejících nebo nesouvisejících s disertační prací, lze s výhodou využít \verb|biblatex|. Jednotlivé bibliografické záznamy vlastních publikací označíme, v \verb|.bib| souboru, klíčovými slovy např.\ \verb|OwnRelated| a~\verb|OwnNonRelated|. Balík \verb|biblatex| umožňuje na základě těchto klíčových slov filtrovat jednotlivé záznamy.
+
+Stránku si přizpůsobte individuálním potřebám, ukázka formátování této stránky není závazná.
+
+\begin{refsection}
+\nocite{MyRelatedArticle1, MyRelatedArticle2}
+\printbibliography[keyword={OwnRelated}, heading=subbibintoc, title={Publikace a výstupy související s tématem práce}]
+\end{refsection}
+
+\begin{refsection}
+\nocite{MyNonrelatedArticle1}
+\printbibliography[keyword={OwnNonRelated}, heading=subbibintoc, title={Publikace a výstupy nesouvisející s tématem práce}]
+\end{refsection}
+
+\section*{Ostatní výstupy}
+\begin{enumerate}
+	\item Specifikace výstupu A
+	\item Specifikace výstupu B
+	\item Specifikace výstupu C
+\end{enumerate}
+
+
+
+\chapter*{Seznam citací vlastních publikací}
+\label{sec:ListOfCitations}
+\addcontentsline{toc}{chapter}{\nameref{sec:ListOfCitations}}
+Jsou známy tyto nevlastní citace\footnote{Stránku si přizpůsobte individuálním potřebám, ukázka formátování této stránky není závazná.}:
+\begin{itemize}
+	\item Moje publikace A
+		\begin{enumerate}
+			\item Publikace, která cituje Moji publikaci A
+			\item Publikace, která cituje Moji publikaci A
+			\item Publikace, která cituje Moji publikaci A
+			\item a tak dále
+		\end{enumerate}
+	\item Moje publikace B
+		\begin{enumerate}
+			\item Publikace, která cituje Moji publikaci B
+			\item Publikace, která cituje Moji publikaci B
+			\item a tak dále
+		\end{enumerate}
+	\item Moje publikace C
+		\begin{enumerate}
+			\item Publikace, která cituje Moji publikaci C
+			\item Publikace, která cituje Moji publikaci C
+			\item a tak dále
+		\end{enumerate}
+\end{itemize}
+
+
+
+\chapter*{Seznam projektů}
+\label{sec:ListOfProjects}
+\addcontentsline{toc}{chapter}{\nameref{sec:ListOfProjects}}
+V průběhu doktorského studia jsem se podílel na těchto projektech\footnote{Stránku si přizpůsobte individuálním potřebám, ukázka formátování této stránky není závazná.}:
+\begin{itemize}
+	\item jako řešitel
+		\begin{enumerate}
+			\item Specifikace projektu 1
+			\item Specifikace projektu 2
+			\item a tak dále
+		\end{enumerate}
+
+	\item jako spoluřešitel
+		\begin{enumerate}[resume]
+			\item Specifikace projektu 3
+			\item Specifikace projektu 4
+			\item a tak dále
+		\end{enumerate}
+
+	\item jako člen týmu
+		\begin{enumerate}[resume]
+			\item Specifikace projektu 5
+			\item Specifikace projektu 6
+			\item a tak dále
+		\end{enumerate}
+\end{itemize}
+
+\endinput

@@ -1,81 +1,70 @@
 % Nejprve uvedeme tridu dokumentu s volbami
-\documentclass[czech,bachelor,dept460,male,cpp,cpdeclaration]{diploma}
+\documentclass[czech,bachelor]{diploma}
 % Dalsi doplnujici baliky maker
 \usepackage[autostyle=true,czech=quotes]{csquotes} % korektni sazba uvozovek, podpora pro balik biblatex
 \usepackage[backend=biber, style=iso-numeric, alldates=iso]{biblatex} % bibliografie
 \usepackage{dcolumn} % sloupce tabulky s ciselnymi hodnotami
-\usepackage{subfig} % makra pro "podobrazky" a "podtabulky"
+\usepackage{subfig}
 \usepackage{hyperref}
 
-% Zadame pozadovane vstupy pro generovani titulnich stran.
 \ThesisAuthor{Filip Peterek}
+
+\ThesisSupervisor{Ing. Jan Gaura, Ph.D.}
 
 \CzechThesisTitle{Vývoj samoříditelné platformy}
 
 \EnglishThesisTitle{Self-driving Platform Development}
 
-\SubmissionDate{30. dubna 2021}
+\SubmissionYear{2021}
 
 % Pokud nechceme nikomu dekovat makro zapoznamkujeme.
-\Thanks{
-	Chtěl bych poděkovat vedoucímu mé práce, Ing. Janu Gaurovi, nejen za pomoc s tvorbou práce a návrhem softwaru,
-	ale především za možnost se projevit a pracovat na skutečném a zajímavém projektu. Dále chci poděkovat svým
-	kolegům z práce, kteří mě naučili spoustu věcí, na které v akademickém prostředí není čas nebo příležitost.
+\Acknowledgement {
+    Chtěl bych poděkovat vedoucímu mé práce, Janu Gaurovi, nejen za pomoc s tvorbou práce a návrhem softwaru,
+    ale především za možnost se projevit a pracovat na skutečném a zajímavém projektu. Dále chci poděkovat svým
+    kolegům z práce, kteří mě naučili spoustu věcí, na které v akademickém prostředí není čas nebo příležitost.
 }
 
-% Zadame cestu a jmeno souboru ci nekolika souboru s digitalizovanou podobou zadani prace.
-% Pokud toto makro zapoznamkujeme sazi se stranka s upozornenim.
-\ThesisAssignmentImagePath{Figures/Assignment}
+\CzechAbstract {
+    Tato práce se zabývá vývojem software pro samořiditelnou platformu vznikající na VŠB-TUO. Po dokončení by software
+    měl být schopen na základě vstupů ze softwaru pro analýzu obrazu, GPS, Lidaru a řídící jednotky vozidla bezpečně
+    navigovat vozidlo univerzitním kampusem.
 
-% Zadame soubor s digitalizovanou podobou prohlaseni autora zaverecne prace.
-% Pokud toto makro zapoznamkujeme sazi se cisty text prohlaseni.
-\AuthorDeclarationImageFile{Figures/AuthorDeclaration.jpg}
+    Řídící software je rozdělen do dvou komponent. První komponenta zajišťuje komunikaci s řídící jednotkou vozidla
+    pomocí sběrnice CAN, na starosti má ovládání rychlosti vozidla a natáčení kol. Druhá komponenta má na starosti
+    plánování cesty na základě výše vyjmenovaných vstupů. První komponentě poté zadá pouze požadovanou rychlost vozidla
+    a natáčení kol, samotné posílání CAN zpráv však nemusí řešit. Komponenty mezi sebou komunikují pomocí protokolu TCP.
+    K testování ovládacího software lze využít simulátor, který dokáže nasimulovat chování první komponenty. Pro řízení
+    vozidla jsou v hojné míře využívány PID regulátory.
 
-% Zadame soubor s digitalizovanou podobou souhlasu spolupracujici prav. nebo fyz. osoby.
-% Pokud toto makro zapoznamkujeme sazi se cisty text souhlasu.
-\CooperatingPersonsDeclarationImageFile{Figures/CoopPersonDeclaration.jpg}
-
-\CzechAbstract{
-	Tato práce se zabývá vývojem software pro samořiditelnou platformu vznikající na VŠB-TUO. Po dokončení by software
-	měl být schopen na základě vstupů ze softwaru pro analýzu obrazu, GPS, Lidaru a řídící jednotky vozidla bezpečně
-	navigovat vozidlo univerzitním kampusem.
-
-	Řídící software je rozdělen do dvou komponent. První komponenta zajišťuje komunikaci s řídící jednotkou vozidla
-	pomocí sběrnice CAN, na starosti má ovládání rychlosti vozidla a natáčení kol. Druhá komponenta má na starosti
-	plánování cesty na základě výše vyjmenovaných vstupů. První komponentě poté zadá pouze požadovanou rychlost vozidla
-	a natáčení kol, samotné posílání CAN zpráv však nemusí řešit. Komponenty mezi sebou komunikují pomocí protokolu TCP.
-	K testování ovládacího software lze využít simulátor, který dokáže nasimulovat chování první komponenty. Pro řízení
-	vozidla jsou v hojné míře využívány PID regulátory.
-
-	V době odevzdání této práce ještě není software plně dokončený, jelikož se jedná o výzkumný projekt, který svým
-	rozsahem přesahuje bakalářskou práci, a vývoj platformy bude dále pokračovat.
+    V době odevzdání této práce ještě není software plně dokončený, jelikož se jedná o výzkumný projekt, který svým
+    rozsahem přesahuje bakalářskou práci, a vývoj platformy bude dále pokračovat.
 }
 
 \CzechKeywords{
-	plánování cesty, client-server komunikace, sběrnice CAN, PID regulátor
+    plánování cesty, client-server komunikace, sběrnice CAN, PID regulátor
 }
 
 \EnglishAbstract{
-	This thesis is focused on the development of software for a self-driving platform, which is being developed by
-	the Technical University of Ostrava. Upon completion, the software should be capable of safely navigating an
-	autonomous vehicle through the university campus, taking inputs from image analysis software, GPS, Lidar, and the
-	vehicle's own controller unit.
+    This thesis is focused on the development of software for a self-driving platform, which is being developed by
+    the Technical University of Ostrava. Upon completion, the software should be capable of safely navigating an
+    autonomous vehicle through the university campus, taking inputs from image analysis software, GPS, Lidar, and the
+    vehicle's own controller unit.
 
-	The software is split into two components. The first component handles communication with the vehicle's controller
-	unit via a CAN bus. The second component then does all the path planning, taking into account the aforementioned
-	inputs. The second component then asks the first component to maintain a certain speed or steer the vehicles,
-	however, it doesn't have to handle CAN messages, including driving inputs or control checksums, by itself. The TCP
-	protocol is used for communication between the components. The path planning software can be tested using
-	a simulator, capable of mocking the CAN handling software, along with the entire vehicle. The simulator honors
-	the TCP API, however, the vehicle physics are simplified. PID controllers are used in multiple parts of the
-	software.
+    The software is split into two components. The first component handles communication with the vehicle's controller
+    unit via a CAN bus. The second component then does all the path planning, taking into account the aforementioned
+    inputs. The second component then asks the first component to maintain a certain speed or steer the vehicles,
+    however, it doesn't have to handle CAN messages, including driving inputs or control checksums, by itself. The TCP
+    protocol is used for communication between the components. The path planning software can be tested using
+    a simulator, capable of mocking the CAN handling software, along with the entire vehicle. The simulator honors
+    the TCP API, however, the vehicle physics are simplified. PID controllers are used in multiple parts of the
+    software.
 
-	At the time of publishing this paper, the software is still unfinished, as the self-driving platform is an academic
-	research project, which outspans this bachelor's thesis in scope, and development of the platform will continue.
+    At the time of publishing this paper, the software is still unfinished, as the self-driving platform is an academic
+    research project, which outspans this bachelor's thesis in scope, and development of the platform will continue.
 }
 
 \EnglishKeywords{
-	path planning, client-server communication, CAN bus, PID controller
+    path planning, client-server communication, CAN bus, PID controller
 }
 
 \AddAcronym{CAN}{Controller Area Network}
@@ -92,7 +81,6 @@
 \AddAcronym{REST}{Representational state transfer}
 
 \addbibresource{biblatex-examples.bib}
-\addbibresource{coffee.bib}
 
 % Novy druh tabulkoveho sloupce, ve kterem jsou cisla zarovnana podle desetinne carky
 \newcolumntype{d}[1]{D{,}{,}{#1}}
@@ -104,149 +92,147 @@
 % Nechame vysazet titulni strany.
 \MakeTitlePages
 
-% A nasleduje text zaverecne prace.
-\section{Úvod}
-\label{sec:Introduction}
-Tato práce je součást většího výzkumného projektu. Cílem projektu je vývoj autonomního eletrifikovaného vozidla, 
+\chapter{Úvod} \label{sec:Introduction}
+Tato práce je součást většího výzkumného projektu. Cílem projektu je vývoj autonomního eletrifikovaného vozidla,
 od fyzického návrhu a zkonstruování vozidla, až po vývoj softwaru. Hotové vozidlo má být schopno plně autonomního pohybu
 po univerzitním kampusu, kde má sloužit k rozvozu materiálu napříč budovami. Při tvorbě samořiditelné platformy je nutné
-klást vysoký důraz na bezpečnost provozu, výsledek projektu při reálném využití nesmí ohrozit zdraví ani majetek 
-univerzity nebo jejích návštěvníků. 
+klást vysoký důraz na bezpečnost provozu, výsledek projektu při reálném využití nesmí ohrozit zdraví ani majetek
+univerzity nebo jejích návštěvníků.
 
-Samotná práce se zabývá vývojem řídícího softwaru vozidla. Software bude sloužit k navigaci vozidla areálem univerzity, 
-plánování cesty, a zajištění bezpečnosti provozu. Pro tento účel řídící kód využívá vstupy z GPS, kamer, Lidaru, 
-a ovládací jednotky vozidla. Analýza obrazu a dat naměřených Lidarem není předmětem této práce, výsledek této analýzy 
+Samotná práce se zabývá vývojem řídícího softwaru vozidla. Software bude sloužit k navigaci vozidla areálem univerzity,
+plánování cesty, a zajištění bezpečnosti provozu. Pro tento účel řídící kód využívá vstupy z GPS, kamer, Lidaru,
+a ovládací jednotky vozidla. Analýza obrazu a dat naměřených Lidarem není předmětem této práce, výsledek této analýzy
 je získáván z API komponenty určené právě k tomuto účelu, taktéž vyvíjené jako součást projektu.
 
 Software, který je vyvíjen jako součást této práce, je tvořen v Pythonu, a je rozdělen do více komponent. Kromě řídícího
-softwaru byl vyvinut také jednoduchý simulátor, umožňující testování řízení. Dále řídící software obsahuje funkční 
+softwaru byl vyvinut také jednoduchý simulátor, umožňující testování řízení. Dále řídící software obsahuje funkční
 vizualizér, pomocí kterého je možné sledovat pohyb vozidla. Při tvorbě řídících komponent byla využita řada open source
-knihoven a veřejných zdrojů, včetně map OpenStreetMap nebo Mapy.cz. Zdrojový kód, který je součástí této práci, je 
+knihoven a veřejných zdrojů, včetně map OpenStreetMap nebo Mapy.cz. Zdrojový kód, který je součástí této práci, je
 rovněž otevřený a veřejně dostupný na Githubu.
 
-\section{Architektura řídícího softwaru}
-Jak již bylo zmíněno, řídící software je rozdělen do dvou komponent, komunikujících mezi sebou pomocí protokolu TCP na bázi 
-architektury klient-server. Jako server slouží program zajišťující přenos dat na rozhraní CAN. Server takto abstrahuje 
-nízkoúrovňové a bezpečnostní záležitosti, mezi které patří výpočet kontrolních součtů, zasílání CAN zpráv, TX/RX synchronizace, 
+\chapter{Architektura řídícího softwaru}
+Jak již bylo zmíněno, řídící software je rozdělen do dvou komponent, komunikujících mezi sebou pomocí protokolu TCP na bázi
+architektury klient-server. Jako server slouží program zajišťující přenos dat na rozhraní CAN. Server takto abstrahuje
+nízkoúrovňové a bezpečnostní záležitosti, mezi které patří výpočet kontrolních součtů, zasílání CAN zpráv, TX/RX synchronizace,
 žádání o možnost ovládat vozidlo, regulace rychlosti pomocí PI regulátoru, nebo také zpracování výstupu z GPS modulu. Klient tak
-může implementovat pouze samotné plánování cesty, v dotazech na server stačí žádat pouze o dodržování rychlosti, úhlu natočení 
+může implementovat pouze samotné plánování cesty, v dotazech na server stačí žádat pouze o dodržování rychlosti, úhlu natočení
 kol, případně aplikace nouzové brzdy. Server samozřejmě dokáže poskytovat zpětnou vazbu, tedy informace o aktuální rychlosti,
 pozici, natočení kol, nebo zdraví systému (tzv. \emph{healthcheck}). Server je většinou spouštěn na Raspberry Pi, ačkoliv může
 být spouštěn na libovolné jednotce připojené k rozhraní CAN samořiditelné platformy, za předpokladu, že je na dané jednotce
 nainstalován interpreter jazyka Python.
 
-Toto dělení nejen zvyšuje úroveň abstrakce, a tím i čitelnost kódu, ale zároveň umožňuje spustit program plánující 
-cestu vozidla na vzdáleném stroji. Takto můžeme například program spouštět na výkonnějším stroj a vyhnout se omezením 
+Toto dělení nejen zvyšuje úroveň abstrakce, a tím i čitelnost kódu, ale zároveň umožňuje spustit program plánující
+cestu vozidla na vzdáleném stroji. Takto můžeme například program spouštět na výkonnějším stroj a vyhnout se omezením
 Raspberry Pi, virtualizovat ovládací software, nebo implementovat jiný typ klienta, které v současné době existují tři.
-Jeden klient se snaží vozidlo řídit na základě vstupů ze senzorů umístěných na vozidle a z komponenty určené pro analýzu obrazu. 
-Druhý klient umožňuje řídící pokyny zadávat manuálně do jednoduchého textového prostředí. Třetí klient poté pouze pošle 
-předdefinovanou testovací sekvenci. Druhý a třetí klient jsou určeny pouze k ověření funkčnosti komunikace pomocí sběrnice CAN. 
-Virtualizace ovládacího softwaru také umožňuje zautomatizovat monitorování ovládání. Ačkoliv k žádným pokusům o automatickou 
-orchestraci a monitorování zatím nedošlo, bylo by možné například spouštět řídící software v Kubernetes, nastavit kontinuální 
+Jeden klient se snaží vozidlo řídit na základě vstupů ze senzorů umístěných na vozidle a z komponenty určené pro analýzu obrazu.
+Druhý klient umožňuje řídící pokyny zadávat manuálně do jednoduchého textového prostředí. Třetí klient poté pouze pošle
+předdefinovanou testovací sekvenci. Druhý a třetí klient jsou určeny pouze k ověření funkčnosti komunikace pomocí sběrnice CAN.
+Virtualizace ovládacího softwaru také umožňuje zautomatizovat monitorování ovládání. Ačkoliv k žádným pokusům o automatickou
+orchestraci a monitorování zatím nedošlo, bylo by možné například spouštět řídící software v Kubernetes, nastavit kontinuální
 nasazování pomocí CI/CD pipeline, a logy či metriky kontrolovat strojově pomocí nástrojů jako ELK stack nebo Prometheus.
 
-\section{Server a CAN komunikace}
+\chapter{Server a CAN komunikace}
 
-\subsection{Sběrnice CAN}
+\section{Sběrnice CAN}
 
 Controller Area Network, zkráceně CAN, je standard poskytující určitý základ pro komunikaci na sběrnici. Standard definuje
 fyzické požadavky na sběrnici a formát zpráv. Součástí zprávy je osm bytů vyhrazených pro data. Sběrnice CAN je, mimo jiné, hojně
 využívána právě v automobilovém průmyslu.
 
-\subsubsection{Vlastní specifikace}
-Standard sice přiřazuje každé zprávě pole o velikosti osm bytů vyhrazené pro data, již však nedefinuje, jaká data mají zprávy 
-obsahovat, v jakém formátu mají být data posílána, nebo jak se s nimi má pracovat. Obsah zpráv tak musel být vydefinován vlastní 
-specifikací, která prošla hned několika iteracemi, a jejíž finální podoba je výsledkem úzké spolupráce konstruktérů fyzické 
-platformy a tvůrců řídícího softwaru. Specifikace byla navrhována tak, aby umožnila dostatečně jemné řízení vozidla, poskytovala 
-řídícímu softwaru všechna potřebná jízdní data a zahrnovala množství prostředků pro kontrolu integrity zprávy, rychlé zachycení 
+\subsection{Vlastní specifikace}
+Standard sice přiřazuje každé zprávě pole o velikosti osm bytů vyhrazené pro data, již však nedefinuje, jaká data mají zprávy
+obsahovat, v jakém formátu mají být data posílána, nebo jak se s nimi má pracovat. Obsah zpráv tak musel být vydefinován vlastní
+specifikací, která prošla hned několika iteracemi, a jejíž finální podoba je výsledkem úzké spolupráce konstruktérů fyzické
+platformy a tvůrců řídícího softwaru. Specifikace byla navrhována tak, aby umožnila dostatečně jemné řízení vozidla, poskytovala
+řídícímu softwaru všechna potřebná jízdní data a zahrnovala množství prostředků pro kontrolu integrity zprávy, rychlé zachycení
 chyb či reportování problémů. Na chyby nebo problémy je samozřejmě důležité reagovat, v krajních případech až nouzovým zastavením
-vozidla. Software pro ovládání platformy byl již několikrát přepisován na základě upravené specifikace, nejaktuálnější verze 
+vozidla. Software pro ovládání platformy byl již několikrát přepisován na základě upravené specifikace, nejaktuálnější verze
 software však implementuje nejnovější verzi specifikace.
 
 Specifikace, kromě formátu a obsahu dat, určuje také formát, jakým je kódována rychlost vozidla nebo natočení předních kol. Tyto
 hodnoty jsou kódovány a uloženy v jednom bytu. Při práci s CAN sběrnicí tak je nutné data správně přepočíst a zakódovat, případně
 dekódovat a převést do formátu IEEE 754.
 
-\subsection{TCP server a jeho metody} \label{server-methods}
+\section{TCP server a jeho metody} \label{server-methods}
 
 Za účelem zvýšení abstrakce a zjednoduššení ovládání vozidla, ale také aby bylo umožněno vzdálené ovládání platformy
 a zjednodušila se výměna způsobů ovládání, je nízkoúrovňové řízení CAN zprávami abstrahováno a obaleno jednoduchým TCP serverem.
 Při vývoji serveru se přirozeně nabídla možnost implementace REST API a využití protokolu HTTP, nebo využití jednoho z rozšířených
-RPC prokolů, jako jsou XMLRPC nebo gRPC. Ačkoliv validní, tyto způsob, implementace se jevily jako neefektivní -- rozhraní 
-poskytované serverem je velmi jednoduché, plaintextový protokol HTTP nebo variace protokolů RPC tak působily až zbytečně 
-komplikovaně. Pro komunikaci byl nakonec použit vlastní binární protokol a jeho implementace přímo nad TCP sockety. 
-Výhodou je rychlost a jednoduchost implementace, úspornost a výkonnost řešení v reálném provozu, nebo fakt, že toto řešení 
-nevyžaduje žádné externí závislosti nad rámec standardní knihovny jazyka Python. Nevýhody současného řešení by se projevily 
-pouze při výrazném nárůstu komplexity poskytovaného rozhraní. Tento scénář by mohl vést k znepřehlednění současného řešení. 
-Nutnosti zvyšování komplexity rozhraní ovšem v současné době nic nenasvědčuje. 
+RPC prokolů, jako jsou XMLRPC nebo gRPC. Ačkoliv validní, tyto způsob, implementace se jevily jako neefektivní -- rozhraní
+poskytované serverem je velmi jednoduché, plaintextový protokol HTTP nebo variace protokolů RPC tak působily až zbytečně
+komplikovaně. Pro komunikaci byl nakonec použit vlastní binární protokol a jeho implementace přímo nad TCP sockety.
+Výhodou je rychlost a jednoduchost implementace, úspornost a výkonnost řešení v reálném provozu, nebo fakt, že toto řešení
+nevyžaduje žádné externí závislosti nad rámec standardní knihovny jazyka Python. Nevýhody současného řešení by se projevily
+pouze při výrazném nárůstu komplexity poskytovaného rozhraní. Tento scénář by mohl vést k znepřehlednění současného řešení.
+Nutnosti zvyšování komplexity rozhraní ovšem v současné době nic nenasvědčuje.
 
-Aktuální verze serveru implementuje celkem pět metod. Na vstupu přijímá celkem tři byty. První byte je vyhrazen pro identifikaci 
+Aktuální verze serveru implementuje celkem pět metod. Na vstupu přijímá celkem tři byty. První byte je vyhrazen pro identifikaci
 metody serveru. Následující dva byty dotazu obsahují data. Klient musí vždy poslat minimálně tři byty, na vstupu jsou, nezávisle
 na metodě, pokaždé očekávány tři byty. Jestliže klient pošle v dotazu více než dva datové byty, budou nadbytečná data ignorována.
 
-Jako identifikátor metody je využito celé nezáporné číslo. V případě, že první byte zprávy obsahuje identifikátor nepříslušící 
-žádné metodě, je dotaz ignorován. Obsah datových bytů je určen danou metodou serveru. Pokud pro danou funkcionalitu není třeba 
-předávat serveru žádná data, může být obsah datových bytů libovolný, data budou ignorována. 
+Jako identifikátor metody je využito celé nezáporné číslo. V případě, že první byte zprávy obsahuje identifikátor nepříslušící
+žádné metodě, je dotaz ignorován. Obsah datových bytů je určen danou metodou serveru. Pokud pro danou funkcionalitu není třeba
+předávat serveru žádná data, může být obsah datových bytů libovolný, data budou ignorována.
 
-\subsubsection{Metoda \emph{drive}}
-Metoda \emph{drive} slouží k předání požadované rychlosti vozidla a natočení kol. Obsah první datového bytu je interpretován jako 
-rychlost, druhý datový byte reprezentuje natočení předních kol. Oba datové byty jsou interpretovány jako celá znaménková čísla. 
+\subsection{Metoda \emph{drive}}
+Metoda \emph{drive} slouží k předání požadované rychlosti vozidla a natočení kol. Obsah první datového bytu je interpretován jako
+rychlost, druhý datový byte reprezentuje natočení předních kol. Oba datové byty jsou interpretovány jako celá znaménková čísla.
 
-Fyzická změna rychlosti nebo natočení kol samozřejmě nemůže nastat okamžitě, rychlost změny je omezena fyzikálními vlastnostmi 
-konstrukce i PI regulátorem, proto nelze vrátit klientu potvrzení o provedené změně. Odpovědí metody je ekvivalentní s metodou 
-\emph{healthcheck}. \emph{Healthcheck} v odpovědi slouží jako potvrzení přijetí dotazu a schopnosti dotazu vyhovět. V případě, 
-že klient potřebuje potvrzení o dosažení požadované rychlosti nebo úhlu natočení kol, je možné po zavolání metody \emph{drive} 
+Fyzická změna rychlosti nebo natočení kol samozřejmě nemůže nastat okamžitě, rychlost změny je omezena fyzikálními vlastnostmi
+konstrukce i PI regulátorem, proto nelze vrátit klientu potvrzení o provedené změně. Odpovědí metody je ekvivalentní s metodou
+\emph{healthcheck}. \emph{Healthcheck} v odpovědi slouží jako potvrzení přijetí dotazu a schopnosti dotazu vyhovět. V případě,
+že klient potřebuje potvrzení o dosažení požadované rychlosti nebo úhlu natočení kol, je možné po zavolání metody \emph{drive}
 opakovaně volat metodu \emph{info}.
 
-\subsubsection{Metoda \emph{healthcheck}}
+\subsection{Metoda \emph{healthcheck}}
 Metoda \emph{healthcheck} slouží k ověření \emph{živosti} systému. \emph{Živost} je binární stav, systém je buď \emph{živý}, nebo
-\emph{mrtvý}. Server je považován za \emph{živý}, jestliže je schopen zpracovávat TCP spojení, a zároveň má plnou kontrolu 
+\emph{mrtvý}. Server je považován za \emph{živý}, jestliže je schopen zpracovávat TCP spojení, a zároveň má plnou kontrolu
 nad vozidlem. V opačném případě je server považován za \emph{mrtvý}. Metoda nepřijímá žádný vstup, datové byty jsou ignorovány.
 
 \emph{Healthcheck} ve své odpovědi posílá pouze jeden byte. Pokud je server živý, obsahuje odpověď nenulovou hodnotu. V opačném
 případě vrátí server nulu, nebo neodpoví vůbec.
 
-\subsubsection{Metoda \emph{info}}
+\subsection{Metoda \emph{info}}
 \emph{Info} metoda TCP serveru se využívá k získání aktuálních jízdních dat vozidla. Na vstupu nepřijímá žádné parametry, všechny
 datové byty jsou tedy ignorovány. Na výstupu server vrátí tři byty. První dva byty reprezentují znaménková celá čísla. Obsahem
 prvního bytu je aktuální rychlost vozidla. Druhý byte obsahuje úhel natočení kol. Poslední byte poté obsahuje logickou hodnotu
-značící stav nouzové brzdy. Jestliže je hodnota třetího bytu nulová, nouzová brzda není aktivována. Nenulová hodnota značí, 
+značící stav nouzové brzdy. Jestliže je hodnota třetího bytu nulová, nouzová brzda není aktivována. Nenulová hodnota značí,
 že došlo k aktivaci nouzového brždění, a bude třeba jej deaktivovat, pokud chceme pokračovat v jízdě.
 
-\subsubsection{Metoda \emph{ebrake}}
+\subsection{Metoda \emph{ebrake}}
 \emph{Ebrake}, nebo-li \emph{'Emergency Brake'}, česky 'nouzová brzda', slouží k ovládání nouzového brždění. První byte vstupu
 je serverem interpretován jako logická hodnota značící požadovaný stav nouzové brzdy. Nenulovou hodnotu server považuje za signál
-k aktivaci nouzového brždění. Při přijetí nulové hodnoty na vstupu poté dochází k deaktivaci nouzové brzdy. Druhý byte vstupu 
+k aktivaci nouzového brždění. Při přijetí nulové hodnoty na vstupu poté dochází k deaktivaci nouzové brzdy. Druhý byte vstupu
 je ignorován.
 
 Výstup metody \emph{ebrake} je opět ekvivalentní výstupu metody \emph{healthcheck}. Nenulová hodnota na výstupu značí, že server
-požadavek přijal a je schopen jej zpracovat. Nula reprezentuje stav, kdy server nemá kontrolu nad vozidlem a není schopen 
+požadavek přijal a je schopen jej zpracovat. Nula reprezentuje stav, kdy server nemá kontrolu nad vozidlem a není schopen
 nouzovou brzdu aktivovat. Pokud však ke ztrátě kontroly došlo důsledkem chyby, vozidlo začne nouzově brzdit samo.
 
-\subsubsection{Metoda \emph{position}}
+\subsection{Metoda \emph{position}}
 
-\emph{Position} využijeme, chceme-li zjistit geografickou polohu vozidla. Tato metoda, která neakceptuje žádný vstup, ve svém 
-17 bytovém výstupu vrací tři hodnoty. 
+\emph{Position} využijeme, chceme-li zjistit geografickou polohu vozidla. Tato metoda, která neakceptuje žádný vstup, ve svém
+17 bytovém výstupu vrací tři hodnoty.
 
-První byte obsahuje logickou hodnotu značící, zda je geografická poloha věrohodná. Nulový byte značí polohu nevěrohodnou, 
-nenulový byte věrohodnou. Poloha je považována za nevěrohodnou např. pokud nedojde ke správné inicializaci vozidla, GPS modul 
-nedokáže zaměřit pozici, apod. 
+První byte obsahuje logickou hodnotu značící, zda je geografická poloha věrohodná. Nulový byte značí polohu nevěrohodnou,
+nenulový byte věrohodnou. Poloha je považována za nevěrohodnou např. pokud nedojde ke správné inicializaci vozidla, GPS modul
+nedokáže zaměřit pozici, apod.
 
-V následujících osmi bytech je zakódována zeměpisná šířka (latitude), v posledních osmi bytech pak zeměpisná délka (longitude). 
-Ačkoliv se jedná o desetinná čísla, pro zjednodušení jsou zakódována jako čísla celá. Skutečná hodnota zeměpisné šířky a délky 
+V následujících osmi bytech je zakódována zeměpisná šířka (latitude), v posledních osmi bytech pak zeměpisná délka (longitude).
+Ačkoliv se jedná o desetinná čísla, pro zjednodušení jsou zakódována jako čísla celá. Skutečná hodnota zeměpisné šířky a délky
 je vynásobena číslem $10^{10}$ a převedena na celé číslo. Výsledné číslo je poté odesláno ve formátu little endian. Při zpracování
 odpovědi serveru si tedy klient musí dát pozor na endianitu a správně dekódovat přijatou hodnotu.
 
-\subsection{Regulace PI regulátorem} \label{pi-controller}
+\section{Regulace PI regulátorem} \label{pi-controller}
 Elektrický motor vozidla samozřejmě koncept rychlosti nezná. Elektrický motor je schopen vydávat určitý točivý moment, o který
 je samozřejmě možné si zažádat. Mezi točivým momentem a rychlostí vozidla ovšem neexistuje lineární závislost. Rychlost vozidla
-může ovlivnit více faktorů. Např. při vysokém konstatním točivém momentu na vodorovné nebo svažující se vozovce by vozidlo mohlo 
-neustále zrychlovat, minimálně dokud by nedosáhlo rychlosti nebezpečné nejen pro samotnou platformu, ale především pro své okolí. 
+může ovlivnit více faktorů. Např. při vysokém konstatním točivém momentu na vodorovné nebo svažující se vozovce by vozidlo mohlo
+neustále zrychlovat, minimálně dokud by nedosáhlo rychlosti nebezpečné nejen pro samotnou platformu, ale především pro své okolí.
 Naopak při stoupání by vozidlo mohlo na rychlosti ztrácet.
 
 O vydání určitého točivého momentu je možné požádat za pomoci CAN sběrnice. Řídící software vyšle CAN zprávu s požadovanou
 rychlostí. Kontrolní jednotka vozidla zprávu zpracuje, zkontroluje, a předá požadavek elektromotoru, který upraví svůj výstup.
-Při ovládání vozidla ovšem není určování momentu vhodné. Podstatně jednodušší by bylo žádat o dodržování konkrétní rychlosti, 
+Při ovládání vozidla ovšem není určování momentu vhodné. Podstatně jednodušší by bylo žádat o dodržování konkrétní rychlosti,
 ne momentu. Proto je točivý moment třeba regulovat. A právě zde se jako řešení nabízí využití PI regulátoru.
 
 Regulátor je zabudován do zdrojového kódu serveru a je implementován softwarově. TCP server na vstupu metody \emph{drive} dostane
@@ -260,104 +246,104 @@ požadované rychlosti, kdy odchylka bude rovna nule, nedošlo k vypnutí motoru
 je využit pouze PI regulátor.
 
 Regulováno je i natočení kol. Zde je regulátor využit zejména k zabránění velkých skokových změn v požadavku na natočení kol. Není
-žádoucí, aby požadovaný úhel například rychle osciloval mezi hodnotami -20 a 20 stupňů. PI regulátor zde slouží právě k zajištění 
-pozvolné změny požadavku. Požadovaný úhel natočení kol je na CAN sběrnici zadáván ve stupních, aplikace regulátoru je zde velmi 
+žádoucí, aby požadovaný úhel například rychle osciloval mezi hodnotami -20 a 20 stupňů. PI regulátor zde slouží právě k zajištění
+pozvolné změny požadavku. Požadovaný úhel natočení kol je na CAN sběrnici zadáván ve stupních, aplikace regulátoru je zde velmi
 jednoduchá.
 
-\subsection{Python implementace}
+\section{Python implementace}
 
 Pro implementaci kódu byl zvolen jazyk Python 3.6. Server má pouze dvě externí závislosti, a to knihovny \emph{python-can} a
 \emph{gpsd-py3}. Dále je samozřejmě extenzivně využívána standardní knihovna jazyka Python.
 
-\subsubsection{Konfigurace}
-Ke konfiguraci komponenty jsou využívány systémové enviromentální proměnné, a to zejména kvůli jednoduchosti řešení a konzistence 
+\subsection{Konfigurace}
+Ke konfiguraci komponenty jsou využívány systémové enviromentální proměnné, a to zejména kvůli jednoduchosti řešení a konzistence
 s ostatními komponentami. Jelikož je program spouštěn pouze na Raspberry Pi fyzicky připojenému ke CAN sběrnici vozidla,
 k virtualizaci pomocí orchestračních nástrojů, jako je třeba Kubernetes, pravděpodobně nikdy nedojde. Argument o jednoduchosti
 konfigurace za využití proměnných prostředí při virtualizaci tak u této komponenty neplatí.
 
-\subsubsection{TCP server}
+\subsection{TCP server}
 K vytvoření TCP serveru byl využit modul \emph{socketserver}, který náleží ke standardním modulům patřícím do jazyka Python.
 Server funguje na synchronní bázi a na zpracování probíhá pouze na jednom vlákně. K serveru je v jednom momentě připojen vždy jen
-jeden klient, jenž posílá pouze relativně malé množství dotazů. Asynchronní nebo vícevláknová implementace tak není potřeba, 
+jeden klient, jenž posílá pouze relativně malé množství dotazů. Asynchronní nebo vícevláknová implementace tak není potřeba,
 pouze by zapříčinila znepřehlednění kódu, a to s velmi nízkými až dokonce žádnými benefity. Server naslouchá na konfigurovatelném
 portu. Instanci rozhraní vozidla nebo port lze serveru předat parametrem při inicializaci. Pokud tak uživatel neučinní, rozhraní
 vozidla je vytvořeno automaticky a číslo portu je vyčteno z enviromentální proměnné \emph{SERVER\_PORT}.
 
-\subsubsection{Rozhraní vozidla}
+\subsection{Rozhraní vozidla}
 Rozhraní vozidla, v kódu třída \emph{Car}, představuje abstrakci nad sběrnicí CAN, a to aby samotný TCP server nemusel pracovat
 přímo s CAN zprávami. Instance třídy \emph{Car} umožňují TCP serveru nastavovat nebo získávat hodnotu úhlu zatočení předních kol,
 rychlost, záchrannou brzdu, případně získat GPS pozici vozidla, aniž by TCP server musel počítat s momentem, CAN hodnotami, nebo
 pracovat s hardwarovými moduly.
 
 Za účelem práce s CAN sběrnicí byly implementovány třídy \emph{Transmitter} a \emph{Receiver}, které slouží k přijímání a vysílání
-zpráv. Interně třídy využívají prostředky poskytované modulem \emph{python-can}, zvenčí představují především abstrakci 
+zpráv. Interně třídy využívají prostředky poskytované modulem \emph{python-can}, zvenčí představují především abstrakci
 nad nízkoúrovňovými CAN záležitostmi. \emph{Transmitter} na sběrnici vysílá zprávy \emph{DriveMessage} a \emph{ControlMessage}.
 \emph{Receiver} přijímá zprávu \emph{CarData}. Data po přijetí zpracuje a předá za pomocí callbacku třídě \emph{Car}. Ke konverzi
 mezi CAN hodnotami a formátem IEEE 754 slouží pomocné třídy \emph{Driving} a \emph{Steering}. GPS souřadnice jsou z fyzického GPS
 modulu připojeneho k Raspberry Pi získávány za využití modulu \emph{gpsd-py3}.
 
 CAN zprávy jsou posílány periodicky. K zajištění periodicity je využita knihovna \emph{python-can}, která zvládne periodické
-zasílání zpráv zajistit. Zasílaná data lze libovolně měnit za využití rozhraní abstraktní třídy \emph{ModifiableCyclicTaskABC} 
+zasílání zpráv zajistit. Zasílaná data lze libovolně měnit za využití rozhraní abstraktní třídy \emph{ModifiableCyclicTaskABC}
 poskytované modulem \emph{python-can}. Knihovna dokáže zajistit pravidelné opakované vysílání zpráv na separátním vlákně. V kódu
 tak stačí vytvořit periodickou úlohu a pouze podle potřeby upravovat požadovaná jízdní data či kontrolní součty.
 
-\section{Simulátor vozidla}
+\chapter{Simulátor vozidla}
 
 Simulátor vozidla, taktéž implementovaný v Pythonu, má za cíl nahradit a nasimulovat server běžící na Raspberry Pi připojeném
 k autonomní platformě. Simulátor implementuje naprosto stejné API jako skutečný server. Fyzické vozidlo je však nahrazeno pouhou
-virtuální aproximací. Simulace samozřejmě určitým způsobem počítá s fyzikálními reáliemi vozidla -- natočení přední soupravy 
-určitou dobu trvá, akcelerace není lineární, vozidlo samovolně zpomaluje, pokud motor neposkytuje dostatečný výkon. Přesto je 
-simulace zjednodušená a počítá pouze s elementárními fyzikálními zákony. Simulátor vznikl s cílem umožnit jednoduché a rychlé 
-testování jednotlivých částí řídícho softwaru. Realistická a přesná simulace by byla pro tento účel příliš složitá a silně 
+virtuální aproximací. Simulace samozřejmě určitým způsobem počítá s fyzikálními reáliemi vozidla -- natočení přední soupravy
+určitou dobu trvá, akcelerace není lineární, vozidlo samovolně zpomaluje, pokud motor neposkytuje dostatečný výkon. Přesto je
+simulace zjednodušená a počítá pouze s elementárními fyzikálními zákony. Simulátor vznikl s cílem umožnit jednoduché a rychlé
+testování jednotlivých částí řídícho softwaru. Realistická a přesná simulace by byla pro tento účel příliš složitá a silně
 překračovala rozsah a cíl projektu.
 
-Program po spuštění vytvoří TCP server a inicializuje vozidlo ve výchozí pozici. Na základě vstupu TCP serveru je poté vozidlo 
-ovládáno. Geografická poloha simulované platformy je automaticky aktualizována s pohybem, aby výstup metody \emph{drive} TCP 
-serveru odpovídal reálnému výstupu v praktickém zapojení. Klientu je tak poskytnut ekvivalent skutečného vozidla. 
+Program po spuštění vytvoří TCP server a inicializuje vozidlo ve výchozí pozici. Na základě vstupu TCP serveru je poté vozidlo
+ovládáno. Geografická poloha simulované platformy je automaticky aktualizována s pohybem, aby výstup metody \emph{drive} TCP
+serveru odpovídal reálnému výstupu v praktickém zapojení. Klientu je tak poskytnut ekvivalent skutečného vozidla.
 
-Kód simulátoru nemá žádné závislosti. Využívá pouze standardní knihovnu jazyka Python verze 3.6. Ke konfiguraci lze využít 
-proměnné prostředí systému. V konfiguraci lze specifikovat port, na kterém má TCP server naslouchat, zapnout debugovací funkce, 
+Kód simulátoru nemá žádné závislosti. Využívá pouze standardní knihovnu jazyka Python verze 3.6. Ke konfiguraci lze využít
+proměnné prostředí systému. V konfiguraci lze specifikovat port, na kterém má TCP server naslouchat, zapnout debugovací funkce,
 nebo také nastavit výchozí pozici vozidla.
 
 Simulátor je využíván například při testování práce s mapovými podklady, jako je vyhledávání a plánování cesty, hledání nejbližší
 využitelné vozovky, při vývoji a testování vizualizéru pohybu vozidla, nebo při vývoji uživatelského rozhraní určenému k ovládání
 vozidla, tedy když realistická simulace není nutná a jednoduchá aproximace více než stačí.
 
-\section{Klient a ovládací software}
+\chapter{Klient a ovládací software}
 
-Účelem klienta je plánovat cestu a rozhodovat o chování a pohybu vozidla na základě vysokoúrovňových informací a pomocí 
-vysokoúrovňových příkazů. Komponenta funguje jako klient ve vztahu nejen k serveru zajišťujícímu CAN komunikaci, ale také 
-softwaru zajišťujícímu analýzu okolního prostředí za pomocí soustavy kamer a lidaru. Důvodem volby této architektury bylo 
-zjednodušení softwaru pro plánování cesty. Klient nemusí řešit frekvenci CAN zpráv, analýzu obrazu, ale ani implementovat 
+Účelem klienta je plánovat cestu a rozhodovat o chování a pohybu vozidla na základě vysokoúrovňových informací a pomocí
+vysokoúrovňových příkazů. Komponenta funguje jako klient ve vztahu nejen k serveru zajišťujícímu CAN komunikaci, ale také
+softwaru zajišťujícímu analýzu okolního prostředí za pomocí soustavy kamer a lidaru. Důvodem volby této architektury bylo
+zjednodušení softwaru pro plánování cesty. Klient nemusí řešit frekvenci CAN zpráv, analýzu obrazu, ale ani implementovat
 asynchronní server nebo synchronizaci vláken -- nemůže se například stát, že by se v polovině výpočtu změnil vstup z kamery.
-Klient si všechny informace vyžádá až v momentě, kdy je doopravdy vyžaduje, provede rozhodnutí, a dokud není v cíli, rozhodovací 
+Klient si všechny informace vyžádá až v momentě, kdy je doopravdy vyžaduje, provede rozhodnutí, a dokud není v cíli, rozhodovací
 cyklus zase opakuje.
 
-Tato softwarová komponenta tedy zastává primárně roli klienta, zejména v relaci k vozidlu, to ovšem neznamená, že v roli klienta 
-musí působit ve všech ohledech a všech aplikacích. Například pokud by došlo k implementaci monitorování pomocí technologie 
-Prometheus, musel by software vystavit své metriky pomocí HTTP serveru. Dále komponenta implementuje jednoduché REST API, které 
+Tato softwarová komponenta tedy zastává primárně roli klienta, zejména v relaci k vozidlu, to ovšem neznamená, že v roli klienta
+musí působit ve všech ohledech a všech aplikacích. Například pokud by došlo k implementaci monitorování pomocí technologie
+Prometheus, musel by software vystavit své metriky pomocí HTTP serveru. Dále komponenta implementuje jednoduché REST API, které
 umožňuje vzdálené ovládání za využití protokolu HTTP. API je podrobněji popsáno v sekci \nameref{rest-api}.
 
-Komunikace s Raspberry Pi na vozidle probíhá pomocí vlastního binárního protokolu popsaného v části \nameref{server-methods}. 
-Podobně je vlastní protokol využit také při komunikaci s analyzátorem okolního prostředí. V obou případech byl pro přenos dat 
+Komunikace s Raspberry Pi na vozidle probíhá pomocí vlastního binárního protokolu popsaného v části \nameref{server-methods}.
+Podobně je vlastní protokol využit také při komunikaci s analyzátorem okolního prostředí. V obou případech byl pro přenos dat
 zvolen protokol TCP, a to především z toho důvodu, že TCP dokáže zajistit doručení všech paketů do cílové destinace. Protokol UDP
-by byl vhodný například pokud by data z kamery byla streamována, nebo pokud by mezi softwarem pro plánování cesty a CAN 
+by byl vhodný například pokud by data z kamery byla streamována, nebo pokud by mezi softwarem pro plánování cesty a CAN
 komunikátorem existoval konstantní proud dat. K tomu ovšem nedochází, řídící software si data vyžaduje teprve v momentě, kdy je
-doopravdy potřebuje. Navíc je při řízení vozidla extrémně důležité, aby nedocházelo ke ztrátě paketů a vozidlo dostalo všechny 
+doopravdy potřebuje. Navíc je při řízení vozidla extrémně důležité, aby nedocházelo ke ztrátě paketů a vozidlo dostalo všechny
 odeslané pokyny a následně jejich přijetí potvrdilo.
 
-\subsection{Definice cílů cesty vozidla}
+\section{Definice cílů cesty vozidla}
 
-Mezi nadšenými motoristy se určitě najde řada lidí, kteří rádi jezdí bez jakéhokoliv cíle pouze pro radost z jízdy autem. 
+Mezi nadšenými motoristy se určitě najde řada lidí, kteří rádi jezdí bez jakéhokoliv cíle pouze pro radost z jízdy autem.
 U autonomního neosazeného vozidla ovšem bezcílné pojíždění nedává žádný smysl. Proto musí být definován určitý cíl cesty, kam
-se má vozidlo dostat, podle kterého poté může plánovací software naplánovat cestu. 
+se má vozidlo dostat, podle kterého poté může plánovací software naplánovat cestu.
 
-K definici cíle slouží waypointy. Waypointy, tedy geografické body na mapě, lze zadat pomocí grafického vizualizéru, 
-viz podkapitola \nameref{visualizer}, a v blízké době také pomocí webové aplikace, viz sekce \nameref{web-app}. Waypointů je možné 
-zadat teoreticky neomezené množství, prakticky je samozřejmě množství omezeno pamětí, kterou může plánovací software využít. 
-Po zadání waypointu plánovací software nalezne nejkratší možnou cestu k danému místu na mapě a pokusí se vozidlo navigovat až 
-k požadovanému cíli. Tento postup opakuje postupně pro každý waypoint, a to v takovém pořadí, v jakém je uživatel zadal. 
-Při dosažení posledního waypointu se vozidlo zastaví a čeká na další pokyny. Pokud uživatel zadá nedosažitelný bod, tedy bod, 
+K definici cíle slouží waypointy. Waypointy, tedy geografické body na mapě, lze zadat pomocí grafického vizualizéru,
+viz podkapitola \nameref{visualizer}, a v blízké době také pomocí webové aplikace, viz sekce \nameref{web-app}. Waypointů je možné
+zadat teoreticky neomezené množství, prakticky je samozřejmě množství omezeno pamětí, kterou může plánovací software využít.
+Po zadání waypointu plánovací software nalezne nejkratší možnou cestu k danému místu na mapě a pokusí se vozidlo navigovat až
+k požadovanému cíli. Tento postup opakuje postupně pro každý waypoint, a to v takovém pořadí, v jakém je uživatel zadal.
+Při dosažení posledního waypointu se vozidlo zastaví a čeká na další pokyny. Pokud uživatel zadá nedosažitelný bod, tedy bod,
 který se nenachází na využitelné vozovce, bere se jako cílový waypoint bod na silnici, který je vstupu uživatele nejblíže.
 
 Jelikož je náročné zastavit přesně v určitém geografickém bodě, už jen kvůli nepřesnosti GPS, počítáme s určitou tolerancí
@@ -365,27 +351,27 @@ v okruhu okolo uživatelem zadaného bodu. Přesná navigace pomocí technologie
 \nameref{gps-failure}. Díky relativně vysoké nepřesnosti GPS se tento styl navigace projevil jako nepřesný a náročný na využití.
 Pro přesnou navigaci vozidla a zastavení v přesném bodě by ovšem bylo možné využít vstupu z kamer a po dosažení geografického cíle
 autonomní platformu navigovat pomocí vizuálních prvků, například čar definujících parkovací místo, nebo grafického kódu, dovést
-do přesného bodu. Tato funkcionalita by následně umožnila například automatické strojové vykládání převáženého nákladu. Ačkoliv 
+do přesného bodu. Tato funkcionalita by následně umožnila například automatické strojové vykládání převáženého nákladu. Ačkoliv
 sice není vyloučena, v současné době, především z časových důvodů, není vyvíjena.
 
-\subsection{Vizualizér} \label{visualizer}
+\section{Vizualizér} \label{visualizer}
 
-Klient obsahuje jednoduchý vizualizér, pomocí kterého lze zobrazit pozici vozidla na mapě včetně historie pohybu, vykreslit 
-softwaru známé cesty, aktivní waypointy a zvýraznit cestu, po níž se vozidlo aktuálně pohybuje. Dále vizualizér umožňuje vytváření 
+Klient obsahuje jednoduchý vizualizér, pomocí kterého lze zobrazit pozici vozidla na mapě včetně historie pohybu, vykreslit
+softwaru známé cesty, aktivní waypointy a zvýraznit cestu, po níž se vozidlo aktuálně pohybuje. Dále vizualizér umožňuje vytváření
 waypointů levým tlačítkem myši. Vizualizér slouží především k vývojovým a testovacím účelům. V reálném provozu vozidla by měla
-být využívána především webová aplikace. 
+být využívána především webová aplikace.
 
-\subsection{REST API} \label{rest-api}
+\section{REST API} \label{rest-api}
 
-REST API slouží ke vzdálenému získávání informací a zadávání pokynů plánovacímu softwaru. API v současné době implementuje čtyři 
-endpointy. Pro předávání dat mezi klientem a serverem je samozřejmě použit formát JSON nebo URI parametry. Data jsou obsažena 
+REST API slouží ke vzdálenému získávání informací a zadávání pokynů plánovacímu softwaru. API v současné době implementuje čtyři
+endpointy. Pro předávání dat mezi klientem a serverem je samozřejmě použit formát JSON nebo URI parametry. Data jsou obsažena
 v těle dotazu klienta nebo odpovědi serveru, případně přímo v URI, pokud je tento přístup pro daný případ vhodnější.
 
-\subsubsection{Endpoint \emph{/waypoints}}
+\subsection{Endpoint \emph{/waypoints}}
 
-Endpoint \emph{/waypoints} slouží k práci s waypointy. Podporuje tři metody standardu HTTP, konkrétně GET, POST a DELETE. 
+Endpoint \emph{/waypoints} slouží k práci s waypointy. Podporuje tři metody standardu HTTP, konkrétně GET, POST a DELETE.
 
-Metoda GET slouží k získání seznamu všech aktuálních waypointů. Server po přijetí požadavku naformátuje seznam waypointů a vrátí 
+Metoda GET slouží k získání seznamu všech aktuálních waypointů. Server po přijetí požadavku naformátuje seznam waypointů a vrátí
 jej jako JSON pole ve své odpovědi.
 
 Metoda POST se využívá k vytváření waypointů. Server v těle požadavku očekává jeden JSON objekt se dvěma atributy, \emph{latitude}
@@ -393,304 +379,287 @@ a \emph{longitude}. Po přijetí dotazu je JSON rozparsován a na základě obsa
 
 Metoda DELETE je přirozeně využita k mazání waypointů. Jedním dotazem je možné smazat jeden waypoint. Metoda DELETE očekává jeden
 parametr, index, který značí index waypointu, který má být smazán. V případě metody DELETE je parametr očekáván již v URI, obsah
-těla nebere API u této metody v potaz. Indexování probíhá přirozeně od nuly. 
+těla nebere API u této metody v potaz. Indexování probíhá přirozeně od nuly.
 
-\subsubsection{Endpoint \emph{/position}}
+\subsection{Endpoint \emph{/position}}
 
-\emph{/position} slouží k získání geografické pozice autonomního vozidla. Implementuje metodu GET a nepřijímá žádné parametry. 
+\emph{/position} slouží k získání geografické pozice autonomního vozidla. Implementuje metodu GET a nepřijímá žádné parametry.
 V těle odpovědi vrací jeden JSON objekt s atributy \emph{latitude} a \emph{longitude}, představující aktuální umístění vozidla.
 
-\subsubsection{Endpoint \emph{/heading}}
+\subsection{Endpoint \emph{/heading}}
 
-GET dotaz na endpoint \emph{/heading} umožňuje získat aktuální natočení vozidla. Natočení je uvedeno ve stupních a odpovídá 
+GET dotaz na endpoint \emph{/heading} umožňuje získat aktuální natočení vozidla. Natočení je uvedeno ve stupních a odpovídá
 natočení v kartézském souřadnicovém systému, není tak relativní k pólům planety Země. Tato funkce slouží především k vykreslování
-vozidla na mapě, která je samozřejmě projekcí glóbu do kartézského systému. Odpověď zde také představuje JSON objekt s jedním 
-atributem, pojmenovaným \emph{heading}. 
+vozidla na mapě, která je samozřejmě projekcí glóbu do kartézského systému. Odpověď zde také představuje JSON objekt s jedním
+atributem, pojmenovaným \emph{heading}.
 
 Jiné metody standardu HTTP endpoint \emph{/heading} nepodporuje.
 
-\subsubsection{Endpoint \emph{/info}}
+\subsection{Endpoint \emph{/info}}
 
-Endpoint \emph{/info} také využívá pouze metodu GET a veškerý vstup ignoruje. Ve své odpovědi vrací pozici, vozidla, jeho 
+Endpoint \emph{/info} také využívá pouze metodu GET a veškerý vstup ignoruje. Ve své odpovědi vrací pozici, vozidla, jeho
 natočení, ale také seznam waypointů. Slouží tedy jako ekvivalent k GET dotazu na všechny tři předchozí endpointy. Hlavní výhodou
-využití endpointu \emph{/info} je samozřejmě nižší množství TCP spojení oproti volání alespoň dvou ze tří předchozích endpointů 
+využití endpointu \emph{/info} je samozřejmě nižší množství TCP spojení oproti volání alespoň dvou ze tří předchozích endpointů
 najednou.
 
-Odpověď serveru obsahuje objekt se třemi atributy. Atribut \emph{position} představuje objekt geografického bodu. Atribut 
+Odpověď serveru obsahuje objekt se třemi atributy. Atribut \emph{position} představuje objekt geografického bodu. Atribut
 \emph{heading} je pouze primitivní desetinné číslo. Pod atributem \emph{waypoints} se poté skrývá pole waypointů.
 
-\subsubsection{Výhody a nevýhody REST API}
+\subsection{Výhody a nevýhody REST API}
 
-Velkou výhodou architektonického stylu REST, zejména v porovnání s binárními RPC protokoly, vlastními protokoly, apod., je 
+Velkou výhodou architektonického stylu REST, zejména v porovnání s binárními RPC protokoly, vlastními protokoly, apod., je
 především jednoduchost jeho využití. Využití formátu JSON umožňuje jednodušší ladění a vyhledávání chyb, právě protože je formát
 lidsky čitelný. K využití a zavolání REST API stačí jakýkoliv HTTP klient, proto je jednoduché implementovat klienta v jakémkoliv
-seriózním jazyce. Není třeba doufat, že pro daný jazyk bude existovat implementace Protocol Buffers kompilátoru a gRPC klienta. 
+seriózním jazyce. Není třeba doufat, že pro daný jazyk bude existovat implementace Protocol Buffers kompilátoru a gRPC klienta.
 Dokonce je možné REST API volat i z webového prohlížeče, nebo třeba z terminálu za využití programu \emph{cURL}. Za nevýhodu lze
 považovat nižší výkon a vyšší nároky na přenesený objem dat v porovnání s binárními protokoly, ovšem s nízkým množstvím požadavků
 v současné aplikaci, v kombinaci s rychlostí moderních procesorů, není rychlost zpracování dotazu faktorem.
 
-\subsection{Python implementace}
+\section{Python implementace}
 
-Software je, konzistentně s ostatními komponentami, vyvíjen v programovacím jazyce Python verze 3.6. Kromě standardních modulů 
+Software je, konzistentně s ostatními komponentami, vyvíjen v programovacím jazyce Python verze 3.6. Kromě standardních modulů
 jazyka Python jsou zde využity knihovny \emph{Pygame}, \emph{Geopy}, \emph{Osmium} a \emph{Flask}.
 
-\subsubsection{Konfigurace}
+\subsection{Konfigurace}
 
 Program lze konfigurovat pomocí proměnných prostředí operačního systému. V případě řídícího softwaru už může být řeč o možné
-virtualizaci. V takovém případě je samozřejmě tento způsob konfigurace vhodný zejména kvůli své jednoduchosti v kombinaci 
-technologiemi, jako je Docker nebo Kubernetes, které využití tohoto způsobu konfiguraci samy podporují. Samozřejmě v některých 
-případech může být tento způsob konfigurace až příliš jednoduchý, a to třeba pokud potřebujeme vyjádřit například objekty 
-se zanořenými atributy, seznamy, apod. V takovém případě by určitě bylo vhodnější využít například Kubernetes konfigurační mapy 
+virtualizaci. V takovém případě je samozřejmě tento způsob konfigurace vhodný zejména kvůli své jednoduchosti v kombinaci
+technologiemi, jako je Docker nebo Kubernetes, které využití tohoto způsobu konfiguraci samy podporují. Samozřejmě v některých
+případech může být tento způsob konfigurace až příliš jednoduchý, a to třeba pokud potřebujeme vyjádřit například objekty
+se zanořenými atributy, seznamy, apod. V takovém případě by určitě bylo vhodnější využít například Kubernetes konfigurační mapy
 a pro konfiguraci využít třeba formát YAML nebo JSON.
 
-\subsubsection{TCP klient}
+\subsection{TCP klient}
 
 Implementace TCP klienta využívá modul \emph{socket} standardní knihovny jazyka Python. Funkce pro komunikaci pomocí protokolu TCP
-se nachází v souboru \emph{client.py}. Využití je velmi jednoduché, při překladu souboru interpreterem se načte konfigurace 
+se nachází v souboru \emph{client.py}. Využití je velmi jednoduché, při překladu souboru interpreterem se načte konfigurace
 z enviromentálních proměnných. Proto stačí pouze importovat daný soubor, nebo jen požadované funkce, a ty poté volat s případnými
-argumenty. Není třeba klienta konfigurovat v kódu, vytvářet instance, apod. 
+argumenty. Není třeba klienta konfigurovat v kódu, vytvářet instance, apod.
 
 Klient samozřejmě využívá vlastní protokol popsaný v sekci \nameref{server-methods}. K volání funkcí serveru implementuje pět
 metod, \emph{drive}, \emph{healthcheck}, \emph{info}, \emph{position} a \emph{ebrake}, které volají stejnojmenné funkce serveru.
 
-Dále implementuje funkci \emph{camera\_info}, jež se nedovolává na řídící server, ale na server provádějící analýzu vstupu 
-z kamery. V tomto případě ovšem server nevrací informace o okolním prostředí, tato funkce slouží pouze k získání pozice 
+Dále implementuje funkci \emph{camera\_info}, jež se nedovolává na řídící server, ale na server provádějící analýzu vstupu
+z kamery. V tomto případě ovšem server nevrací informace o okolním prostředí, tato funkce slouží pouze k získání pozice
 detekovaného grafického kódu. Funkce \emph{camera\_info} je tedy využívána především při následování kódů, ne při navigaci pomocí
 geografických waypointů.
 
-\subsubsection{REST API}
+\subsection{REST API}
 
 REST API je implementováno jako velmi jednoduchá Flask aplikace. Narozdíl od klienta musí být API inicializováno zavoláním funkce
 \emph{init}, jíž je v argumentu předán ukazatel na instanci třídy \emph{CarController}, která zajišťuje řízení vozidla. Předání
-tohoto objektu je potřeba proto, aby API mohlo interagovat s řídícím kódem. API se spouští na separátním vlákně, třída 
+tohoto objektu je potřeba proto, aby API mohlo interagovat s řídícím kódem. API se spouští na separátním vlákně, třída
 \emph{CarController} proto musí být thread-safe. V opačném případě by mohlo dojít např. ke konkurentnímu přístupu k atributům.
 
-\subsubsection{Řídící kód}
+\subsection{Řídící kód}
 
 K ovládání vozidla slouží především třídy \emph{CarController} a \emph{PathPlanner}.
 
 Třída \emph{CarController} slouží k vysokoúrovňovému ovládání vozidla. Pomocí této třídy lze například nastavit waypointy, nebo
-zapnout sledování grafických kódů. Dále také agreguje a spravuje instance pomocných tříd, jako jsou \emph{PositionFetcher} 
-a \emph{PositionTracker}, sloužící k získávání a sledování pozice vozidla, \emph{Visualizer}, třídu umožňující grafickou 
+zapnout sledování grafických kódů. Dále také agreguje a spravuje instance pomocných tříd, jako jsou \emph{PositionFetcher}
+a \emph{PositionTracker}, sloužící k získávání a sledování pozice vozidla, \emph{Visualizer}, třídu umožňující grafickou
 vizualizaci, nebo instanci třídy \emph{Map}, obsahující mapové podklady univerzitního kampusu.
 
 \emph{PathPlanner} poté rozhoduje o pohybu vozidla. Na základě poskytnutých informací, jako jsou například mapové podklady, vstup
 z GPS nebo detekce obrazu, apod., rozhoduje jak o okamžitých akcích, tak o dlouhodobém pohybu a dráze vozidla, za účelem dovedení
-vozidla do cíle. Za účelem plánování cesty bylo vyzkoušeno hned několik způsobů. Zkoušeným způsobům, poznatkům ze zkoušení 
+vozidla do cíle. Za účelem plánování cesty bylo vyzkoušeno hned několik způsobů. Zkoušeným způsobům, poznatkům ze zkoušení
 postupů, nalezeným problémům a výsledkům výzkumu se podrobněji věnuje kapitola \nameref{driving-methods}.
 
-\subsubsection{Využité knihovny}
+\subsection{Využité knihovny}
 
-Knihovna \emph{Pygame} byla zvolena pro implementaci vizualizéru zejména díky jednoduchému využití a vykreslování grafických 
-podkladů, mezi které patří nejen základní geometrické útvary, jako jsou třeba úsečka, kruh, ale také obrazové podklady a grafické 
-sprity. 
+Knihovna \emph{Pygame} byla zvolena pro implementaci vizualizéru zejména díky jednoduchému využití a vykreslování grafických
+podkladů, mezi které patří nejen základní geometrické útvary, jako jsou třeba úsečka, kruh, ale také obrazové podklady a grafické
+sprity.
 
-Modul \emph{Geopy} je využíván pro své možnosti práce s geografickými souřadnicemi. Důležitou a v kódu často využívanou funkcí 
+Modul \emph{Geopy} je využíván pro své možnosti práce s geografickými souřadnicemi. Důležitou a v kódu často využívanou funkcí
 knihovny \emph{Geopy} je funkce \emph{geopy.distance.distance}, jež poskytuje funkcionalitu pro výpočet fyzické vzdálenosti mezi
 dvěma geografickými body. Získaná vzdálenost v metrech se poté využívá například při hledání nejkratší cesty na mapě, nebo také
 při převodu geografických souřadnic na souřadnice kartézské, které následně umožňují zjednodušení výpočtů za cenu nižší, ale stále
 naprosto dostačující přesnosti, využití goniometrických souřadnic pro výpočet úhlu, apod.
 
-Předposlední využívaná knihovna, \emph{Osmium}, slouží k parsování OpenStreetMap dat. Modul \emph{Osmium} dokáže zpracovat data 
-exportovaná z OpenStreetMap ve formátu XML a převést je na objekty jazyka Python, se kterými lze následně jednoduše pracovat 
+Předposlední využívaná knihovna, \emph{Osmium}, slouží k parsování OpenStreetMap dat. Modul \emph{Osmium} dokáže zpracovat data
+exportovaná z OpenStreetMap ve formátu XML a převést je na objekty jazyka Python, se kterými lze následně jednoduše pracovat
 v kódu. Zpracování mapových podkladů se podrobněji věnuje kapitola \nameref{osm-chapter}.
 
-Mikroframework \emph{Flask} není třeba žádnému zkušenějšímu Python programátorovi představovat. Jedná se o knihovnu umožňující 
+Mikroframework \emph{Flask} není třeba žádnému zkušenějšímu Python programátorovi představovat. Jedná se o knihovnu umožňující
 tvorbu HTTP serveru a zpracování HTTP dotazů. Jako mikroframework je velmi jednoduchý na využití a relativně drobný. Není proto
 sám o sobě vhodný na tvorbu webových aplikací, za tímto účelem je efektivnější využít technologií stavějících na Flasku, pro
-rychlou tvorbu API je ovšem \emph{Flask} velmi dobrá volba. Nevýhodou \emph{Flasku} je chybějící podpora pro asynchronní 
-zpracování dotazů, proto se dnes často na úkor \emph{Flasku} využívá třeba \emph{Starlette}, nebo z něj vycházející 
-\emph{FastApi}, které díky své asynchronní povaze dokážou zpracovat podstatně vyšší množství dotazů. V současné aplikaci však 
+rychlou tvorbu API je ovšem \emph{Flask} velmi dobrá volba. Nevýhodou \emph{Flasku} je chybějící podpora pro asynchronní
+zpracování dotazů, proto se dnes často na úkor \emph{Flasku} využívá třeba \emph{Starlette}, nebo z něj vycházející
+\emph{FastApi}, které díky své asynchronní povaze dokážou zpracovat podstatně vyšší množství dotazů. V současné aplikaci však
 na API chodí maximálně jednotky dotazů za sekundu a \emph{Flask} stačí více než dostatečně.
 
-\section{Testované způsoby řízení vozidla} \label{driving-methods}
+\chapter{Testované způsoby řízení vozidla} \label{driving-methods}
 
 Při vývoji softwaru byly vyzkoušeny hned tři způsoby řízení vozidla, a to řízení čistě pomocí GPS, řízení pouze pomocí grafických
-kódu, a nakonec kombinace řízení pomocí vstupů z GPS, kamery, a případně také Lidaru. První dva způsoby se projevily jako v praxi 
-téměř nevyužitelné, alespoň samy o sobě. I přesto výzkum těchto technik řízení přinesl spoustu poznatků, objevů, zkušeností, ale 
+kódu, a nakonec kombinace řízení pomocí vstupů z GPS, kamery, a případně také Lidaru. První dva způsoby se projevily jako v praxi
+téměř nevyužitelné, alespoň samy o sobě. I přesto výzkum těchto technik řízení přinesl spoustu poznatků, objevů, zkušeností, ale
 také technologického progresu a kódu, proto výzkum nelze považovat za neúspěšný. Ačkoliv jsou totiž techniky řízení nepraktické
 samy o sobě, lze je zkombinovat s jinými technikami, a tím vytvořit spolehlivý software schopný bezpečně řídit vozidlo. K tomuto
 účelu lze samozřejmě také využít zdrojových kódu napsaných při provádění výzkumu.
 
-\subsection{Řízení vozidla pomocí GPS} \label{gps-failure}
+\section{Řízení vozidla pomocí GPS} \label{gps-failure}
 
 První pokusy o řízení proběhly za pomocí technologie GPS. Při testování se nepočítalo ani s mapovými podklady, autonomní platforma
 měla jezdit pouze po omezené ploše, aby se vyzkoušela možnost tohoto způsobu řízení. K vozidlu byl připojen GPS modul, pomocí
-kterého Raspberry Pi server určoval aktuální geolokaci vozidla. Řídící kód byl naprogramován tak, aby vozidlo vedl přímo 
-k nejbližšímu waypointy. Nastavení waypointů tuto skutečnost reflektovalo -- waypointy byly rozmístěny tak, aby vozidlu nestála 
+kterého Raspberry Pi server určoval aktuální geolokaci vozidla. Řídící kód byl naprogramován tak, aby vozidlo vedl přímo
+k nejbližšímu waypointy. Nastavení waypointů tuto skutečnost reflektovalo -- waypointy byly rozmístěny tak, aby vozidlu nestála
 v cestě žádná překážka, budova, obrubník, apod. Navigace ve 2D prostoru bez žádných překážek není nic složitého, na první pohled
 by úspěchu nic bránit nemělo. Přesto se ovšem objevilo několik problémů, které bylo třeba řešit.
 
-\subsubsection{Kalibrace GPS}
+\subsection{Kalibrace GPS}
 
-První problém se projevil hned při spuštění serveru a inicializaci GPS modulu -- zaměření vozidla pomocí GPS ve venkovním 
+První problém se projevil hned při spuštění serveru a inicializaci GPS modulu -- zaměření vozidla pomocí GPS ve venkovním
 prostředí nějakou dobu trvá, ve vnitřních prostorech GPS modul nedokáže pozici určit vůbec.
 
-Pomalé zaměření vozidla ve venkovních prostorech je efekt nežádaný, ovšem ne neřešitelný. Řídící kód byl upraven tak, aby tuto 
-skutečnost bral v potaz, a před rozjezdem alespoň deset sekund čekal, aby měl GPS modul možnost pozici správně určit, a aby se 
-omezila oscilace naměřených hodnot, které jsou při zaměřování velmi nepřesné. Navíc není předpokládáno, že by v případném reálném 
-provozu docházelo k častému vypínání vozidla, a tím i GPS modulu. Také lze projevy problému omezit například nákupem dražšího 
-hardwaru, nebo neustálým napájením GPS, a to i v momentě, kdy je vozidlo vypnuté. V současném stavu ovšem krátké čekání 
+Pomalé zaměření vozidla ve venkovních prostorech je efekt nežádaný, ovšem ne neřešitelný. Řídící kód byl upraven tak, aby tuto
+skutečnost bral v potaz, a před rozjezdem alespoň deset sekund čekal, aby měl GPS modul možnost pozici správně určit, a aby se
+omezila oscilace naměřených hodnot, které jsou při zaměřování velmi nepřesné. Navíc není předpokládáno, že by v případném reálném
+provozu docházelo k častému vypínání vozidla, a tím i GPS modulu. Také lze projevy problému omezit například nákupem dražšího
+hardwaru, nebo neustálým napájením GPS, a to i v momentě, kdy je vozidlo vypnuté. V současném stavu ovšem krátké čekání
 po spuštění vozidla nevadí, proto tato řešení nejsou nyní využívána v praxi.
 
-Nezaměřitelnost vozidla ve vnitřních prostorech je problém podstatně větší. Platforma stavěná za účelem rozvozu materiálu 
+Nezaměřitelnost vozidla ve vnitřních prostorech je problém podstatně větší. Platforma stavěná za účelem rozvozu materiálu
 v industriálních prostorech pohybu uvnitř musí být schopna, v opačném případě bude její využití velmi omezené. A jelikož má
 vozidlo být co nejjednodušší na využití, a nemělo by vyžadovat stavbu dodatečné infrastruktury umožňující zaměření ve vnitřních
 prostorech, bylo už v tomto momentě rozhodnuto o tom, že bude třeba implementovat také řízení pomocí systému kamer, Lidarů, nebo
 kombinace obojího.
 
-\subsubsection{Směr natočení vozidla} \label{directions-and-angles}
+\subsection{Směr natočení vozidla} \label{directions-and-angles}
 
 Pro úspěšnou navigaci v prostoru je samozřejmě také nutné vědět, kterým směrem je vozidlo natočeno a kterým směrem se pohybuje.
 
 Na platformě ovšem nebyl umístěn kompas. Proto bylo třeba improvizovat. Řídící kód byl znovu upraven, tentokrát takovým způsobem,
-aby směr, kterým se vozidlo pohybuje, určoval podle změny v naměřených GPS souřadnicích. 
+aby směr, kterým se vozidlo pohybuje, určoval podle změny v naměřených GPS souřadnicích.
 
-Zde ovšem vyvstal nový problém, vycházející z nedokonalosti a nepřesnosti GPS. GPS nedokáže zaměřit pozici se 100\% přesností, 
-vždy dojde k naměření s určitou odchylkou, která musí být při práci s naměřenými souřadnicemi započítána. Tato odchylka může 
-vozidlo na mapě umístit jinam, než kde ve skutečnosti je. Při vysokých rychlostech, kdy dochází k velkým změnám souřadnic, 
-je odchylka relativně k absolutní změně zanedbatelná a odchylka mezi reálným a vypočítaným směrem pohybu dosahuje pouze 
-zanedbatelných hodnot. Vozidlo, jež je subjektem této práce, ovšem dosahuje pouze relativně nízkých rychlostí, převážně kvůli 
+Zde ovšem vyvstal nový problém, vycházející z nedokonalosti a nepřesnosti GPS. GPS nedokáže zaměřit pozici se 100\% přesností,
+vždy dojde k naměření s určitou odchylkou, která musí být při práci s naměřenými souřadnicemi započítána. Tato odchylka může
+vozidlo na mapě umístit jinam, než kde ve skutečnosti je. Při vysokých rychlostech, kdy dochází k velkým změnám souřadnic,
+je odchylka relativně k absolutní změně zanedbatelná a odchylka mezi reálným a vypočítaným směrem pohybu dosahuje pouze
+zanedbatelných hodnot. Vozidlo, jež je subjektem této práce, ovšem dosahuje pouze relativně nízkých rychlostí, převážně kvůli
 bezpečnosti provozu. V nízkých rychlostech je samozřejmě absolutní změna souřadnic podstatně menší, odchylka způsobená nepřesností
-GPS je tedy relativně o hodně vyšší, již není zanedbatelná, a odchylka mezi reálným a vypočítaným směrem pohybu je schopná 
-dosahovat hodnoty až $180^{\circ}$. Hodnoty s tak vysokými odchylkami jsou samozřejmě v praxi nevyužitelné. Problematice 
-nepřesnosti GPS se dále věnuje sekce \nameref{gps-inaccuracy}. 
+GPS je tedy relativně o hodně vyšší, již není zanedbatelná, a odchylka mezi reálným a vypočítaným směrem pohybu je schopná
+dosahovat hodnoty až $180^{\circ}$. Hodnoty s tak vysokými odchylkami jsou samozřejmě v praxi nevyužitelné. Problematice
+nepřesnosti GPS se dále věnuje sekce \nameref{gps-inaccuracy}.
 
-Dalším problémem, který s sebou tento přístup určení směru přinesl, byla nemožnost určit směr natočení vozidla, když se vozidlo 
+Dalším problémem, který s sebou tento přístup určení směru přinesl, byla nemožnost určit směr natočení vozidla, když se vozidlo
 nehýbalo. Tento problém měl nežádoucí projevy zejména po startu vozidla, kdy nebylo možné určit, kterým směrem musí platforma jet,
-aby dosáhla cíle, a zda potřebuje zatáčet. V průběhu jízdy lze tento problém samozřejmě odstranit pamatováním si posledního 
-naměřeného směru před případným dočasným zastavením vozidla. Problém byl řešen obyčejným rozjetím autonomní platformy rovně 
+aby dosáhla cíle, a zda potřebuje zatáčet. V průběhu jízdy lze tento problém samozřejmě odstranit pamatováním si posledního
+naměřeného směru před případným dočasným zastavením vozidla. Problém byl řešen obyčejným rozjetím autonomní platformy rovně
 dopředu. Z naměřeného pohybu byl dopočten směr, a teprve poté došlo k umožnění zatáčení v řídícím softwaru.
 
-Samotný výpočet směru pohybu vozidla je velmi jednoduchý. Za pomocí naměřených GPS souřadnic zjistíme, jaký pohyb vozidlo 
-vykonalo. Z předchozí a nově naměřené hodnoty vyčteme rozdíl v zeměpisné šířce i délce. Pomocí knihovny \emph{geopy} převedeme 
-rozdíl uvedený v zeměpisné šířce a délce na metry, a převedeme tak globální světové souřadnice na souřadnice kartézské. To nám 
-umožní využít goniometrické funkce a zjednoduššit výpočty, viz sekce \nameref{cartesian-coordinates}. Dále za využití Pythagorovy 
+Samotný výpočet směru pohybu vozidla je velmi jednoduchý. Za pomocí naměřených GPS souřadnic zjistíme, jaký pohyb vozidlo
+vykonalo. Z předchozí a nově naměřené hodnoty vyčteme rozdíl v zeměpisné šířce i délce. Pomocí knihovny \emph{geopy} převedeme
+rozdíl uvedený v zeměpisné šířce a délce na metry, a převedeme tak globální světové souřadnice na souřadnice kartézské. To nám
+umožní využít goniometrické funkce a zjednoduššit výpočty, viz sekce \nameref{cartesian-coordinates}. Dále za využití Pythagorovy
 věty vypočteme celkovou vzdálenost, jakou vozidlo překonalo. Tímto získáme pravoúhlý trojúhelník, jehož přepona je dráha
 pohybu vozidla, odvěsny poté reprezentují rozdíly v zeměpisné šířce a v zeměpisné délce. Následně stačí rozdíl v zeměpisné šířce
 uvedený v metrech vydělit celkovou vzdáleností. Touto operací získáme kosinus úhlu. Na získaný kosinus aplikujeme funkci arkus
 kosinus, tedy funkci kosinu inverzní, čímž získáme úhel v rozsahu prvního a druhého kvadrantu. Jelikož však úhel může patřit do
-třetího nebo čtvrtého kvadrantu kruhu, je třeba zkontrolovat, jestli je vozidlo pohybovalo směrem na západ. Jestliže je nová 
+třetího nebo čtvrtého kvadrantu kruhu, je třeba zkontrolovat, jestli je vozidlo pohybovalo směrem na západ. Jestliže je nová
 lokalita vozidla západněji, provedla autonomní platforma pohyb vlevo v kartézských souřadnicích. V takovém případě pouze stačí
 odečíst vypočítaný úhel od úhlu $360^{\circ}$. Tak získáme směr, kterým se v kartézských souřadnicích vozidlo pohybuje a zároveň
 kterým směrem je momentálně natočeno.
 
-Výpočet požadovaného směru pohybu je analogický, pouze se při výpočtu využije aktuální pozice vozidla a souřadnice waypointu. 
+Výpočet požadovaného směru pohybu je analogický, pouze se při výpočtu využije aktuální pozice vozidla a souřadnice waypointu.
 
-Na základě vypočtených směrů je poté vypočítáno natočení kol, aby autonomní platforma svým pohybem mířila k cílovému waypointu. 
+Na základě vypočtených směrů je poté vypočítáno natočení kol, aby autonomní platforma svým pohybem mířila k cílovému waypointu.
 Výpočet požadovaného natočení kol není vůbec složitý, jakmile známe směr, kterým se vozidlo momentálně pohybuje, a směr, kterým
-by se vozidlo mělo pohybovat, aby dosáhlo svého cíle. Prostým odečtením těchto směrů od sebe získáme odchylku mezi požadovaným 
-a aktuálním směrem pohybu. Natočení kol následně může mít vůči rozdílu směrů lineární závislost, případně lze nastavit krokové 
+by se vozidlo mělo pohybovat, aby dosáhlo svého cíle. Prostým odečtením těchto směrů od sebe získáme odchylku mezi požadovaným
+a aktuálním směrem pohybu. Natočení kol následně může mít vůči rozdílu směrů lineární závislost, případně lze nastavit krokové
 změny při určitých hodnotách odchylky.
 
-\subsubsection{Pomalá odezva GPS}
+\subsection{Pomalá odezva GPS}
 
-\subsubsection{Nepřesnost GPS} \label{gps-inaccuracy}
+\subsection{Nepřesnost GPS} \label{gps-inaccuracy}
 
-\subsubsection{Práce s 2D prostorem} \label{cartesian-coordinates}
+\subsection{Práce s 2D prostorem} \label{cartesian-coordinates}
 
-Jak již bylo předestřeno dříve, v této práci se často převádí geografické souřadnice na souřadnice kartézské. Díky elipsoidní 
-nátuře tvaru planety Země totiž nemusí jeden stupeň zeměpisné šířky odpovídat jednomu stupni zeměpisné délky relativně 
+Jak již bylo předestřeno dříve, v této práci se často převádí geografické souřadnice na souřadnice kartézské. Díky elipsoidní
+nátuře tvaru planety Země totiž nemusí jeden stupeň zeměpisné šířky odpovídat jednomu stupni zeměpisné délky relativně
 k vzdálenosti. Navíc mezi vzdáleností vyjadřovanou jedním stupněm zeměpisné šířky a jedním stupněm zeměpisné délky neexistuje
 univerzální poměr, neboť se poměr mezi těmito hodnotami mění na základě aktuální zeměpisné šířky.
 
 Samozřejmě univerzitní kampus, pro který je autonomní platforma stavěna, není rozlohou nijak veliký, proto se nabízela možnost
 pracovat s geografickými souřadnicemi jako by byly ekvivalentní souřadnicím kartézským, a předpokládat, že chyba způsobená tímto
-zjednodušením bude zanedbatelná. Problémy s touto doměnkou ovšem byly odhaleny velmi rychle. Velikost chyby často přesahovala 
+zjednodušením bude zanedbatelná. Problémy s touto doměnkou ovšem byly odhaleny velmi rychle. Velikost chyby často přesahovala
 rozumné hodnoty. Projev chyby bylo možné zachytit nejen při testování softwaru, ale také při pouhém umístění vlastních značek
 v libovolné veřejné mapové službě (při práci na projektu byly využívány služby OpenStreetMap a Mapy.cz). Samozřejmě bude umístění
 značek opticky zkreslené, protože kreslíme na 2D projekci sférické planety. Toto zkreslení vytváří optickou chybu, jež nebude mít
 na samotné výpočty vliv, i tak lze ale velmi dobře vidět nepřesnost námi využitého zjednodušení. Při umístění bodů na mapu tak,
 aby hodnoty geografických souřadnic tvořily čtverec v souřadnicích kartézských, tedy dva sousedící body mají vždy jednu souřadnici
-stejnou, a rozdíl lišící se geografické souřadnice byl pro všechny čtyři strany stejný. Již na první pohled lze vidět, že body 
+stejnou, a rozdíl lišící se geografické souřadnice byl pro všechny čtyři strany stejný. Již na první pohled lze vidět, že body
 tvoří lichoběžník, ne čtverec, ačkoliv je lichoběžník také velmi zkreslený právě projekcí glóbu do 2D prostoru.
 
-Po odhalení nepřesnosti tohoto zjednodušení bylo tedy rozhodnuto, že bude vyzkoušen jiný způsob zjednodušení výpočtů.  Ačkoliv by 
-totiž správná práce s geografickými souřadnice elipsoidní planety byla nejpřesnější, pro relativně malý univerzitní kampus, který 
-lze navíc v řídícím softwaru považovat za 2D plochu, je implementace tohoto řešení zbytečně časově náročná s ohledem na relativně 
+Po odhalení nepřesnosti tohoto zjednodušení bylo tedy rozhodnuto, že bude vyzkoušen jiný způsob zjednodušení výpočtů.  Ačkoliv by
+totiž správná práce s geografickými souřadnice elipsoidní planety byla nejpřesnější, pro relativně malý univerzitní kampus, který
+lze navíc v řídícím softwaru považovat za 2D plochu, je implementace tohoto řešení zbytečně časově náročná s ohledem na relativně
 nízký benefit v daném měřítku. Proto momentální verze softwaru převádí geografické souřadnice na lokální kartézský systém. Tento
-systém se prokázal jako dostatečně přesný v měřítku kampusu Vysoké školy báňské, a ačkoliv samozřejmě není přesný a přináší 
+systém se prokázal jako dostatečně přesný v měřítku kampusu Vysoké školy báňské, a ačkoliv samozřejmě není přesný a přináší
 s sebou také určitou chybu, díky využití lokálního kartézského systému je chyba dostatečně nízká.
 
-Převod do lokálního souřadnicového systému je řešen způsobem předestřeným dříve v sekci \nameref{directions-and-angles}. Dva 
-geografické body se považují za úhlopříčku obdélníku. Délky stran obdélníku vypočteme aplikací funkce 
+Převod do lokálního souřadnicového systému je řešen způsobem předestřeným dříve v sekci \nameref{directions-and-angles}. Dva
+geografické body se považují za úhlopříčku obdélníku. Délky stran obdélníku vypočteme aplikací funkce
 \emph{geopy.distance.distance}. Dva body obdélníku již samozřejmě známe, zbylé dva body získáme tak, že vezmeme zeměpisné šířky
 známých bodů, a zkombinujeme je se zeměpisnými délkami opačného bodu.
 
-Vypočítané délky stran nám tak definují vektor, jenž odpovídá úhlopříčce obdélníku. Následně využijeme faktu, že obdélník lze 
-definovat také kombinací bodu a vektoru. Jeden vrchol obdélníku umístíme do bodu (0, 0). Když k tomuto bodu poté přičteme 
+Vypočítané délky stran nám tak definují vektor, jenž odpovídá úhlopříčce obdélníku. Následně využijeme faktu, že obdélník lze
+definovat také kombinací bodu a vektoru. Jeden vrchol obdélníku umístíme do bodu (0, 0). Když k tomuto bodu poté přičteme
 vypočtený vektor, získáme opačný vrchol. Tyto vrcholy nám nyní reprezentují geografické souřadnice v lokálním kartézském systému.
 
-Délku úhlopříčky samozřejmě můžeme spočítat buď aplikací Pythagorovy věty, nebo funkcí \emph{geopy.distance.distance}. Využití 
-zmíněné funkce z knihovny \emph{geopy} bude pravděpodobně přesnější, Pythagorovu větu ovšem naopak můžeme aplikovat i v případě, 
-kdy neznáme původní geografické body, které byly převedeny do kartézského souřadnicového systému. Takový případ může nastat třeba 
-po zavolání funkce, jež jako své argumenty přijímá pouze kartézské souřadnice. Zdrojový kód funkce, ale ani funkce nebo metody 
+Délku úhlopříčky samozřejmě můžeme spočítat buď aplikací Pythagorovy věty, nebo funkcí \emph{geopy.distance.distance}. Využití
+zmíněné funkce z knihovny \emph{geopy} bude pravděpodobně přesnější, Pythagorovu větu ovšem naopak můžeme aplikovat i v případě,
+kdy neznáme původní geografické body, které byly převedeny do kartézského souřadnicového systému. Takový případ může nastat třeba
+po zavolání funkce, jež jako své argumenty přijímá pouze kartézské souřadnice. Zdrojový kód funkce, ale ani funkce nebo metody
 touto funkcí volané, již k původním geografickým souřadnicím nemají jak přistoupit.
 
 Nespornou výhodou kartézského souřadnicového systému je jednoduchost jeho využití. V kartézském souřadnicovém systému lze také
-bez jakýchkoliv problémů aplikovat funkce sinus a kosinus, které jsou samozřejmě kritické při práci s úhly. Dále na počtech 
+bez jakýchkoliv problémů aplikovat funkce sinus a kosinus, které jsou samozřejmě kritické při práci s úhly. Dále na počtech
 s kartézskými souřadnicemi často není nic složitého. Díky jejich přímočarosti tak zdrojový kód zůstává jednoduchý, čitelný,
 vývoj je rychlejší a také je sníženo riziko výskytu chyb.
 
 Při navigaci vozidla, a zejména při práci s mapovými podklady, je univerzitní kampus považován za 2D plochu. Areál možná nelze
 považovat za vodorovný, zároveň jej ale nikdo nemůže nazvat kopcovitým, nebo dokonce hornatým. Výškové rozdíly napříč areálem jsou
 dostatečně nízké, aby se daly považovat za zanedbatelné. Při navigaci tedy není třeba plánovat cestu tak, aby vozidlo nemuselo
-podstupovat dlouhé stoupání do kopce a zbytečně plýtvat energií. Občasné krátké stoupání pak může způsobit zpomalení pohybu 
+podstupovat dlouhé stoupání do kopce a zbytečně plýtvat energií. Občasné krátké stoupání pak může způsobit zpomalení pohybu
 vozidla, za takovým účelem je ale na ovládacím serveru běžícím na autonomní platformě samotné implementován PI regulátor, který
 právě v takovémto případě zaznamenaný pokles rychlosti vykompenzuje zvýšením kroutivého momentu elektromotoru, aby udržel rychlost
 na požadované hodnotě. PI regulace je probrána v sekci \nameref{pi-controller}.
 
-\subsection{Řízení vozidla pomocí detekce grafických kódu}
+\section{Řízení vozidla pomocí detekce grafických kódu}
 
-\subsection{Řízení vozidla kombinací vstupů z GPS, kamery, a za využití mapových podkladů}
+\section{Řízení vozidla kombinací vstupů z GPS, kamery, a za využití mapových podkladů}
 
-\section{Práce s mapovými podklady} \label{osm-chapter}
+\chapter{Práce s mapovými podklady} \label{osm-chapter}
 
-\subsection{Načítání mapových podkladů}
+\section{Načítání mapových podkladů}
 
-\subsection{Vyhledání aktuální pozice na mapě}
+\section{Vyhledání aktuální pozice na mapě}
 
-\subsection{Plánování cesty za využití mapových podkladů}
+\section{Plánování cesty za využití mapových podkladů}
 
-\section{Budoucí vývoj vozidla}
+\chapter{Budoucí vývoj vozidla}
 
-\subsection{Vstup z Lidaru}
+\section{Vstup z Lidaru}
 
-\subsection{Chytřejší práce s mapovými podklady}
+\section{Chytřejší práce s mapovými podklady}
 
-\subsubsection{Automatická aktualizace mapových podkladů}
+\subsection{Automatická aktualizace mapových podkladů}
 
-\subsubsection{Cena cesty odvíjející se od denní doby}
+\subsection{Cena cesty odvíjející se od denní doby}
 
-\subsection{Ovládání vozidla pomocí webové aplikace} \label{web-app}
+\section{Ovládání vozidla pomocí webové aplikace} \label{web-app}
 
-\subsection{Metriky, chytřejší logování, monitorování}
+\section{Metriky, chytřejší logování, monitorování}
 
-\section{Závěr}
+\chapter{Závěr}
 
-\section{Technické detaily}
-
-\subsection{Křížové odkazy}
-\label{sec:CrossReferences}
-Odborné texty, mezi které lze počítat i bakalářské, diplomové a disertační práce, obvykle obsahují množství křížových odkazů odkazující na nejrůznější části textu:
-\begin{description}
-	\item [kapitoly] -- například odkaz na kapitolu \ref{sec:Uherske}. Pokud odkazujeme na kapitolu, která je značně vzdálená od současné stránky, bývá dobrým zvykem k odkazu na číslo kapitoly přidat ještě i odpovídající číslo stránky, jako například pokud odkazujeme na kapitolu \ref{sec:Introduction} na straně \pageref{sec:Introduction}.
-\end{description}
-
-\subsection{Jak citovat}
-Obecně lze říci, že pro bibliografické odkazy a citace dokumentů používáme zásadně normu ČSN ISO 690.
-\subsubsection{Odkaz v textu}
-Pro odkazy v textu používáme číselné označení citací dokumentů ohraničené hranatými závorkami. Takže například můžeme citovat časopisecké \emph{články} \cite{herrmann, bertram, moore, yoon, sigfridsson, baez/article}, \emph{knihy} \cite{wilde, nietzsche:ksa1, averroes/bland, hammond, cotton, knuth:ct:a, gerhardt, gonzalez, companion}, \emph{periodika} \cite{jcg}, \emph{bakalářské, diplomové či diserteční práce} \cite{geer}, \emph{patenty} \cite{kowalik, almendro, sorace, laufenberg}, \emph{online zdroje} \cite{ctan, wassenberg, itzhaki, markey, baez/online} či \emph{manuály} \cite{cms}.
-
-\subsubsection{Seznam citací}
-Seznam citací je umístěn na konci závěrečné práce, před přílohami, a musí obsahovat všechny citace na které je v textu práce odkazováno.
-
+% Seznam literatury
 \printbibliography[title={Literatura}, heading=bibintoc]
-% https://www.csselectronics.com/screen/page/simple-intro-to-can-bus/language/en
-%
 
+% Prilohy
 \appendix
-\section{Plné tkví drah pokles průběhu}
+% \input{Chapters/Appendix1.tex}
+% \input{Chapters/Appendix2.tex}
 
 \end{document}
-
