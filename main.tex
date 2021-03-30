@@ -639,6 +639,8 @@ grafického kódu bylo s rozumnou přesností a úspěšností zprovozněno již
 v praxi používán. Přesto výzkum a testování tohoto řešení, podobně jako v případě řízení pomocí GPS, přineslo nejen řadu poznatků,
 ale také technické zázemí a využitelný zdrojový kód.
 
+\subsection{Implementace řízení}
+
 Při implementaci tohoto druhu řízení byla na vozidlo upevněna obyčejná webkamera. Vstup z webkamery analyzoval program nezávislý
 na řídícím softwaru, který je subjektem této práce. Analyzační software společně s kamerou byly kalibrovány na určitou velikost
 grafického kódu. Po správné kalibraci dokázal software správně určit vzdálenost kódu od vozidla na základě jeho nakonfigurovaných
@@ -661,10 +663,51 @@ protilehlé straně. Délkou protilehlé strany je zde vzdálenost bodu od stře
 od vozidla. Samotný poměr nám představuje sinus hledaného úhlu. Na poměr tedy aplikujeme funkci arkus sinus, funkci inverzní k 
 funkci sinus, a získáme hledanou odchylku.
 
-%TODO: Řešení při testování fungovalo, ale je na chuja
+\subsection{Výsledek testování}
 
+Řešení se při testování projevilo jako funkční, ovšem omezené a v praxi hůře použitelné. Jako hlavní problém samozřejmě vyvstává
+absence analýzy okolí vozidla. Stejně jako při řízení pomocí GPS, i zde si vozidlo není vědomo svého okolí. Mohlo by tak snadno
+dojít k situaci, kdy autonomní platforma například narazí do jednoho z řady prémiových vozů německých značek, které jejich 
+majitelé rádi parkovali v místech, kde často docházelo k testování nehotového softwaru pro autonomní řízení, nebo, v horším 
+případě, ohrozí zdraví lidí náhodou se pohybujících okolo vozidla. Pokud by mělo dojít k reálnému využití takto řízeného vozidla,
+analýza okolního prostředí samozřejmě bude nezbytná. Je však třeba zmínit, že v případě testování se jednalo teprve o první 
+prototyp, jenž měl sloužit k vyzkoušení daného způsobu řízení. Cílem při prvním testování samozřejmě nebylo, a ani nemohlo být,
+vytvořit na první pokus dokonalý systém.
 
-\section{Řízení vozidla kombinací vstupů z GPS, kamery, a za využití mapových podkladů}
+Jako druhý, a z hlediska využití vozidla také podstatně závažnější, problém se nabízí omezená flexibilita řešení. Zatímco při 
+řízení pomocí GPS stačí pro změnu cesty autonomní platformy pouze nadefinovat jinak waypointy, případně aktualizovat digitální 
+mapové podklady, v případě řízení pomocí grafických kódu je třeba fyzicky rozmístit grafické kódy tak, aby software vždy věděl,
+kde má v aktuální situaci platformu směřovat. Grafické kódy musí být vidět, nesmí být například blokovány zaparkovaným vozem,
+poničené okolo jdoucí osobou se špatnými úmysly, poničené vlivem počasí, apod. Dále lze tímto způsobem nadefinovat pouze jednu
+cestu, aby software vždy dokázal jednoduše deterministicky rozhodnout o správné cestě. Posledním projevem neflexibility daného
+způsobu řešení je také nutnost fyzicky přesunout grafické kódy při každé změně plánované cesty.
+
+Za problém lze považovat také fakt, že vozidlo při detekci kamery směřuje přímo k nejbližšímu kódu. Kódy samozřejmě musí být 
+rozmístěny mimo silnici či chodník, aby neblokovaly cestu. Ovšem kódy umístěné mimo silnici dokážou vozidlo svést z cesty 
+v lepším případě pouze na trávník, v horším případě jej navedou přímo do nečekané překážky. Tento problém však je řešitelný,
+například vynucením určitého odstupu od kódu a udržování kódu v určité vzdálenosti od boku vozidla.  V tomto případě by ale musely
+všechny kódy být umístěny pouze po jedné straně vozidla. Druhým možným řešením je převod detekovaného grafického kódu na waypoint
+na mapě. Toto řešení ovšem vyžaduje využití mapových podkladů a vstupů z GPS pro řízení platformy, a zabíhá již do podkapitoly 
+\nameref{combination-of-driving-inputs}
+
+\subsection{Možné využití v praxi}
+
+I přes určitá omezení tohoto způsobu řízení ovšem není možné daný způsob prohlásit za nepoužitelný. Ačkoliv je nevhodný 
+při navigaci kampusem pomocí předem neznámé trasy, může skvěle posloužit například pro přesné zaparkování vozidla po dosažení 
+cíle. K parkování lze samozřejmě využít například horizontální značení parkovacího místa. Očekává se ovšem, že autonomní platforma
+bude objíždět velké množství budov spadajících pod kampus Vysoké školy báňské. V takovém případě ovšem nemusí jít vždy zaparkovat,
+například z důvodu obsazenosti parkovacích míst, nebo z důvodu velké vzdálenosti nejbližšího parkovacího místa od budovy. Toto by
+mohlo způsobit problémy třeba při případné implementaci automatizovaného nakládání a vykládání vozidla. Navíc možnost vytvářet 
+nová parkovací místa rezervovaná pouze pro autonomní výzkumná vozidla nevyniká svou praktičností, už jen díky nutnosti vytvoření
+nového horizontálního značení.
+
+Jako alternativa se v takovéto situaci nabízí právě využití grafického kódu, který stačí pouze vytisknout ve správné velikosti 
+a umístit na vertikální plochu. Vozidlo by po detekování kódu mohlo přesně zaparkovat v předdefinované vzdálenosti od kódu. Takto
+by bylo možné přesně a relativně jednoduše dovést vozidlo až do přesně určené finální pozice. Tato funkcionalita dokáže umožnit
+nejen dříve zmíněné robotizované nakládání a vykládání autonomní platformy, jež má sloužit k rozvozu materiálu napříč kampusem,
+ale také přesné zaparkování v garáži nebo jiných vnitřních prostorech, ve kterých samozřejmě nelze využít technologii GPS.
+
+\section{Řízení vozidla kombinací vstupů z GPS, kamery, a za využití mapových podkladů} \label{combination-of-driving-inputs}
 
 \chapter{Práce s mapovými podklady} \label{osm-chapter}
 
@@ -676,19 +719,46 @@ funkci sinus, a získáme hledanou odchylku.
 
 \chapter{Budoucí vývoj vozidla}
 
+Jak již bylo zmíněno dříve, projekt, jemuž se věnuje tato práce, přesahuje svým rozsahem bakalářskou práci. Práce na projektu bude
+dále pokračovat, v současné době je třeba dokončit především autonomní řízení a navigaci vozidla. Dále se však nabízí velká škála
+vylepšení projektu, aby bylo umožněno platformu využívat v reálném provozu. Tato rozšíření a vylepšení nejsou v momentální době
+uvažována zejména z časových důvodů a restrikcí.
+
 \section{Vstup z Lidaru}
+
+Pro zpřesnění ovládání a zlepšení analýzy okolí by bylo vhodné vstup ze soustavy kamer doplnit soustavou Lidarů. Soustava Lidarů
+umožní softwaru lépe určit např. vzdálenosti překážek. Většina analýzy vstupu z Lidaru by ovšem s nejvyšší pravděpodobností byla
+provedena na stejném serveru, jenž analyzuje vstup z kamer. Server by informace zpracoval a na svém vstupu vrátil pouhou kompilaci
+již zpracovaných dat. Kód, jímž se zabývá tato práce, by tak nejspíše nebylo třeba příliš upravovat.
 
 \section{Chytřejší práce s mapovými podklady}
 
-\subsection{Automatická aktualizace mapových podkladů}
+V současné době jako zdroj mapových podkladů slouží statický XML soubor, který je výsledkem exportu dat z mapové služby 
+OpenStreetMap. Toto s sebou však přináší určitá úskalí. V případě aktualizace mapových podkladů bude nutné znovu manuálně provést
+export, budeme-li chtít pracovat s nejnovějšími daty. Vhodnějším přístupem by bezpochyby bylo automatické stahování nejnovějších
+mapových podkladů např. pomocí periodicky spouštěného cronjobu. Cronjob by také mohl data určitým způsobem zpracovat, převést 
+do vlastního formátu, a případně také vyfiltrovat informace a data, která pro řízení vozidla nejsou potřeba, a naopak doplnit data
+o požadovaný kontext.
 
-\subsection{Cena cesty odvíjející se od denní doby}
+Příkladem dodatečného kontextu může být například informace o frekventovanosti silnice, tedy informace, jež úzce souvisí s dalším
+vylepšením práce s daty. Po univerzitním kampusu se na denní bázi pohybuje velké množství lidí. Vysoká koncentrace lidí může pohyb
+vozidla zpomalit, zároveň však vozidlo může představovat nebezpečí pro zdraví osob v jeho okolí. Ačkoliv je autonomní platforma
+navrhována s vysokým důrazem na bezpečnost, bylo by pro zvýšení bezpečnosti, a částečně také plynulosti provozu vozidla, lepší,
+aby se vyhýbalo frekventovaným cestám. Informace o frekventovanosti dané silnice, zakódovaná v souboru s mapovými podklady, 
+by tak mohla posloužit při vyhledávání cesty, aby vozidlo využívalo cesty méně využívané, a ještě více bylo zmírněno jakékoliv
+riziko spojené s provozem vozidla.
 
 \section{Ovládání vozidla pomocí webové aplikace} \label{web-app}
 
+%TODO: Tohle chci ještě naprogramovat, takže dopsat jenom kdybych nestihl, jinak naprogramovat a jebnout do separate chapteru
+
 \section{Metriky, chytřejší logování, monitorování}
 
+%TODO: Prometheus, Grafana, Kibana
+
 \chapter{Závěr}
+
+%TODO: Zhodnotit, jak moc za píču to stojí
 
 % Seznam literatury
 \printbibliography[title={Literatura}, heading=bibintoc]
