@@ -709,7 +709,24 @@ ale také přesné zaparkování v garáži nebo jiných vnitřních prostorech,
 
 \section{Řízení vozidla kombinací vstupů z GPS, kamery, a za využití mapových podkladů} \label{combination-of-driving-inputs}
 
+Jasným výsledkem předchozího výzkumu tedy je nutnost implementace řízení za pomocí kombinace více vstupů. Tato implentace tak bude
+kombinovat vyhledávání cesty pomocí mapových podkladů k nalezení správné cesty, a vstupy ze soustavy kamer a lidarů k zajištění
+bezpečnosti provozu, vyhýbání se překážkám, udržování správné trajektorie, aby vozidlo např. odchylkou GPS nesjelo z vozovky,
+ale také k vyhledávání zatáček a křižovatek, na kterých poté pomocí mapových podkladů proběhne rozhodnutí o následujícím pohybu 
+autonomní platformy, aby bylo korektně dosaženo cíle. Cíl samozřejmě bude definován waypointy. Při vývoji bude využito nejen 
+poznatků, ale také kódu z předchozího výzkumu.
+
+Bohužel, vývoj tohoto způsobu autonomního řízení je náročný a navazuje na předchozí výzkum, projekt bude vývoji ještě nějakou
+dobu, a přesahuje rozsah této publikace. Navíc byla práce na projektu autonomního řízení negativně ovlivněna pandemií koronaviru
+SARS-CoV-2 a stoupající cenou kryptoměn. Pandemie koronaviru ztížila testování vozidla a práci s fyzickým vozidlem vynucení práce
+z domova, způsobila silný nedostatek webkamer, které byly na projektu potřeba kvůli snímání okolí, a kombinace vysokého zájmu
+těžařů o grafické karty, a snížené produkce grafických karet a počítačových čipů obecně, znemožnila získání hardwaru potřebného
+pro implementaci plně autonomního řízení. Práce však bude do budoucna stále pokračovat, pravděpodobně poté bude popsána v jiné 
+publikaci.
+
 \chapter{Práce s mapovými podklady} \label{osm-chapter}
+
+%TODO: do this
 
 \section{Načítání mapových podkladů}
 
@@ -754,7 +771,20 @@ riziko spojené s provozem vozidla.
 
 \section{Metriky, chytřejší logování, monitorování}
 
-%TODO: Prometheus, Grafana, Kibana
+Každý programátor s profesionální zkušeností ze soukromé sféry si je vědom důležitosti logování, sledování určitých metrik 
+a monitorování programu za běhu. Za účelem automatizace monitorování aplikací proto také vznikla velká spousta nástrojů, mezi něž
+se řadí například Prometheus, Grafana, Kibana nebo Logstash. V projektu autonomního řízení by bylo vhodné implementovat 
+automatizované monitorování právě pomocí těchto nástrojů, ideálně dříve, než dojde k využití vozidla v reálném provozu. 
+
+Extenzivní logování zpráv ve formátu JSON by umožnilo automatizovat sledování logů nástrojem Kibana, a notifikovat vývojáře 
+platformy v případě zvýšeného výskytu chyb. 
+
+Nástroj Prometheus lze využít ke sběru programátorem poskytovaných metrik. Metriky samozřejmě nejsou předem definované, vývojář 
+metriky definuje sám, pomocí Promethea tak lze sledovat skoro cokoliv. Často se ovšem tato technologie používá například 
+ke sledování počtu, ale také trvání, dotazů na externí komponentu, ke sledování počtu chyb, apod. Toto samozřejmě umožní například
+sbírat informace o počtu chyb na sběrnici CAN, délky trvání dotazů na server analyzující okolní prostředí, atd. Sesbírané metriky
+následně lze graficky zobrazit za využití technologie trefně pojmenované Grafana. Monitorování metrik umožní nejen odhalení chyb, 
+ale také zjednodušší ladění výkonnostní stránky aplikace, díky možnosti sledování délky trvání dotazů.
 
 \chapter{Závěr}
 
@@ -762,6 +792,9 @@ riziko spojené s provozem vozidla.
 
 % Seznam literatury
 \printbibliography[title={Literatura}, heading=bibintoc]
+% https://pmj.bmj.com/content/97/1144/110
+% https://www.csselectronics.com/screen/page/simple-intro-to-can-bus/language/en
+%TODO: Nefunguje Bloomberg, ozdrojovat shitoměny
 
 % Prilohy
 \appendix
@@ -769,3 +802,4 @@ riziko spojené s provozem vozidla.
 % \input{Chapters/Appendix2.tex}
 
 \end{document}
+
