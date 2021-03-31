@@ -70,10 +70,14 @@
 \AddAcronym{RX}{Receiver}
 \AddAcronym{RPC}{Remote Procedure Call}
 \AddAcronym{REST}{Representational state transfer}
+\AddAcronym{OSM}{OpenStreetMap}
 
 \addbibresource{biblatex-examples.bib}
 
 % Novy druh tabulkoveho sloupce, ve kterem jsou cisla zarovnana podle desetinne carky
+% Já jako chápu, jaký je význam tohoto, ale bylo to v šabloně od Dvorského, nikde to (momentálně) nevyužívám
+% Možná to zapomenu smazat
+% TODO: Smazat, jestli to nevyužiju.
 \newcolumntype{d}[1]{D{,}{,}{#1}}
 
 \begin{document}
@@ -98,7 +102,7 @@ vizualizér, pomocí kterého je možné sledovat pohyb vozidla. Při tvorbě ř
 knihoven a veřejných zdrojů, včetně map OpenStreetMap nebo Mapy.cz. Zdrojový kód, který je součástí této práci, je
 rovněž otevřený a veřejně dostupný na Githubu.
 
-\chapter{Architektura řídícího softwaru}
+\chapter{Architektura řídícího softwaru} \label{software-architecture}
 Jak již bylo zmíněno, řídící software je rozdělen do dvou komponent, komunikujících mezi sebou pomocí protokolu TCP na bázi
 architektury klient-server. Jako server slouží program zajišťující přenos dat na rozhraní CAN. Server takto abstrahuje
 nízkoúrovňové a bezpečnostní záležitosti, mezi které patří výpočet kontrolních součtů, zasílání CAN zpráv, TX/RX synchronizace,
@@ -120,6 +124,14 @@ orchestraci a monitorování zatím nedošlo, bylo by možné například spouš
 nasazování pomocí CI/CD pipeline, a logy či metriky kontrolovat strojově pomocí nástrojů jako ELK stack nebo Prometheus.
 
 \chapter{Server a CAN komunikace}
+
+TCP server slouží k vzdálenému ovládání vozidla pomocí libovolného klienta. Software serveru je spouštěn na zařízení Raspberry Pi
+připojeném k rozhrání CAN autonomní platformy. CAN komunikace je implementována za využití knihovny \emph{python-can} a software 
+je schopen vozidlu předávat pokyny a zároveň vozidlo regulovat a monitorovat. Sám ale nedokáže plánovat cestu nebo reagovat 
+na vnější události ovlivňující vozidlo, dokáže však zpracovat interní chyby. Software tedy slouží čistě a pouze ke zpracování 
+interních záležitostí vozidla.
+
+Architektura softwaru a důvod dělení na server a klient jsou podrobněji popsány v kapitole \nameref{software-architecture}.
 
 \section{Sběrnice CAN}
 
@@ -726,13 +738,45 @@ publikaci.
 
 \chapter{Práce s mapovými podklady} \label{osm-chapter}
 
-%TODO: do this
+Při práci s mapovými podklady jsou využity hned dvě mapové služby, Mapy.cz společnosti Seznam.cz, a.s., a komunitní mapový projekt
+OpenStreetMap. 
+
+Mapy.cz jsou využívány především pro grafické podklady. Dále je využíváno API Mapy.cz pro implementaci webové aplikace. Důvody
+využití služby Mapy.cz souvisí především s jejím českým původem. Vývojáři Mapy.cz spolupracují přímo s českými úřady a často tak
+dokážou zaznamenat změny v silniční síti rychleji než zahraniční nebo komunitní mapové služby. Drobnou roli hraje také vlastenecký
+sentiment.
+
+OpenStreetMap poté slouží jako poskytovatel veřejně dostupných vektorových mapových podkladů.
+
+Při vývoji projektu byl věnován čas výběru správnému zdroji vektorových mapových podkladů. Mapy.cz působily jako primární kandidát
+na zdroj podkladů, a to především díky svých již dříve zmíněných časnějších aktualizací na základě změn v silniční síti. 
+Při studování dokumentace API Mapy.cz byl však objeven znepokojující fakt -- Mapy.cz veřejně poskytují pouze grafické podklady.
+Na dotaz, zda je možné využít vektorové podklady společnosti Seznam.cz, a.s., bylo odpovězeno, že v současné době jsou tyto
+podklady používány pouze interně a existují pouze v binárním formátu. Společnost Seznam.cz, a.s. vyjádřila ochotu exportovat 
+a poskytnout svá data pro akademické účely, ovšem pro jednoduchost využití bylo rozhodnuto, že budou využity podklady poskytované
+projektem OpenStreetMap.
 
 \section{Načítání mapových podkladů}
 
+Mapové podklady jsou uloženy ve formátu XML, který využívá pro export projekt OpenStreetMap, nejsou převáděny do vlastního 
+formátu. K načítání textového XML souboru je využita knihovna \emph{osmium}. Z tohoto souboru jsou přečteny uzly a cesty. Relace
+jsou ignorovány. Při zpracování cest jsou uloženy pouze cesty povolených typů, ostatní typy cest jsou ignorovány. Mezi ignorované
+typy patří např. \emph{footway}, \emph{corridor}, \emph{steps}. Podklady OSM často obsahují například chodníky či chodby, je ovšem
+velmi nežádoucí, aby se vozidlo pokoušelo projíždět například chodbou budovy. Po načtení všech cest jsou nakonec z mapových 
+podkladů odstraněny také uzly, ke kterým nevede žádná cesta. Uzly v reálném světě představují například křižovatky nebo spojení
+chodeb. Ovšem v případě například vnitřního uzlu, tedy spojení chodeb v budově, není třeba uzel ukládat v paměti softwaru a dále 
+s ním pracovat, neboť chodby jsou již dříve z podkladů odstraněny a uzel by neměl reálné využití.
+
+Při načítání jsou samozřejmě objekty modulu \emph{osmium} převedeny na instance vlastních tříd, definujících nové užitečné metody
+či atributy.
+
 \section{Vyhledání aktuální pozice na mapě}
 
+%TODO: Tohle mám naprogramované, chci popsat (vyhledání nejbližšího bodu na nejbližším vektoru)
+
 \section{Plánování cesty za využití mapových podkladů}
+
+%TODO: BFS (nebo variace) nad cestami, rád bych naprogramoval, jestli ne, okecat
 
 \chapter{Budoucí vývoj vozidla}
 
