@@ -12,24 +12,24 @@
 \SubmissionYear{2021}
 
 \Acknowledgement {
-    Chtěl bych poděkovat vedoucímu mé práce, Janu Gaurovi, nejen za pomoc s tvorbou práce a návrhem softwaru, ale především 
-    za možnost se projevit a pracovat na skutečném a zajímavém projektu. Dále chci poděkovat svým kolegům z práce, kteří mě 
+    Chtěl bych poděkovat vedoucímu mé práce, Janu Gaurovi, nejen za pomoc s tvorbou práce a návrhem softwaru, ale především
+    za možnost se projevit a pracovat na skutečném a zajímavém projektu. Dále chci poděkovat svým kolegům z práce, kteří mě
     naučili spoustu věcí, na které v akademickém prostředí není čas nebo příležitost.
 }
 
 \CzechAbstract {
-    Tato práce se zabývá vývojem software pro samořiditelnou platformu vznikající na VŠB-TUO. Po dokončení by software měl být 
-    schopen na základě vstupů ze softwaru pro analýzu obrazu, GPS, Lidaru a řídící jednotky vozidla bezpečně navigovat vozidlo 
+    Tato práce se zabývá vývojem software pro samořiditelnou platformu vznikající na VŠB-TUO. Po dokončení by software měl být
+    schopen na základě vstupů ze softwaru pro analýzu obrazu, GPS, Lidaru a řídící jednotky vozidla bezpečně navigovat vozidlo
     univerzitním kampusem.
 
-    Řídící software je rozdělen do dvou komponent. První komponenta zajišťuje komunikaci s řídící jednotkou vozidla pomocí 
-    sběrnice CAN, na starosti má ovládání rychlosti vozidla a natáčení kol. Druhá komponenta má na starosti plánování cesty 
-    na základě výše vyjmenovaných vstupů. První komponentě poté zadá pouze požadovanou rychlost vozidla a natáčení kol, samotné 
-    posílání CAN zpráv však nemusí řešit. Komponenty mezi sebou komunikují pomocí protokolu TCP. K testování ovládacího software 
-    lze využít simulátor, který dokáže nasimulovat chování první komponenty. Pro řízení vozidla jsou v hojné míře využívány PID 
+    Řídící software je rozdělen do dvou komponent. První komponenta zajišťuje komunikaci s řídící jednotkou vozidla pomocí
+    sběrnice CAN, na starosti má ovládání rychlosti vozidla a natáčení kol. Druhá komponenta má na starosti plánování cesty
+    na základě výše vyjmenovaných vstupů. První komponentě poté zadá pouze požadovanou rychlost vozidla a natáčení kol, samotné
+    posílání CAN zpráv však nemusí řešit. Komponenty mezi sebou komunikují pomocí protokolu TCP. K testování ovládacího software
+    lze využít simulátor, který dokáže nasimulovat chování první komponenty. Pro řízení vozidla jsou v hojné míře využívány PID
     regulátory.
 
-    V době odevzdání této práce ještě není software plně dokončený, jelikož se jedná o výzkumný projekt, který svým rozsahem 
+    V době odevzdání této práce ještě není software plně dokončený, jelikož se jedná o výzkumný projekt, který svým rozsahem
     přesahuje bakalářskou práci, a vývoj platformy bude dále pokračovat.
 }
 
@@ -38,19 +38,19 @@
 }
 
 \EnglishAbstract {
-    This thesis is focused on the development of software for a self-driving platform, which is being developed by the Technical 
-    University of Ostrava. Upon completion, the software should be capable of safely navigating an autonomous vehicle through 
+    This thesis is focused on the development of software for a self-driving platform, which is being developed by the Technical
+    University of Ostrava. Upon completion, the software should be capable of safely navigating an autonomous vehicle through
     the university campus, taking inputs from image analysis software, GPS, Lidar, and the vehicle's own controller unit.
 
-    The software is split into two components. The first component handles communication with the vehicle's controller 
-    unit via a CAN bus. The second component then does all the path planning, taking into account the aforementioned inputs. 
-    The second component then asks the first component to maintain a certain speed or steer the vehicles, however, it doesn't 
-    have to handle CAN messages, including driving inputs or control checksums, by itself. The TCP protocol is used 
-    for communication between the components. The path planning software can be tested using a simulator, capable of mocking 
-    the CAN handling software, along with the entire vehicle. The simulator honors the TCP API, however, the vehicle physics 
+    The software is split into two components. The first component handles communication with the vehicle's controller
+    unit via a CAN bus. The second component then does all the path planning, taking into account the aforementioned inputs.
+    The second component then asks the first component to maintain a certain speed or steer the vehicles, however, it doesn't
+    have to handle CAN messages, including driving inputs or control checksums, by itself. The TCP protocol is used
+    for communication between the components. The path planning software can be tested using a simulator, capable of mocking
+    the CAN handling software, along with the entire vehicle. The simulator honors the TCP API, however, the vehicle physics
     are simplified. PID controllers are used in multiple parts of the software.
 
-    At the time of publishing this paper, the software is still unfinished, as the self-driving platform is an academic research 
+    At the time of publishing this paper, the software is still unfinished, as the self-driving platform is an academic research
     project, which outspans this bachelor's thesis in scope, and development of the platform will continue.
 }
 
@@ -71,6 +71,7 @@
 \AddAcronym{RPC}{Remote Procedure Call}
 \AddAcronym{REST}{Representational state transfer}
 \AddAcronym{OSM}{OpenStreetMap}
+\AddAcronym{URL}{Uniform Resource Locator}
 
 \addbibresource{biblatex-examples.bib}
 
@@ -126,9 +127,9 @@ nasazování pomocí CI/CD pipeline, a logy či metriky kontrolovat strojově po
 \chapter{Server a CAN komunikace}
 
 TCP server slouží k vzdálenému ovládání vozidla pomocí libovolného klienta. Software serveru je spouštěn na zařízení Raspberry Pi
-připojeném k rozhrání CAN autonomní platformy. CAN komunikace je implementována za využití knihovny \emph{python-can} a software 
-je schopen vozidlu předávat pokyny a zároveň vozidlo regulovat a monitorovat. Sám ale nedokáže plánovat cestu nebo reagovat 
-na vnější události ovlivňující vozidlo, dokáže však zpracovat interní chyby. Software tedy slouží čistě a pouze ke zpracování 
+připojeném k rozhrání CAN autonomní platformy. CAN komunikace je implementována za využití knihovny \emph{python-can} a software
+je schopen vozidlu předávat pokyny a zároveň vozidlo regulovat a monitorovat. Sám ale nedokáže plánovat cestu nebo reagovat
+na vnější události ovlivňující vozidlo, dokáže však zpracovat interní chyby. Software tedy slouží čistě a pouze ke zpracování
 interních záležitostí vozidla.
 
 Architektura softwaru a důvod dělení na server a klient jsou podrobněji popsány v kapitole \nameref{software-architecture}.
@@ -332,19 +333,22 @@ komunikátorem existoval konstantní proud dat. K tomu ovšem nedochází, říd
 doopravdy potřebuje. Navíc je při řízení vozidla extrémně důležité, aby nedocházelo ke ztrátě paketů a vozidlo dostalo všechny
 odeslané pokyny a následně jejich přijetí potvrdilo.
 
-\section{Definice cílů cesty vozidla}
+\section{Definice cílů cesty vozidla} \label{target-definition}
 
 Mezi nadšenými motoristy se určitě najde řada lidí, kteří rádi jezdí bez jakéhokoliv cíle pouze pro radost z jízdy autem.
 U autonomního neosazeného vozidla ovšem bezcílné pojíždění nedává žádný smysl. Proto musí být definován určitý cíl cesty, kam
 se má vozidlo dostat, podle kterého poté může plánovací software naplánovat cestu.
 
-K definici cíle slouží waypointy. Waypointy, tedy geografické body na mapě, lze zadat pomocí grafického vizualizéru,
-viz podkapitola \nameref{visualizer}, a v blízké době také pomocí webové aplikace, viz sekce \nameref{web-app}. Waypointů je možné
-zadat teoreticky neomezené množství, prakticky je samozřejmě množství omezeno pamětí, kterou může plánovací software využít.
-Po zadání waypointu plánovací software nalezne nejkratší možnou cestu k danému místu na mapě a pokusí se vozidlo navigovat až
-k požadovanému cíli. Tento postup opakuje postupně pro každý waypoint, a to v takovém pořadí, v jakém je uživatel zadal.
-Při dosažení posledního waypointu se vozidlo zastaví a čeká na další pokyny. Pokud uživatel zadá nedosažitelný bod, tedy bod,
-který se nenachází na využitelné vozovce, bere se jako cílový waypoint bod na silnici, který je vstupu uživatele nejblíže.
+K definici cíle slouží waypointy. Waypointy, tedy geografické body na mapě, lze zadat nejen pomocí grafického vizualizéru,
+viz podkapitola \nameref{visualizer}, ale také pomocí webové aplikace, která by v praxi měla být preferována. Webové aplikaci
+se podrobněji věnuje kapitola \nameref{web-app}.
+
+Waypointů je možné zadat teoreticky neomezené množství, prakticky je samozřejmě množství omezeno pamětí, kterou může plánovací
+software využít.  Po zadání waypointu plánovací software nalezne nejkratší možnou cestu k danému místu na mapě a pokusí se vozidlo
+navigovat až k požadovanému cíli. Tento postup opakuje postupně pro každý waypoint, a to v takovém pořadí, v jakém je uživatel
+zadal. Při dosažení posledního waypointu se vozidlo zastaví a čeká na další pokyny. Pokud se uživatel při vytváření waypointu
+pokusí waypoint vytvořit mimo silnice definované mapovými podklady, je waypoint automaticky umístěn na nejbližší silnici.
+Práce s mapovými podklady je podrobněji rozebrána v kapitole \nameref{osm-chapter}.
 
 Jelikož je náročné zastavit přesně v určitém geografickém bodě, už jen kvůli nepřesnosti GPS, počítáme s určitou tolerancí
 v okruhu okolo uživatelem zadaného bodu. Přesná navigace pomocí technologie GPS byla vyzkoušena a je popsána v sekci
@@ -477,10 +481,6 @@ dvěma geografickými body. Získaná vzdálenost v metrech se poté využívá 
 při převodu geografických souřadnic na souřadnice kartézské, které následně umožňují zjednodušení výpočtů za cenu nižší, ale stále
 naprosto dostačující přesnosti, využití goniometrických souřadnic pro výpočet úhlu, apod.
 
-Předposlední využívaná knihovna, \emph{Osmium}, slouží k parsování OpenStreetMap dat. Modul \emph{Osmium} dokáže zpracovat data
-exportovaná z OpenStreetMap ve formátu XML a převést je na objekty jazyka Python, se kterými lze následně jednoduše pracovat
-v kódu. Zpracování mapových podkladů se podrobněji věnuje kapitola \nameref{osm-chapter}.
-
 Mikroframework \emph{Flask} není třeba žádnému zkušenějšímu Python programátorovi představovat. Jedná se o knihovnu umožňující
 tvorbu HTTP serveru a zpracování HTTP dotazů. Jako mikroframework je velmi jednoduchý na využití a relativně drobný. Není proto
 sám o sobě vhodný na tvorbu webových aplikací, za tímto účelem je efektivnější využít technologií stavějících na Flasku, pro
@@ -535,15 +535,15 @@ kombinace obojího.
 Nepopiratelným problémem při snaze řízení vozidla pouze za pomocí GPS byla samozřejmě také pomalá odezva GPS modulu. GPS modul
 aktualizoval souřadnice frekvencí pouze 1 Hz. Jedna aktualizace za sekundu pravděpodobně není žádný problém, pokud vozidlo řídí
 člověk. Jedna aktualizace za sekundu by nepředstavovala problém ani při řízení pomocí vstupu z kamery. Pokud však má být vozidlo
-řízeno pouze vstupem z GPS, je frekvence jednoho hertze příliš nízká. Jestliže vezmeme v potaz, že se vozidlo může pohybovat 
-rychlostí několika metrů za vteřinu, zvláště poté v kombinaci s nepřesnou GPS, která může naměřit lokaci s odchylkou více než 
+řízeno pouze vstupem z GPS, je frekvence jednoho hertze příliš nízká. Jestliže vezmeme v potaz, že se vozidlo může pohybovat
+rychlostí několika metrů za vteřinu, zvláště poté v kombinaci s nepřesnou GPS, která může naměřit lokaci s odchylkou více než
 jeden metr, mohlo by v praxi jednoduše dojít k situaci, kdy vozidlo například projede křižovatkou, na které mělo odbočit, nebo
-křižovatku detekuje příliš pozdě, pokusí se zatočit, ale narazí například na obrubník, který díky absenci vstupu z kamery nebo 
+křižovatku detekuje příliš pozdě, pokusí se zatočit, ale narazí například na obrubník, který díky absenci vstupu z kamery nebo
 Lidaru v uvažovaném způsobu ovládání nedokáže detekovat.
 
 Problém s rychlostí odezvy GPS je samozřejmě řešitelný investicí do GPS modulu s vyšší obnovovací frekvencí. V tomto momentě ovšem
 bylo jasné, že řízení vozidla pouze pomocí GPS je v nejlepším případě velmi nepraktické, v nejhorším případě velmi nebezpečné
-pro vozidlo i okolí. O nefunkčnosti tohoto řešení již nebylo třeba diskutovat, ovládání vozidla musí být implementováno jiným 
+pro vozidlo i okolí. O nefunkčnosti tohoto řešení již nebylo třeba diskutovat, ovládání vozidla musí být implementováno jiným
 způsobem. Proto tento problém zůstal neřešen.
 
 \subsection{Směr natočení vozidla} \label{directions-and-angles}
@@ -659,61 +659,61 @@ grafického kódu. Po správné kalibraci dokázal software správně určit vzd
 rozměrů. Dále dokázal software spočítat také vzdálenost od středu obrazu. Tato hodnota byla následně využita pro výpočet natočení
 kol vozidla. Software pro analýzu obrazu ovšem není předmětem této práce a byl vyvíjen jiným členem výzkumného týmu.
 
-Software analyzující vstup z kamery také implementoval obyčejný TCP server, jež na požádání vrátil údaje odečtené ze vstupu 
+Software analyzující vstup z kamery také implementoval obyčejný TCP server, jež na požádání vrátil údaje odečtené ze vstupu
 z webkamery. Ve své odpovědi vrací server vzdálenost detekovaného kódu od vozidla a vzdálenost detekovaného kódu od středu obrazu.
-Řídící software si opakovaně o tyto hodnoty žádá a na jejich základě počítá odchylku mezi směrem, kterým vozidlo momentálně 
+Řídící software si opakovaně o tyto hodnoty žádá a na jejich základě počítá odchylku mezi směrem, kterým vozidlo momentálně
 směřuje, a úhlem, pod kterým na grafický kód nahlíží. Natočení kol je následně nastaveno na hodnotu této odchylky, nejvýše však
 $20^{\circ}$, tedy maximální úhel natočení přední soupravy, aby autonomní platforma vždy směřovala nejkratší cestou k detekovanému
-kódu. Aby nedošlo ke kolizi mezi vozidlem a objektem, na kterém je upevněn grafický kód, je software naprogramován tak, aby 
+kódu. Aby nedošlo ke kolizi mezi vozidlem a objektem, na kterém je upevněn grafický kód, je software naprogramován tak, aby
 vozidlo zastavil v momentě, kdy je detekovaná vzdálenost kódu menší nebo rovna dvěma metrům.
 
-K výpočtu odchylky je třeba pouze matematika základní školy. Představíme si trojúhelník, jehož tři vrcholy jsou objektiv kamery, 
+K výpočtu odchylky je třeba pouze matematika základní školy. Představíme si trojúhelník, jehož tři vrcholy jsou objektiv kamery,
 střed projekce, a grafický kód. V takovém trojúhelníku bude přeponu představovat úsečka mezi objektivem kamery a grafickým bodem.
 Odchylku samotnou představuje úhel mezi přeponou a úsečkou spojující střed projekce. Délku této strany trojúhelníku neznáme, známe
-ovšem délky zbylých dvou stran, a víme, že je daný trojúhelník pravoúhlý. Pro výpočet úhlu tedy můžeme využít poměr přepony ku 
-protilehlé straně. Délkou protilehlé strany je zde vzdálenost bodu od středu projekce, délkou přepony je vzdálenost bodu 
-od vozidla. Samotný poměr nám představuje sinus hledaného úhlu. Na poměr tedy aplikujeme funkci arkus sinus, funkci inverzní k 
+ovšem délky zbylých dvou stran, a víme, že je daný trojúhelník pravoúhlý. Pro výpočet úhlu tedy můžeme využít poměr přepony ku
+protilehlé straně. Délkou protilehlé strany je zde vzdálenost bodu od středu projekce, délkou přepony je vzdálenost bodu
+od vozidla. Samotný poměr nám představuje sinus hledaného úhlu. Na poměr tedy aplikujeme funkci arkus sinus, funkci inverzní k
 funkci sinus, a získáme hledanou odchylku.
 
 \subsection{Výsledek testování}
 
 Řešení se při testování projevilo jako funkční, ovšem omezené a v praxi hůře použitelné. Jako hlavní problém samozřejmě vyvstává
 absence analýzy okolí vozidla. Stejně jako při řízení pomocí GPS, i zde si vozidlo není vědomo svého okolí. Mohlo by tak snadno
-dojít k situaci, kdy autonomní platforma například narazí do jednoho z řady prémiových vozů německých značek, které jejich 
-majitelé rádi parkovali v místech, kde často docházelo k testování nehotového softwaru pro autonomní řízení, nebo, v horším 
+dojít k situaci, kdy autonomní platforma například narazí do jednoho z řady prémiových vozů německých značek, které jejich
+majitelé rádi parkovali v místech, kde často docházelo k testování nehotového softwaru pro autonomní řízení, nebo, v horším
 případě, ohrozí zdraví lidí náhodou se pohybujících okolo vozidla. Pokud by mělo dojít k reálnému využití takto řízeného vozidla,
-analýza okolního prostředí samozřejmě bude nezbytná. Je však třeba zmínit, že v případě testování se jednalo teprve o první 
+analýza okolního prostředí samozřejmě bude nezbytná. Je však třeba zmínit, že v případě testování se jednalo teprve o první
 prototyp, jenž měl sloužit k vyzkoušení daného způsobu řízení. Cílem při prvním testování samozřejmě nebylo, a ani nemohlo být,
 vytvořit na první pokus dokonalý systém.
 
-Jako druhý, a z hlediska využití vozidla také podstatně závažnější, problém se nabízí omezená flexibilita řešení. Zatímco při 
-řízení pomocí GPS stačí pro změnu cesty autonomní platformy pouze nadefinovat jinak waypointy, případně aktualizovat digitální 
+Jako druhý, a z hlediska využití vozidla také podstatně závažnější, problém se nabízí omezená flexibilita řešení. Zatímco při
+řízení pomocí GPS stačí pro změnu cesty autonomní platformy pouze nadefinovat jinak waypointy, případně aktualizovat digitální
 mapové podklady, v případě řízení pomocí grafických kódu je třeba fyzicky rozmístit grafické kódy tak, aby software vždy věděl,
 kde má v aktuální situaci platformu směřovat. Grafické kódy musí být vidět, nesmí být například blokovány zaparkovaným vozem,
 poničené okolo jdoucí osobou se špatnými úmysly, poničené vlivem počasí, apod. Dále lze tímto způsobem nadefinovat pouze jednu
 cestu, aby software vždy dokázal jednoduše deterministicky rozhodnout o správné cestě. Posledním projevem neflexibility daného
 způsobu řešení je také nutnost fyzicky přesunout grafické kódy při každé změně plánované cesty.
 
-Za problém lze považovat také fakt, že vozidlo při detekci kamery směřuje přímo k nejbližšímu kódu. Kódy samozřejmě musí být 
-rozmístěny mimo silnici či chodník, aby neblokovaly cestu. Ovšem kódy umístěné mimo silnici dokážou vozidlo svést z cesty 
+Za problém lze považovat také fakt, že vozidlo při detekci kamery směřuje přímo k nejbližšímu kódu. Kódy samozřejmě musí být
+rozmístěny mimo silnici či chodník, aby neblokovaly cestu. Ovšem kódy umístěné mimo silnici dokážou vozidlo svést z cesty
 v lepším případě pouze na trávník, v horším případě jej navedou přímo do nečekané překážky. Tento problém však je řešitelný,
 například vynucením určitého odstupu od kódu a udržování kódu v určité vzdálenosti od boku vozidla.  V tomto případě by ale musely
 všechny kódy být umístěny pouze po jedné straně vozidla. Druhým možným řešením je převod detekovaného grafického kódu na waypoint
-na mapě. Toto řešení ovšem vyžaduje využití mapových podkladů a vstupů z GPS pro řízení platformy, a zabíhá již do podkapitoly 
+na mapě. Toto řešení ovšem vyžaduje využití mapových podkladů a vstupů z GPS pro řízení platformy, a zabíhá již do podkapitoly
 \nameref{combination-of-driving-inputs}
 
 \subsection{Možné využití v praxi}
 
-I přes určitá omezení tohoto způsobu řízení ovšem není možné daný způsob prohlásit za nepoužitelný. Ačkoliv je nevhodný 
-při navigaci kampusem pomocí předem neznámé trasy, může skvěle posloužit například pro přesné zaparkování vozidla po dosažení 
+I přes určitá omezení tohoto způsobu řízení ovšem není možné daný způsob prohlásit za nepoužitelný. Ačkoliv je nevhodný
+při navigaci kampusem pomocí předem neznámé trasy, může skvěle posloužit například pro přesné zaparkování vozidla po dosažení
 cíle. K parkování lze samozřejmě využít například horizontální značení parkovacího místa. Očekává se ovšem, že autonomní platforma
 bude objíždět velké množství budov spadajících pod kampus Vysoké školy báňské. V takovém případě ovšem nemusí jít vždy zaparkovat,
 například z důvodu obsazenosti parkovacích míst, nebo z důvodu velké vzdálenosti nejbližšího parkovacího místa od budovy. Toto by
-mohlo způsobit problémy třeba při případné implementaci automatizovaného nakládání a vykládání vozidla. Navíc možnost vytvářet 
+mohlo způsobit problémy třeba při případné implementaci automatizovaného nakládání a vykládání vozidla. Navíc možnost vytvářet
 nová parkovací místa rezervovaná pouze pro autonomní výzkumná vozidla nevyniká svou praktičností, už jen díky nutnosti vytvoření
 nového horizontálního značení.
 
-Jako alternativa se v takovéto situaci nabízí právě využití grafického kódu, který stačí pouze vytisknout ve správné velikosti 
+Jako alternativa se v takovéto situaci nabízí právě využití grafického kódu, který stačí pouze vytisknout ve správné velikosti
 a umístit na vertikální plochu. Vozidlo by po detekování kódu mohlo přesně zaparkovat v předdefinované vzdálenosti od kódu. Takto
 by bylo možné přesně a relativně jednoduše dovést vozidlo až do přesně určené finální pozice. Tato funkcionalita dokáže umožnit
 nejen dříve zmíněné robotizované nakládání a vykládání autonomní platformy, jež má sloužit k rozvozu materiálu napříč kampusem,
@@ -724,8 +724,8 @@ ale také přesné zaparkování v garáži nebo jiných vnitřních prostorech,
 Jasným výsledkem předchozího výzkumu tedy je nutnost implementace řízení za pomocí kombinace více vstupů. Tato implentace tak bude
 kombinovat vyhledávání cesty pomocí mapových podkladů k nalezení správné cesty, a vstupy ze soustavy kamer a lidarů k zajištění
 bezpečnosti provozu, vyhýbání se překážkám, udržování správné trajektorie, aby vozidlo např. odchylkou GPS nesjelo z vozovky,
-ale také k vyhledávání zatáček a křižovatek, na kterých poté pomocí mapových podkladů proběhne rozhodnutí o následujícím pohybu 
-autonomní platformy, aby bylo korektně dosaženo cíle. Cíl samozřejmě bude definován waypointy. Při vývoji bude využito nejen 
+ale také k vyhledávání zatáček a křižovatek, na kterých poté pomocí mapových podkladů proběhne rozhodnutí o následujícím pohybu
+autonomní platformy, aby bylo korektně dosaženo cíle. Cíl samozřejmě bude definován waypointy. Při vývoji bude využito nejen
 poznatků, ale také kódu z předchozího výzkumu.
 
 Bohužel, vývoj tohoto způsobu autonomního řízení je náročný a navazuje na předchozí výzkum, projekt bude vývoji ještě nějakou
@@ -733,46 +733,78 @@ dobu, a přesahuje rozsah této publikace. Navíc byla práce na projektu autono
 SARS-CoV-2 a stoupající cenou kryptoměn. Pandemie koronaviru ztížila testování vozidla a práci s fyzickým vozidlem vynucení práce
 z domova, způsobila silný nedostatek webkamer, které byly na projektu potřeba kvůli snímání okolí, a kombinace vysokého zájmu
 těžařů o grafické karty, a snížené produkce grafických karet a počítačových čipů obecně, znemožnila získání hardwaru potřebného
-pro implementaci plně autonomního řízení. Práce však bude do budoucna stále pokračovat, pravděpodobně poté bude popsána v jiné 
+pro implementaci plně autonomního řízení. Práce však bude do budoucna stále pokračovat, pravděpodobně poté bude popsána v jiné
 publikaci.
 
 \chapter{Práce s mapovými podklady} \label{osm-chapter}
 
 Při práci s mapovými podklady jsou využity hned dvě mapové služby, Mapy.cz společnosti Seznam.cz, a.s., a komunitní mapový projekt
-OpenStreetMap. 
+OpenStreetMap.
 
 Mapy.cz jsou využívány především pro grafické podklady. Dále je využíváno API Mapy.cz pro implementaci webové aplikace. Důvody
-využití služby Mapy.cz souvisí především s jejím českým původem. Vývojáři Mapy.cz spolupracují přímo s českými úřady a často tak
-dokážou zaznamenat změny v silniční síti rychleji než zahraniční nebo komunitní mapové služby. Drobnou roli hraje také vlastenecký
-sentiment.
+využití služby Mapy.cz souvisí především s extenzivním, avšak jednoduchým API, ale také s jejím českým původem. Vývojáři Mapy.cz
+spolupracují přímo s českými úřady a často tak dokážou zaznamenat změny v silniční síti rychleji než zahraniční nebo komunitní
+mapové služby. Drobnou roli hraje také vlastenecký sentiment.
 
 OpenStreetMap poté slouží jako poskytovatel veřejně dostupných vektorových mapových podkladů.
 
 Při vývoji projektu byl věnován čas výběru správnému zdroji vektorových mapových podkladů. Mapy.cz působily jako primární kandidát
-na zdroj podkladů, a to především díky svých již dříve zmíněných časnějších aktualizací na základě změn v silniční síti. 
+na zdroj podkladů, a to především díky svých již dříve zmíněných časnějších aktualizací na základě změn v silniční síti.
 Při studování dokumentace API Mapy.cz byl však objeven znepokojující fakt -- Mapy.cz veřejně poskytují pouze grafické podklady.
 Na dotaz, zda je možné využít vektorové podklady společnosti Seznam.cz, a.s., bylo odpovězeno, že v současné době jsou tyto
-podklady používány pouze interně a existují pouze v binárním formátu. Společnost Seznam.cz, a.s. vyjádřila ochotu exportovat 
+podklady používány pouze interně a existují pouze v binárním formátu. Společnost Seznam.cz, a.s. vyjádřila ochotu exportovat
 a poskytnout svá data pro akademické účely, ovšem pro jednoduchost využití bylo rozhodnuto, že budou využity podklady poskytované
 projektem OpenStreetMap.
 
-\section{Načítání mapových podkladů}
+\section{Stahování mapových podkladů a jejich zpracování}
 
-Mapové podklady jsou uloženy ve formátu XML, který využívá pro export projekt OpenStreetMap, nejsou převáděny do vlastního 
-formátu. K načítání textového XML souboru je využita knihovna \emph{osmium}. Z tohoto souboru jsou přečteny uzly a cesty. Relace
-jsou ignorovány. Při zpracování cest jsou uloženy pouze cesty povolených typů, ostatní typy cest jsou ignorovány. Mezi ignorované
-typy patří např. \emph{footway}, \emph{corridor}, \emph{steps}. Podklady OSM často obsahují například chodníky či chodby, je ovšem
-velmi nežádoucí, aby se vozidlo pokoušelo projíždět například chodbou budovy. Po načtení všech cest jsou nakonec z mapových 
+Projekt OpenStreetMap, zvolený poskytovatel mapových podkladů, umožňuje data exportovat mimo jiné také ve formátu XML. Pro získání
+souboru stačí vytvořit obyčejný HTTP GET požadavek a požadovanou exportovanou oblast specifikovat v parametrech URL. Server
+v odpovědi vrátí soubor s mapovými podklady. Soubor lze takto jednoduše získat například pomocí programu curl.
+
+Pro stahování a export mapových podkladů byl vytvořen separátní skript implementován v jazyce Python. Tento skript dokáže stáhnout
+soubor s mapovými podklady, zpracovat jej, uložit zpracovaná data ve vlastním formátu, a následně smazat soubor s původními
+mapovými podklady ve formátu XML.
+
+Implementace separátního skriptu pro získání mapových podkladů s sebou přinásí určité množství výhod. Skript je možné periodicky
+spouštět jako cronjob, ať už přímo v operačním systému, nebo například jako kontejner v Kubernetes. Dále je možné část zpracování
+podkladů převést z plánovacího softwaru do separátního programu, a tím zjednodušit logiku samotného plánovacího softwaru.
+A nakonec, využití vlastního formátu pro uložení dat nám umožní jednoduššeji přidat do souboru vlastní data a dodatečný kontext,
+viz sekce \nameref{smarter-maps}.
+
+K načtení textového XML souboru je využita knihovna \emph{osmium}. Z tohoto souboru jsou přečteny uzly a cesty. Relace jsou
+ignorovány. Při zpracování cest jsou uloženy pouze cesty povolených typů, ostatní typy cest jsou ignorovány. Mezi ignorované typy
+patří např. \emph{footway}, \emph{corridor}, \emph{steps}. Podklady OSM často obsahují například chodníky či chodby, je ovšem
+velmi nežádoucí, aby se vozidlo pokoušelo projíždět například chodbou budovy. Po načtení všech cest jsou nakonec z mapových
 podkladů odstraněny také uzly, ke kterým nevede žádná cesta. Uzly v reálném světě představují například křižovatky nebo spojení
-chodeb. Ovšem v případě například vnitřního uzlu, tedy spojení chodeb v budově, není třeba uzel ukládat v paměti softwaru a dále 
+chodeb. Ovšem v případě například vnitřního uzlu, tedy spojení chodeb v budově, není třeba uzel ukládat v paměti softwaru a dále
 s ním pracovat, neboť chodby jsou již dříve z podkladů odstraněny a uzel by neměl reálné využití.
 
-Při načítání jsou samozřejmě objekty modulu \emph{osmium} převedeny na instance vlastních tříd, definujících nové užitečné metody
-či atributy.
+Zpracovaná data jsou dále skriptem naformátována a uložena ve formátu JSON. Po dokončení exportu je XML soubor smazán.
 
-\section{Vyhledání aktuální pozice na mapě}
+\section{Vyhledání nejbližší silnice na mapě}
 
-%TODO: Tohle mám naprogramované, chci popsat (vyhledání nejbližšího bodu na nejbližším vektoru)
+Vyhledání nejbližší silnice je důležité nejen za účelem určení aktuální pozice vozidla na mapě, ale také při umisťování waypointů,
+které se vždy umisťují na silnici, viz sekce \nameref{target-definition}. Autonomní platforma se samozřejmě pohybuje po silnici,
+a plánovací software musí vědět, kde se vozidlo momentálně nachází i v momentě, kdy nepřesná GPS (viz sekce
+\nameref{gps-inaccuracy}) umístí autonomní platformu mimo definovanou silnici. Dále samozřejmě musí plánovací software vědět,
+na které silnici se nachází daný waypoint, aby dokázal správně naplánovat cestu.
+
+Cestu lze v mapových podkladech definovat dvěma způsoby. Počátečním a koncovým bodem, nebo bodem a vektorem určujícím směr a délku
+cesty. Oba způsoby definice cesty jsou využity při určování nejbližší silnice. Dále je uvažováno, že nejkratší cestou
+z libovolného bodu k libovolné silnici je úsečka kolmá k dané silnici, pokud taková úsečka existuje. V opačném případě
+je nejkratší cestou úsečka spojující daný bod s bližším koncem silnice.
+
+Pro určení nejbližší silnice využijeme výpočet průsečíků dvou přímek. %TODO: Reference SO answer
+Jako první přímku uvažujeme přímku definovanou počátkem a koncem silnice. K získání druhé přímky je následně třeba vzít normálový
+vektor k vektoru definujícímu danou silnici. Získaný normálový vektor umístíme do uvažovaného bodu, tedy například do aktuální
+pozice vozidla nebo neupravené pozice uživatelem definovaného waypointu. Tímto získáme přímku kolmou k dříve získané přímce.
+Následně na získané přímky aplikujeme funkci výpočtu průsečíku přímek, a zkontrolujeme, zda se daný průsečík nachází zároveň
+na úsečce představující silnici. Pokud ano, nejkratší cestu z uvažovaného bodu k dané silnici definujeme jako úsečku z uvažovaného
+bodu do průsečíku přímek. Pokud ne, nejkratší cesta bude cesta z daného bodu k bližšímu okrajovému bodu silnice. Tento algoritmus
+následně stačí v cyklu aplikovat na všechny silnice definované v mapových podkladech, a takto nalézt silnici, ke které vede
+nejkratší cesta. Tímto získáme nejen nejbližší silnici, ale také bod na dané silnici, ve kterém se nachází vozidlo, nebo ve kterém
+by měl být umístěn waypoint.
 
 \section{Plánování cesty za využití mapových podkladů}
 
@@ -792,42 +824,30 @@ umožní softwaru lépe určit např. vzdálenosti překážek. Většina analý
 provedena na stejném serveru, jenž analyzuje vstup z kamer. Server by informace zpracoval a na svém vstupu vrátil pouhou kompilaci
 již zpracovaných dat. Kód, jímž se zabývá tato práce, by tak nejspíše nebylo třeba příliš upravovat.
 
-\section{Chytřejší práce s mapovými podklady}
+\section{Chytřejší práce s mapovými podklady} \label{smarter-maps}
 
-V současné době jako zdroj mapových podkladů slouží statický XML soubor, který je výsledkem exportu dat z mapové služby 
-OpenStreetMap. Toto s sebou však přináší určitá úskalí. V případě aktualizace mapových podkladů bude nutné znovu manuálně provést
-export, budeme-li chtít pracovat s nejnovějšími daty. Vhodnějším přístupem by bezpochyby bylo automatické stahování nejnovějších
-mapových podkladů např. pomocí periodicky spouštěného cronjobu. Cronjob by také mohl data určitým způsobem zpracovat, převést 
-do vlastního formátu, a případně také vyfiltrovat informace a data, která pro řízení vozidla nejsou potřeba, a naopak doplnit data
-o požadovaný kontext.
-
-Příkladem dodatečného kontextu může být například informace o frekventovanosti silnice, tedy informace, jež úzce souvisí s dalším
-vylepšením práce s daty. Po univerzitním kampusu se na denní bázi pohybuje velké množství lidí. Vysoká koncentrace lidí může pohyb
-vozidla zpomalit, zároveň však vozidlo může představovat nebezpečí pro zdraví osob v jeho okolí. Ačkoliv je autonomní platforma
-navrhována s vysokým důrazem na bezpečnost, bylo by pro zvýšení bezpečnosti, a částečně také plynulosti provozu vozidla, lepší,
-aby se vyhýbalo frekventovaným cestám. Informace o frekventovanosti dané silnice, zakódovaná v souboru s mapovými podklady, 
-by tak mohla posloužit při vyhledávání cesty, aby vozidlo využívalo cesty méně využívané, a ještě více bylo zmírněno jakékoliv
-riziko spojené s provozem vozidla.
-
-\section{Ovládání vozidla pomocí webové aplikace} \label{web-app}
-
-%TODO: Tohle chci ještě naprogramovat, takže dopsat jenom kdybych nestihl, jinak naprogramovat a jebnout do separate chapteru
+Po univerzitním kampusu se na denní bázi pohybuje velké množství lidí. Vysoká koncentrace lidí může pohyb vozidla zpomalit,
+zároveň však vozidlo může představovat nebezpečí pro zdraví osob v jeho okolí. Ačkoliv je autonomní platforma navrhována s vysokým
+důrazem na bezpečnost, bylo by pro zvýšení bezpečnosti, a částečně také plynulosti provozu vozidla, lepší, aby se vyhýbalo
+frekventovaným cestám. Při následném vývoji řídícího softwaru by bylo vhodné do souboru s mapovými podklady zakódovat také
+informace o frekventovanosti silnice. Tato informace by následně mohla posloužit při vyhledávání cesty, aby vozidlo využívalo
+cesty méně využívané, a ještě více bylo zmírněno jakékoliv riziko spojené s provozem vozidla.
 
 \section{Metriky, chytřejší logování, monitorování}
 
-Každý programátor s profesionální zkušeností ze soukromé sféry si je vědom důležitosti logování, sledování určitých metrik 
+Každý programátor s profesionální zkušeností ze soukromé sféry si je vědom důležitosti logování, sledování určitých metrik
 a monitorování programu za běhu. Za účelem automatizace monitorování aplikací proto také vznikla velká spousta nástrojů, mezi něž
-se řadí například Prometheus, Grafana, Kibana nebo Logstash. V projektu autonomního řízení by bylo vhodné implementovat 
-automatizované monitorování právě pomocí těchto nástrojů, ideálně dříve, než dojde k využití vozidla v reálném provozu. 
+se řadí například Prometheus, Grafana, Kibana nebo Logstash. V projektu autonomního řízení by bylo vhodné implementovat
+automatizované monitorování právě pomocí těchto nástrojů, ideálně dříve, než dojde k využití vozidla v reálném provozu.
 
-Extenzivní logování zpráv ve formátu JSON by umožnilo automatizovat sledování logů nástrojem Kibana, a notifikovat vývojáře 
-platformy v případě zvýšeného výskytu chyb. 
+Extenzivní logování zpráv ve formátu JSON by umožnilo automatizovat sledování logů nástrojem Kibana, a notifikovat vývojáře
+platformy v případě zvýšeného výskytu chyb.
 
-Nástroj Prometheus lze využít ke sběru programátorem poskytovaných metrik. Metriky samozřejmě nejsou předem definované, vývojář 
-metriky definuje sám, pomocí Promethea tak lze sledovat skoro cokoliv. Často se ovšem tato technologie používá například 
+Nástroj Prometheus lze využít ke sběru programátorem poskytovaných metrik. Metriky samozřejmě nejsou předem definované, vývojář
+metriky definuje sám, pomocí Promethea tak lze sledovat skoro cokoliv. Často se ovšem tato technologie používá například
 ke sledování počtu, ale také trvání, dotazů na externí komponentu, ke sledování počtu chyb, apod. Toto samozřejmě umožní například
 sbírat informace o počtu chyb na sběrnici CAN, délky trvání dotazů na server analyzující okolní prostředí, atd. Sesbírané metriky
-následně lze graficky zobrazit za využití technologie trefně pojmenované Grafana. Monitorování metrik umožní nejen odhalení chyb, 
+následně lze graficky zobrazit za využití technologie trefně pojmenované Grafana. Monitorování metrik umožní nejen odhalení chyb,
 ale také zjednodušší ladění výkonnostní stránky aplikace, díky možnosti sledování délky trvání dotazů.
 
 \chapter{Závěr}
@@ -839,6 +859,7 @@ ale také zjednodušší ladění výkonnostní stránky aplikace, díky možnos
 % https://pmj.bmj.com/content/97/1144/110
 % https://www.csselectronics.com/screen/page/simple-intro-to-can-bus/language/en
 %TODO: Nefunguje Bloomberg, ozdrojovat shitoměny
+% https://stackoverflow.com/a/51127674 % Line line intersection in Python
 
 % Prilohy
 \appendix
