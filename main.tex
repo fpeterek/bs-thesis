@@ -528,9 +528,50 @@ kombinace obojího.
 
 \subsection{Nepřesnost GPS} \label{gps-inaccuracy}
 
-%TODO: Napsat, využít obrázky z testování, zmínit mobilní appku, teď se mi to nechce robit.
+Fakt, že GPS nedosahuje milimetrové přesnosti, dnes nikoho nepřekvapí. Nejen že k tomuto tématu existuje velká spousta zdrojů,
+%TODO: ozdrojovat linkem dole o nepřesnosti GPS
+a velká spousta motoristů nepřesnost systému zaznamenala třeba při využití navigace na silnicích, ale také není vůbec složité se 
+o zmiňované nepřesnosti přesvědčit jednoduchým pokusem. Stačí vzít do ruky mobilní telefon obsahující GPS modul a zobrazit si svou
+aktuální pozici. Tvůrci mapových aplikací svůj software implementují tak, aby ukazatel polohy opticky příliš neosciloval, přesto
+jde na mapě vidět určitá nepřesnost. Dále si lze povšimnout, že ukazatel polohy ve spoustě mapových aplikací vyobrazuje oblast
+větší než je reálná velikost GPS modulu. Tato vlastnost je samozřejmě z uživatelského hlediska v pořádku -- ukazatel musí být 
+v aplikaci vidět a uživateli tento grafický ukazatel nevadí. Tvůrcům aplikace navíc při chytré implementaci umožňuje větší 
+grafický ukazatel kompletně zakrýt odchylku měření GPS. Při řízení vozidla je ovšem důležité získat pozici s nepřesností v řádu
+nejvýše jednotek centimetrů, proto se nepřesnost GPS může projevit jako problematická.
 
-\subsection{Pomalá odezva GPS}
+Ovládací software vozidla byl při implementaci nejprve testován za využití simulátoru, který pozici vozidla počítá z přesně 
+definované pozice a rychlosti vozidla. Simulátor navíc aktualizoval pozici vozidla velmi často, v softwaru nebyla implementována
+žádná umělá odchylka, ani zpoždění. Při testování tak simulované vozidlo jezdilo korektně a vždy včas zatáčelo a správně hledalo
+přímou cestu k cíli. Problém ovšem nastal při testování softwaru v praxi na fyzickém vozidle s reálným GPS modulem.
+
+První testovací trasy byly pomocí waypointů definovány tak, aby vozidlo nemuselo prudce zatáčet, aby nenarazilo na žádné překážky
+a aby nebyla ohrožena bezpečnost osob, majetku, ale také samotného vozdila. Vozidlo po spuštění ovládacího softwaru úspěšně 
+zahájilo pohyb. Po bezpečném a rovném rozjezdu bylo povoleno zatáčení (viz oddíl \nameref{directions-and-angles}), v tomto momentě
+však nastaly problémy. Autonomní platforma začala nepředvídatelně zatáčet a směřovat špatným směrem. Často při první příležitosti
+změnila trajektorii pohybu a snažila se najet do nejbližší překážky. Toto chování bylo nečekané, neboť na simulátoru fungoval
+software bezproblémově, a také nežádoucí, jelikož waypointy byly definováný tak, aby vozidlo jelo rovně a zatáčelo pouze 
+minimálně.
+
+Nepřesnost GPS se samozřejmě nabízela jako hlavní vinník této nepříjemné situace, proto byla přesnost GPS modulu přezkoušena hned
+na místě. Software byl upraven tak, aby naměřené GPS hodnoty logoval na standardní výstup programu. Naměřené hodnoty ihned 
+potvrdily pravdivost doměnky -- nepřesnost systému GPS byla na potřeby autonomního řízení s využitím GPS jako jediného vstupu 
+velmi vysoká. Modul často umisťoval vozidlo jinde, než kde se ve skutečnosti nacházelo. Špatná lokalizace vozidla následně 
+zapříčinila špatné určení směru pohybu autonomní platformy (viz oddíl \nameref{directions-and-angles} a software začal směrovat
+vozidlo špatným směrem.
+
+Zde se samozřejmě objevil velký problém z hlediska řízení vozidla. Cílem vědecko-výzkumného projektu ovšem nebylo zjistit, co
+implementovat nejde, ale zjistit, co implementovat jde a jak lze autonomní platformu ovládat. Software byl znovu upraven. 
+Tentokrát došlo k úpravě způsobu určování aktuální pozice vozidla. Pozice se samozřejmě stále získávala z GPS modulu, nově ovšem
+software přestal pracovat s nezpracovanými daty poskytovanými modulem. Místo využití pouze těch nejnovějších souřadnic software 
+nyní využíval vážený průměr posledních deseti naměřených hodnot. Vážený průměr byl zvolen především kvůli minimalizaci zpoždění,
+které by přineslo využití obyčejného aritmetického průměru při rychlém pohybu. Při výpočtu váženého průměru byla nejnovější 
+naměřené souřadnici přiřazena váha o hodnotě 1. Váha následujících hodnot poté odpovídala 0,9násobku předchozí váhy. 
+Při vykreslení pozice získané pomocí váženého průměru nejnovějších deseti hodnot vypadala grafická vizualizace podstatně lépe 
+vedle vizualizace nezpracovaných čistých dat poskytnutých GPS modulem. Při vyzkoušení na fyzickém vozidle se však nepřesnost GPS,
+zvlášť v kombinaci s pomalou odezvou (viz sekce \nameref{gps-low-polling-rate}), stále jevila jako nepřekonatelný problém. V tomto
+momentě však stále ještě nedošlo k rezignaci vývojového týmu na tento způsob řízení vozidla.
+
+\subsection{Pomalá odezva GPS} \nameref{gps-low-polling-rate}
 
 Nepopiratelným problémem při snaze řízení vozidla pouze za pomocí GPS byla samozřejmě také pomalá odezva GPS modulu. GPS modul
 aktualizoval souřadnice frekvencí pouze 1 Hz. Jedna aktualizace za sekundu pravděpodobně není žádný problém, pokud vozidlo řídí
@@ -864,6 +905,7 @@ ale také zjednodušší ladění výkonnostní stránky aplikace, díky možnos
 % https://www.csselectronics.com/screen/page/simple-intro-to-can-bus/language/en
 %TODO: Nefunguje Bloomberg, ozdrojovat shitoměny
 % https://stackoverflow.com/a/51127674 % Line line intersection in Python
+% https://www.singletracks.com/mtb-gear/do-gps-units-always-overestimate-trail-distances-no/
 
 % Prilohy
 \appendix
