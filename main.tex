@@ -565,13 +565,37 @@ Tentokrát došlo k úpravě způsobu určování aktuální pozice vozidla. Poz
 software přestal pracovat s nezpracovanými daty poskytovanými modulem. Místo využití pouze těch nejnovějších souřadnic software 
 nyní využíval vážený průměr posledních deseti naměřených hodnot. Vážený průměr byl zvolen především kvůli minimalizaci zpoždění,
 které by přineslo využití obyčejného aritmetického průměru při rychlém pohybu. Při výpočtu váženého průměru byla nejnovější 
-naměřené souřadnici přiřazena váha o hodnotě 1. Váha následujících hodnot poté odpovídala 0,9násobku předchozí váhy. 
+naměřené souřadnici přiřazena váha o hodnotě 1. Váha následujících hodnot poté odpovídala 0,9 násobku předchozí váhy. 
 Při vykreslení pozice získané pomocí váženého průměru nejnovějších deseti hodnot vypadala grafická vizualizace podstatně lépe 
 vedle vizualizace nezpracovaných čistých dat poskytnutých GPS modulem. Při vyzkoušení na fyzickém vozidle se však nepřesnost GPS,
 zvlášť v kombinaci s pomalou odezvou (viz sekce \nameref{gps-low-polling-rate}), stále jevila jako nepřekonatelný problém. V tomto
 momentě však stále ještě nedošlo k rezignaci vývojového týmu na tento způsob řízení vozidla.
 
-\subsection{Pomalá odezva GPS} \nameref{gps-low-polling-rate}
+Následující výzkum se tedy věnoval právě nepřesnosti GPS a snaze zjistit, jak nepřesná GPS doopravdy je, jaké jsou reálné dopady
+nepřesnosti při řízení a do jaké míry pomáhá v předchozím odstavci zmíněný vážený průměr nejnovějších deseti naměřených hodnot.
+
+Za účelem testování GPS vznikla velmi jednoduchá aplikace pro mobilní operační systém Android. Aplikace byla naprogramována 
+v programovacím jazyce Kotlin -- oficiálně doporučeným jazykem pro tvorbu aplikací pro zmiňovaný operační systém společnosti 
+Google. Samotná aplikace nebude v této publikaci příliš rozebírána, neboť skutečně odpovídá definici slova 'primitivní'. Aplikace
+obsahuje pouze jedno velké funkční tlačítko, kterým lze zapnout logování GPS souřadnic. Souřadnice jsou logovány jednou za sekundu
+do obyčejného textového souboru uloženého v paměti telefonu. Každý soubor je označen časem vytvoření -- tedy časem, kdy uživatel
+spustil logování geolokace. Soubor musí být po dokončení logování extrahován z paměti telefonu manuálně. Aplikace také byla 
+testována pouze na zařízení Samsung Galaxy Note 9 s nejnovější verzí softwaru, jež byla v době tvorby aplikace pro daný hardware
+dostupná. Výsledný program není publikován v žádném veřejném obchodě a slouží skutečně spíše jako jednorázová utilita pro krátké
+a rychlé testování. Zdrojové kódy jsou ovšem volně dostupné na Githubu, %TODO: Github link
+a také jsou přiloženy k této práci.
+
+Dokončení mobilní aplikace umožnilo následné vyražení do terénu a testování přesnosti GPS v praxi. Měření bylo prováděno na území
+obce Kobeřice a přineslo výsledky v určitých ohledech překvapivé, v jiných zase předpokládatelné.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\textwidth]{Figures/louky.png}
+    \caption{Rovná cesta středem ulice připomíná spíše večerní ploužení z nedalékého restauračního zařízení}
+    \label{fig:louky}
+\end{figure}
+
+\subsection{Pomalá odezva GPS} \label{gps-low-polling-rate}
 
 Nepopiratelným problémem při snaze řízení vozidla pouze za pomocí GPS byla samozřejmě také pomalá odezva GPS modulu. GPS modul
 aktualizoval souřadnice frekvencí pouze 1 Hz. Jedna aktualizace za sekundu pravděpodobně není žádný problém, pokud vozidlo řídí
@@ -906,6 +930,7 @@ ale také zjednodušší ladění výkonnostní stránky aplikace, díky možnos
 %TODO: Nefunguje Bloomberg, ozdrojovat shitoměny
 % https://stackoverflow.com/a/51127674 % Line line intersection in Python
 % https://www.singletracks.com/mtb-gear/do-gps-units-always-overestimate-trail-distances-no/
+% https://github.com/fpeterek %TODO: Můj github na místa, kde se hodí
 
 % Prilohy
 \appendix
