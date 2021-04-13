@@ -539,6 +539,8 @@ v aplikaci vidět a uživateli tento grafický ukazatel nevadí. Tvůrcům aplik
 grafický ukazatel kompletně zakrýt odchylku měření GPS. Při řízení vozidla je ovšem důležité získat pozici s nepřesností v řádu
 nejvýše jednotek centimetrů, proto se nepřesnost GPS může projevit jako problematická.
 
+\subsubsection{Problémy při prvním testování}
+
 Ovládací software vozidla byl při implementaci nejprve testován za využití simulátoru, který pozici vozidla počítá z přesně 
 definované pozice a rychlosti vozidla. Simulátor navíc aktualizoval pozici vozidla velmi často, v softwaru nebyla implementována
 žádná umělá odchylka, ani zpoždění. Při testování tak simulované vozidlo jezdilo korektně a vždy včas zatáčelo a správně hledalo
@@ -574,6 +576,8 @@ momentě však stále ještě nedošlo k rezignaci vývojového týmu na tento z
 Následující výzkum se tedy věnoval právě nepřesnosti GPS a snaze zjistit, jak nepřesná GPS doopravdy je, jaké jsou reálné dopady
 nepřesnosti při řízení a do jaké míry pomáhá v předchozím odstavci zmíněný vážený průměr nejnovějších deseti naměřených hodnot.
 
+\subsubsection{Testování přesnosti GPS za pomocí mobilní aplikace}
+
 Za účelem testování GPS vznikla velmi jednoduchá aplikace pro mobilní operační systém Android. Aplikace byla naprogramována 
 v programovacím jazyce Kotlin -- oficiálně doporučeným jazykem pro tvorbu aplikací pro zmiňovaný operační systém společnosti 
 Google. Samotná aplikace nebude v této publikaci příliš rozebírána, neboť skutečně odpovídá definici slova 'primitivní'. Aplikace
@@ -586,14 +590,71 @@ a rychlé testování. Zdrojové kódy jsou ovšem volně dostupné na Githubu, 
 a také jsou přiloženy k této práci.
 
 Dokončení mobilní aplikace umožnilo následné vyražení do terénu a testování přesnosti GPS v praxi. Měření bylo prováděno na území
-obce Kobeřice a přineslo výsledky v určitých ohledech překvapivé, v jiných zase předpokládatelné.
+obce Kobeřice a přineslo výsledky v určitých ohledech překvapivé, v jiných zase předpokládatelné. Naměřené hodnoty byly za účelem
+vyhodnocení měření vykresleny do grafických mapových podkladů. Naměřené hodnoty jsou v obrázcích vyznačeny červenou barvou.
+
+Ze zajímavých výsledků lze zmínit například cestu středem rovné ulice. Měření bylo v tomto případě provedeno rovným pohybem 
+přesným středem silnice. Měření začalo i přestalo ve středu silnice. Naměřené hodnoty jsou graficky znázorněny na obrázku 
+\ref{fig:louky}. GPS modul v počátku měření naměřil hodnotu v cizím domě mimo vozovku, na které se ve skutečnosti nacházel. 
+Po chvíli se měření stabilizovalo. Zajímavé ovšem je, že na sebe naměřené hodnoty navazují. Předpoklad, že budou naměřené hodnoty
+náhodně rozmístěny okolo středu vozovky tímto byl vyvrácen. Také tím byla vyvrácena doměnka, že aplikace váženého průměru 
+na naměřené hodnoty zlepší přesnost. Ve skutečnosti by přesnost zůstala přinejlepším podobná, neboť z obrázku můžeme vyčíst, že
+pokud se naměřené hodnoty odchylují od středu silnice, zůstávají vychýlené po delší dobu. Pokud by na tyto hodnoty byl aplikován
+vážený průměr, průměrná hodnota by zůstala pozadu za reálnou hodnotou, odchylka od středu by však odfiltrována nebyla.
+Zároveň lze však vidět, že se odchylka po určité době změní a naměřené souřadnice se odchýlí na opačnou stranu. Odchylka tedy není
+konstatní a nelze ji jednoduše odečíst.
 
 \begin{figure}
     \centering
     \includegraphics[width=0.9\textwidth]{Figures/louky.png}
-    \caption{Rovná cesta středem ulice připomíná spíše večerní ploužení z nedalékého restauračního zařízení}
+    \caption{Rovná cesta středem ulice zaznamenaná pomocí GPS}
     \label{fig:louky}
 \end{figure}
+
+Jako další zajímavé měření lze považovat měření za jízdy osobním automobilem. Vozidlo se pohybovalo rychlostí 30 km/h, tedy 
+maximální povolenou rychlostí na silnici, na níž bylo měření prováděno. Měření bylo samozřejmě provedeno dvěma osobami, z níž
+jedna řídila vozidlo, zatímco druhá operovala mobilní telefon s aplikací. Nedošlo tak k žádnému ohrožení bezpečnosti provozu.
+Výsledek měření lze vidět na obrázku \ref{fig:olsinaautem}.
+
+Na obrázku \ref{fig:olsinaautem} je vidět, že při vyšší rychlosti již naměřené hodnoty nejsou spojité. Stále se však objevuje 
+určitá odchylka, tentokrát ovšem skoro konstantní. Lze odečíst, že směr a rychlost vozidla není velký problém vyhodnotit při 
+vyšších rychlostech, kdy je projev odchylky relativně ke skutečné změně nízký. Ovládací software však vzniká za účelem řízení
+autonomní platformy menších rozměrů kampusem univerzity. V takovémto případě je rychlost 30 km/h nereálná. Pro vozidlo a jeho 
+náklad nemusí být vhodná a pro bezpečnost provozu v areálu je příliš vysoká. Dále si lze povšimnout, že ačkoliv je odchylka 
+přijatelně nízká pro určení směru pohybu, přesně určit pozici vozidla není možné. GPS modul velmi často umístil osobní automobil
+do některého z domů stojících podél silnice. I přes takto vysokou odchylku lze jednoduše určit, po které silnici se vozidlo 
+momentálně pohybuje. Za účelem přesné navigace pouze pomocí GPS, což byl původní cíl výzkumu, je ovšem třeba přinejhorším 
+centimetrové přesnosti, jež GPS momentálně dosáhnout nedokáže.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\textwidth]{Figures/olsinaautem.png}
+    \caption{Krátká jízda osobním automobilem zaznamenaná pomocí GPS}
+    \label{fig:olsinaautem}
+\end{figure}
+
+Výsledky ostatních měření jsou obsaženy v příloze publikace.
+
+\subsubsection{Návrhy řešení nepřesnosti GPS}
+
+Ve snaze vytvořit funkční řízení čistě pomocí vstupu z GPS padlo v týmu zabývajícím se vývojem vozidla několik návrhů, jak danou
+situaci vyřešit a odchylku odfiltrovat.
+
+Jedním z návrhů bylo vzít nejbližší bod na na nejbližší silnici vzhledem k naměřené pozici, a předpokládat, že se autonomní 
+platforma po dané silnici pohybuje. Tento návrh byl rychle zavrhnut. Pokud by se vozidlo pohybovalo po trajektorii neparalelní
+se středem silnice, velmi rychle by opustilo silnici, ačkoliv by upravené hodnoty vykazovaly rovný pohyb po nadefinované cestě.
+
+Druhým ze zavrhnutých návrhů byl návrh naměřenou hodnotu validovat výpočtem. Pokud se vozidlo pohybuje určitou rychlostí s určitým
+úhlem natočení kol, není reálné, aby náhle rychle změnilo svůj směr a začalo se pohybovat na opačnou stranu. Tato úvaha na první
+pohled působí logickým dojmem, má ovšem jeden veliký problém. Abychom mohli validovat novou pozici na základě pozice předchozí 
+a dopočítané očekávané změny pozice, museli bychom si být jistí přesností pozice předchozí. Díky nepřesnosti GPS touto jistotou
+ovšem nedisponujeme, a validace tak může být problematická a nepřesná.
+
+Mezi návrhy se zařadilo také řešení hrubou silou -- využití většího množství GPS modulů a práce s průměrem naměřených hodnot. 
+Tento návrh však také nebyl bezchybný. Pokud by nebyly moduly synchronizovány a neaktualizovaly by své naměřené hodnoty všechny 
+najednou v krátkém časovém rozmezí, nemusel by průměr být vypovídající, zejména díky využití starých hodnot. Dále toto řešení
+samozřejmě vyžaduje připojení většího množství GPS modulů k jednomu zařízení Raspberry Pi. Nakonec však nedošlo k testování tohoto
+řešení, neboť řízení čistě pomocí vstupů z GPS bylo ještě před testováním zavrhnuto.
 
 \subsection{Pomalá odezva GPS} \label{gps-low-polling-rate}
 
@@ -875,7 +936,7 @@ by měl být umístěn waypoint.
 
 %TODO: BFS (nebo variace) nad cestami, rád bych naprogramoval, jestli ne, okecat
 
-\chapter{Webová aplikace}
+\chapter{Webová aplikace} \label{web-app}
 
 %TODO: Webová appka (už naprogramovaná, Kotlin+Ktor a JS+Mapy.cz, nějak popsat)
 
