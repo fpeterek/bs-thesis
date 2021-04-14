@@ -382,8 +382,8 @@ Metoda POST se využívá k vytváření waypointů. Server v těle požadavku o
 a \emph{longitude}. Po přijetí dotazu je JSON rozparsován a na základě obsahu objektu je vozidlu přidán nový waypoint.
 
 Metoda DELETE je přirozeně využita k mazání waypointů. Jedním dotazem je možné smazat jeden waypoint. Metoda DELETE očekává jeden
-parametr, index, který značí index waypointu, který má být smazán. V případě metody DELETE je parametr očekáván již v URI, obsah
-těla nebere API u této metody v potaz. Indexování probíhá přirozeně od nuly.
+parametr, id, který značí unikátní identifikátor waypointu, který má být smazán. V případě metody DELETE je parametr očekáván již 
+v URI, obsah těla nebere API u této metody v potaz.
 
 \subsection{Endpoint \emph{/position}}
 
@@ -938,7 +938,72 @@ by měl být umístěn waypoint.
 
 \chapter{Webová aplikace} \label{web-app}
 
-%TODO: Webová appka (už naprogramovaná, Kotlin+Ktor a JS+Mapy.cz, nějak popsat)
+V kapitole \nameref{target-definition} bylo předestřeno využití webové aplikaci ke vzdálenému ovládání vozidla. V současné době 
+lze autonomní platformu ovládat pomocí vizualizéru, jenž je součástí plánovacího softwaru. Toto řešení je ovšem dočasné a slouží
+především k ulehčení vývoje a zachytávání chyb. Při skutečném využití by bylo přinejlepším nepraktické. Využívání vizualizéru,
+mimo své negativní dopady na nároky ovládacího softwaru díky nutnosti vykreslovat vozidlo na mapu a vyobrazovat jeho pohyb, 
+znemožňuje kontejnerizaci softwaru pro plánování cesty a vynucuje spouštění ovládacího softwaru na zařízení, ze kterého chceme 
+autonomní platformu ovládat. Za další nevýhodu lze považovat nutnost instalace interpreteru jazyka Python na cílovém stroji, nebo
+daný interpreter přibalit k distribuci plánovacího softwaru.
+
+Webová aplikace je v dnešní době již víceméně standardním řešením, jež řeší všechny dříve zmíněné problémy. Software pro plánování
+cesty vozidla může běžet nezávisle na uživatelském rozhraní v kontejnerizovaném prostředí a vystavovat své REST API 
+pod nakonfigurovaným portem. Backend webové aplikace může běžet na stejném stroji či clusteru, jako plánovací software, nebo může
+být samozřejmě spuštěn kdekoliv jinde. Uživatel poté webovou aplikaci může využívat jednoduše za pomoci libovolného moderního 
+webového prohlížeče. Prohlížeč si od serveru vyžádá statické soubory a vykreslí webovou aplikaci, jež následně očekává vstup
+od uživatele a zároveň graficky vyobrazuje aktuální informace o vozidlu. Uživateli tak stačí mít k dispozici libovolný stroj 
+s moderním prohlížečem. Není třeba instalace žádného softwaru, může být využito libovolné zařízení, logika plánování cesty 
+a logika grafického vyobrazování informací o vozidle je od sebe oddělená, a všechny potřebné aktualizace jsou proveditelné
+na straně backendu.
+
+\section{Implementace frontendu webové aplikace}
+
+Volba technologií využitých na frontendu určitě nikoho nepřekvapí. Pro práci s mapovými podklady je využíváno API mapové služby 
+Mapy.cz (viz kapitola \nameref{osm-chapter}), jež umožňuje nejen vykreslování vozidla a waypointů, ale také registrovat interakce
+s mapou a implementovat ovládání vozidla a vytváření waypointů. Webová stránka je definována značkovacím jazykem HTML a logika
+webové aplikace je naprogramována v jazyce Javascript. Knihovna služby Mapy.cz je jediná závislost využitá v implementaci
+frontendu webové aplikace, s její výjimkou je využit pouze čistý Javascript.
+
+Frontend webové aplikace po svém načtení prohlížečem začne periodicky obnovovat aplikaci pomocí HTTP requestu na backend aplikace.
+Po přijetí odpovědi serveru jsou automaticky aktualizovány mapové podklady.
+
+Dále frontend definuje vytváření a mazání waypointů, jež definují cíl cesty vozidla. 
+
+Po kliknutí na mapu je poslán HTTP dotaz na API serveru. Server následně notifikuje plánovací software o uživatelově snaze 
+vytvořit waypoint. Software waypoint vytvoří a vloží jej na nejbližší cestu definovanou v mapových podkladech vozidla. 
+Po vytvoření waypointu je vynucena aktualizace mapových podkladů, aby se nově vytvořený waypoint promítl na mapě.
+
+Kliknutím na waypoint je možné daný waypoint smazat. Mazání waypointu je provedeno způsobem analogickým k vytváření waypointu,
+pouze je volán jiný endpoint backendu.
+
+\section{Implementace backendu webové aplikace}
+
+Volba technologií na backendu je již zajímavější, už jen z důvodu vyššího výběru technologií použitelných pro vývoj backendu.
+Pro tvorbu serveru byl zvolen programovací jazyk Kotlin spárovaný s frameworkem \emph{Ktor}. 
+
+%TODO: Ozdrojovat kotlinlang.org, ozdrojovat Kotlin jako default lang pro Googlí shit
+Jazyk Kotlin je moderní, objektově orientovaný jazyk s prvky funkcionálního programování. Jazyk Kotlin je tvořen firmou JetBrains
+a je možné jej kompilovat pro více platform. Primárně je jazyk Kotlin kompilován pro platformu JVM, kde může využívat celého 
+ekosystému jazyka Java, dále však může být kompilován do nativního strojového kódu, nebo transpilován do jazyka Javascript. Jazyk
+Kotlin v současné době slouží jako oficiální jazyk pro tvorbu aplikací mobilního operačního systému Android.
+
+Framework \emph{Ktor} je technologie implementovaná v jazyce Kotlin, sloužící k implementaci asynchronních REST API. 
+
+Důvod volby těchto technologií byla snaha ukázat modularitu systému o více komponentách využívajících protokol HTTP 
+pro komunikaci, a možnost využití libovolné technologie a jazyka v takto nadesignovaném systému. Pro uvažovanou aplikaci by 
+samozřejmě jazyk Python byl naprosto validní volba, v praxi je ovšem často vhodné využití většího množství jazyků a technologií, 
+především díky lišících se předností různých jazyků, nebo dostupnosti knihoven či frameworků pro daný jazyk nebo platformu. Druhým
+důvodem volby jazyka Kotlin byla snaha vyzkoušet využití frameworku \emph{Ktor} v praxi.
+
+Backend definuje REST API, jež, kromě vydávání statických souborů, implementuje endpointy analogické REST API softwaru 
+pro plánování cesty, popsaném v podkapitole \nameref{rest-api}. Rozdíl mezi API plánovacího softwaru, a API backendu webové 
+aplikace, je ve validaci prováděné daným API. API plánovacího softwaru, z důvodů jednoduchosti implementuje pouze minimální 
+validaci, nemělo by být vystaveno veřejně a slouží pouze k internímu použití. REST API backendu webové aplikace je určeno 
+k veřejnému použití, a za tímto účelem také implementuje určitou validaci svých vstupů. Samozřejmě také z hlediska logické dělení
+funkcionality systému není vhodné, aby software pro plánování cesty vozidla uměl vydávat statické soubory.
+
+Kromě frameworku \emph{Ktor} jsou na backendu využity také knihovny \emph{org.json:json} sloužící k práci s plaintextovým formátem
+JSON, a \emph{io.github.rybalkinsd:kohttp} implementující DSL pro jazyk Kotlin pro vytváření HTTP dotazů.
 
 \chapter{Budoucí vývoj vozidla}
 
