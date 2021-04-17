@@ -1,11 +1,35 @@
 \documentclass[czech, bachelor]{diploma}
 \usepackage[autostyle=true, czech=quotes]{csquotes}
-\usepackage[backend=biber, style=iso-numeric, alldates=iso]{biblatex}
 \usepackage{dcolumn}
 \usepackage{subfig}
-%\PassOptionsToPackage{hyphens}{url}\usepackage{hyperref}
 \usepackage{hyperref}
 \usepackage{xurl}
+\usepackage{listings}
+\PassOptionsToPackage{usenames,dvipsnames}{xcolor}
+
+% Propůjčeno z https://github.com/cansik/kotlin-latex-listing
+% Geniální člověk co používá skvělý jazyk
+\lstdefinelanguage{Kotlin}{
+  comment=[l]{//},
+  commentstyle={\color{gray}\ttfamily},
+  emph={filter, first, firstOrNull, forEach, lazy, map, mapNotNull, println},
+  %emphstyle={\color{OrangeRed}},
+  emphstyle=\color{orange},
+  %identifierstyle=\color{black},
+  identifierstyle=\color[RGB]{43,145,175},
+  keywords={!in, !is, abstract, actual, annotation, as, as?, break, by, catch, class, companion, const, constructor, continue, crossinline, data, delegate, do, dynamic, else, enum, expect, external, false, field, file, final, finally, for, fun, get, if, import, in, infix, init, inline, inner, interface, internal, is, lateinit, noinline, null, object, open, operator, out, override, package, param, private, property, protected, public, receiveris, reified, return, return@, sealed, set, setparam, super, suspend, tailrec, this, throw, true, try, typealias, typeof, val, var, vararg, when, where, while},
+  %keywordstyle={\color{NavyBlue}\bfseries},
+  keywordstyle=\color{blue},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]",
+  morestring=[s]{"""*}{*"""},
+  ndkeywords={@Deprecated, @JvmField, @JvmName, @JvmOverloads, @JvmStatic, @JvmSynthetic, Array, Byte, Double, Float, Int, Integer, Iterable, Long, Runnable, Short, String},
+  %ndkeywordstyle={\color{BurntOrange}\bfseries},
+  ndkeywordstyle=\color{blue},
+  sensitive=true,
+  stringstyle=\color[RGB]{163,21,21}
+  %stringstyle={\color{ForestGreen}\ttfamily},
+}
 
 \ThesisAuthor{Filip Peterek}
 \ThesisSupervisor{Ing. Jan Gaura, Ph.D.}
@@ -20,9 +44,9 @@
 }
 
 \CzechAbstract {
-    Tato práce se zabývá vývojem software pro samořiditelnou platformu vznikající na VŠB-TUO. Po~dokončení by software měl být
-    schopen na základě vstupů ze softwaru pro analýzu obrazu, GPS, Lidaru a řídící jednotky vozidla bezpečně navigovat vozidlo
-    univerzitním kampusem.
+    Tato práce se zabývá vývojem softwaru pro samořiditelnou platformu vznikající na VŠB-TUO. Po~dokončení by software měl být
+    schopen na základě vstupů ze softwaru pro analýzu obrazu, GPS, Lidaru a řídící jednotky vozidla bezpečně navigovat autonomní
+    platformu univerzitním kampusem.
 
     Řídící software je rozdělen do dvou komponent. První komponenta zajišťuje komunikaci s řídící jednotkou vozidla pomocí
     sběrnice CAN, na starosti má ovládání rychlosti vozidla a natáčení kol. Druhá komponenta má na starosti plánování cesty
@@ -75,8 +99,6 @@
 \AddAcronym{OSM}{OpenStreetMap}
 \AddAcronym{URL}{Uniform Resource Locator}
 
-\addbibresource{biblatex-examples.bib}
-
 % Novy druh tabulkoveho sloupce, ve kterem jsou cisla zarovnana podle desetinne carky
 % Já jako chápu, jaký je význam tohoto, ale bylo to v šabloně od Dvorského, nikde to (momentálně) nevyužívám
 % Možná to zapomenu smazat
@@ -102,8 +124,9 @@ je získáván z API komponenty určené právě k tomuto účelu, taktéž vyv�
 Software, který je vyvíjen jako součást této práce, je tvořen v Pythonu, a je rozdělen do více komponent. Kromě řídícího
 softwaru byl vyvinut také jednoduchý simulátor, umožňující testování řízení. Dále řídící software obsahuje funkční
 vizualizér, pomocí kterého je možné sledovat pohyb vozidla. Při tvorbě řídících komponent byla využita řada open source
-knihoven a veřejných zdrojů, včetně map OpenStreetMap nebo Mapy.cz. Zdrojový kód, který je součástí této práci, je
-rovněž otevřený a veřejně dostupný na Githubu.
+knihoven a veřejných zdrojů, včetně map OpenStreetMap nebo Mapy.cz. Zdrojový kód, který je součástí této práce, je
+rovněž otevřený a veřejně dostupný na Githubu \cite{car-client-source, car-webapp-source, car-map-downloader-source,
+car-can-source, car-simulator-source, geologger-source}.
 
 \chapter{Architektura řídícího softwaru} \label{software-architecture}
 Jak již bylo zmíněno, řídící software je rozdělen do dvou komponent, komunikujících mezi sebou pomocí protokolu TCP na bázi
@@ -138,19 +161,47 @@ Architektura softwaru a důvod dělení na server a klient jsou podrobněji pops
 
 \section{Sběrnice CAN}
 
-Controller Area Network, zkráceně CAN, je standard poskytující určitý základ pro komunikaci na~sběrnici. Standard definuje
-fyzické požadavky na sběrnici a formát zpráv. Součástí zprávy je~osm bytů vyhrazených pro data. Sběrnice CAN je, mimo jiné, hojně
-využívána právě v~automobilovém průmyslu.
+Controller Area Network \cite{can-source}, zkráceně CAN, je standard poskytující určitý základ pro komunikaci na~sběrnici. 
+Standard definuje fyzické požadavky na sběrnici a formát zpráv. Součástí zprávy je~osm bytů vyhrazených pro data. Sběrnice CAN je,
+mimo jiné, hojně využívána právě v~automobilovém průmyslu.
 
 \subsection{Vlastní specifikace}
 Standard sice přiřazuje každé zprávě pole o velikosti osm bytů vyhrazené pro data, již však nedefinuje, jaká data mají zprávy
-obsahovat, v jakém formátu mají být data posílána, nebo jak se s~nimi má pracovat. Obsah zpráv tak musel být vydefinován vlastní
-specifikací, která prošla hned několika iteracemi, a jejíž finální podoba je výsledkem úzké spolupráce konstruktérů fyzické
-platformy a tvůrců řídícího softwaru. Specifikace byla navrhována tak, aby umožnila dostatečně jemné řízení vozidla, poskytovala
-řídícímu softwaru všechna potřebná jízdní data a zahrnovala množství prostředků pro kontrolu integrity zprávy, rychlé zachycení
-chyb či reportování problémů. Na~chyby nebo problémy je samozřejmě důležité reagovat, v krajních případech až nouzovým zastavením
-vozidla. Software pro ovládání platformy byl již několikrát přepisován na základě upravené specifikace, nejaktuálnější verze
-software však implementuje nejnovější verzi specifikace.
+obsahovat, v jakém formátu mají být data posílána, nebo jak se s~nimi má pracovat \cite{can-source}. Obsah zpráv tak musel být 
+vydefinován vlastní specifikací, která prošla hned několika iteracemi, a jejíž finální podoba je výsledkem úzké spolupráce 
+konstruktérů fyzické platformy a tvůrců řídícího softwaru. Specifikace byla navrhována tak, aby umožnila dostatečně jemné řízení
+vozidla, poskytovala řídícímu softwaru všechna potřebná jízdní data a zahrnovala množství prostředků pro kontrolu integrity
+zprávy, rychlé zachycení chyb či reportování problémů. Na~chyby nebo problémy je samozřejmě důležité reagovat, v krajních 
+případech až nouzovým zastavením vozidla. Software pro ovládání platformy byl již několikrát přepisován na základě upravené
+specifikace, nejaktuálnější verze softwaru však implementuje nejnovější verzi specifikace. Ukázku části specifikace si lze 
+prohlédnout v tabulce \ref{tab:can-spec-table}.
+
+\begin{table}
+  \centering
+  \caption{Ukázka současné verze vlastní CAN specifikace}
+  \label{tab:can-spec-table}
+  \begin{tabular}{ |c|c|c|c|c|c|c| }
+    \hline
+    Message Name     & ID  & Cycle (ms) & Byte & Length (bits) & Min Value & Max Value \\
+    \hline
+    System Status    & 201 & 20         & 1    & 1             & 0         & 1 \\
+    \hline
+    Control Request  & 201 & 20         & 2    & 1             & 0         & 1 \\
+    \hline
+    Steering Request & 201 & 20         & 3    & 8             & 0         & 255 \\
+    \hline
+    Drive Request    & 201 & 20         & 4    & 8             & 0         & 255 \\
+    \hline
+    Drive Gain       & 201 & 20         & 5    & 2             & 0         & 4 \\
+    \hline
+    Steering Gain    & 201 & 20         & 6    & 2             & 0         & 4 \\
+    \hline
+    Message Count    & 201 & 20         & 7    & 8             & 0         & 255 \\
+    \hline
+    Data Checksum    & 201 & 20         & 8    & 8             & 0         & 255 \\
+    \hline
+  \end{tabular}
+\end{table}
 
 Specifikace, kromě formátu a obsahu dat, určuje také formát, jakým je kódována rychlost vozidla nebo natočení předních kol. Tyto
 hodnoty jsou kódovány a uloženy v jednom bytu. Při práci s~CAN sběrnicí tak je nutné data správně přepočíst a zakódovat, případně
@@ -158,13 +209,13 @@ dekódovat a převést do formátu IEEE 754.
 
 \section{TCP server a jeho metody} \label{server-methods}
 
-Za účelem zvýšení abstrakce a zjednoduššení ovládání vozidla, ale také aby bylo umožněno vzdálené ovládání platformy
+Za účelem zvýšení úrovně abstrakce a zjednoduššení ovládání vozidla, ale také aby bylo umožněno vzdálené ovládání platformy
 a zjednodušila se výměna způsobů ovládání, je nízkoúrovňové řízení CAN zprávami abstrahováno a obaleno jednoduchým TCP serverem.
 Při vývoji serveru se přirozeně nabídla možnost implementace REST API a využití protokolu HTTP, nebo využití jednoho z rozšířených
 RPC prokolů, jako jsou XMLRPC nebo gRPC. Ačkoliv validní, tyto způsob, implementace se jevily jako neefektivní -- rozhraní
 poskytované serverem je velmi jednoduché, plaintextový protokol HTTP nebo variace protokolů RPC tak působily až zbytečně
 komplikovaně. Pro komunikaci byl nakonec použit vlastní binární protokol a jeho implementace přímo nad TCP sockety.
-Výhodou je~rychlost a~jednoduchost implementace, úspornost a výkonnost řešení v reálném provozu, nebo fakt, že toto řešení
+Výhodou je rychlost a~jednoduchost implementace, úspornost a výkonnost řešení v reálném provozu, nebo také fakt, že toto řešení
 nevyžaduje žádné externí závislosti nad rámec standardní knihovny jazyka Python. Nevýhody současného řešení by se projevily
 pouze při výrazném nárůstu komplexity poskytovaného rozhraní. Tento scénář by mohl vést k znepřehlednění současného řešení.
 Nutnosti zvyšování komplexity rozhraní ovšem v současné době nic nenasvědčuje.
@@ -236,7 +287,8 @@ Naopak při stoupání by vozidlo mohlo na rychlosti ztrácet.
 O vydání určitého točivého momentu je možné požádat za pomoci CAN sběrnice. Řídící software vyšle CAN zprávu s požadovanou
 rychlostí. Kontrolní jednotka vozidla zprávu zpracuje, zkontroluje, a předá požadavek elektromotoru, který upraví svůj výstup.
 Při ovládání vozidla ovšem není určování momentu vhodné. Podstatně jednodušší by bylo žádat o dodržování konkrétní rychlosti,
-ne momentu. Proto je točivý moment třeba regulovat. A právě zde se jako řešení nabízí využití PI regulátoru.
+ne momentu. Proto je točivý moment třeba regulovat. A právě zde se jako řešení nabízí využití PI regulátoru
+\cite{pid-controller-source}.
 
 Regulátor je zabudován do zdrojového kódu serveru a je implementován softwarově. TCP server na vstupu metody \emph{drive} dostane
 požadavek na udržování rychlosti. Server metodu zpracuje a předá regulátoru jako požadovanou hodnotu. Druhým vstupem regulátoru
@@ -269,8 +321,8 @@ K vytvoření TCP serveru byl využit modul \emph{socketserver}, který nálež�
 Server funguje na synchronní bázi a na zpracování probíhá pouze na~jednom vlákně. K serveru je v jednom momentě připojen vždy jen
 jeden klient, jenž posílá pouze relativně malé množství dotazů. Asynchronní nebo vícevláknová implementace tak není potřeba,
 pouze by~zapříčinila znepřehlednění kódu, a to s velmi nízkými až dokonce žádnými benefity. Server naslouchá na konfigurovatelném
-portu. Instanci rozhraní vozidla nebo port lze serveru předat parametrem při inicializaci. Pokud tak uživatel neučinní, rozhraní
-vozidla je vytvořeno automaticky a~číslo portu je~vyčteno z enviromentální proměnné \emph{SERVER\_PORT}.
+portu. Instanci rozhraní vozidla nebo port lze serveru předat parametrem při~inicializaci. Pokud tak uživatel neučinní, rozhraní
+vozidla je vytvořeno automaticky a číslo portu je~vyčteno z enviromentální proměnné \emph{SERVER\_PORT}.
 
 \subsection{Rozhraní vozidla}
 Rozhraní vozidla, v kódu třída \emph{Car}, představuje abstrakci nad sběrnicí CAN, a to aby samotný TCP server nemusel pracovat
@@ -473,13 +525,13 @@ postupů, nalezeným problémům a výsledkům výzkumu se podrobněji věnuje k
 
 \subsection{Využité knihovny}
 
-Knihovna \emph{Pygame} byla zvolena pro implementaci vizualizéru zejména díky jednoduchému využití a vykreslování grafických
+Knihovna \emph{pygame} byla zvolena pro implementaci vizualizéru zejména díky jednoduchému využití a vykreslování grafických
 podkladů, mezi které patří nejen základní geometrické útvary, jako jsou třeba úsečka, kruh, ale také obrazové podklady a grafické
 sprity.
 
-Modul \emph{Geopy} je využíván pro své možnosti práce s geografickými souřadnicemi. Důležitou, a~v~kódu často využívanou, funkcí
-knihovny \emph{Geopy} je funkce \emph{geopy.distance.distance}, jež poskytuje funkcionalitu pro výpočet fyzické vzdálenosti mezi
-dvěma geografickými body. Získaná vzdálenost v metrech se poté využívá například při hledání nejkratší cesty na mapě, nebo také
+Modul \emph{geopy} je využíván pro své možnosti práce s geografickými souřadnicemi. Důležitou, a~v~kódu často využívanou, funkcí
+knihovny \emph{geopy} je funkce \emph{geopy.distance.distance}, jež poskytuje funkcionalitu pro výpočet fyzické vzdálenosti mezi
+dvěma geografickými body. Získaná vzdálenost v~metrech se poté využívá například při hledání nejkratší cesty na mapě, nebo také
 při převodu geografických souřadnic na souřadnice kartézské, které následně umožňují zjednodušení výpočtů za~cenu nižší, ale stále
 naprosto dostačující přesnosti, využití goniometrických souřadnic pro výpočet úhlu, apod.
 
@@ -488,7 +540,7 @@ tvorbu HTTP serveru a zpracování HTTP dotazů. Jako mikroframework je velmi je
 sám o sobě vhodný na~tvorbu webových aplikací, za tímto účelem je efektivnější využít technologií stavějících na Flasku, 
 pro~rychlou tvorbu API je ovšem \emph{Flask} velmi dobrá volba. Nevýhodou \emph{Flasku} je chybějící podpora asynchronního
 zpracování dotazů, proto se dnes často na úkor \emph{Flasku} využívá třeba \emph{Starlette}, nebo z něj vycházející
-\emph{FastApi}, které díky své asynchronní povaze dokážou zpracovat podstatně vyšší množství dotazů. V současné aplikaci však
+\emph{FastAPI}, které díky své asynchronní povaze dokážou zpracovat podstatně vyšší množství dotazů. V současné aplikaci však
 na API chodí maximálně jednotky dotazů za sekundu a~\emph{Flask} stačí více než dostatečně.
 
 \chapter{Testované způsoby řízení vozidla} \label{driving-methods}
@@ -530,16 +582,16 @@ kombinace obojího.
 
 \subsection{Nepřesnost GPS} \label{gps-inaccuracy}
 
-Fakt, že GPS nedosahuje milimetrové přesnosti, dnes nikoho nepřekvapí. Nejen že k tomuto tématu existuje velká spousta zdrojů,
-%TODO: ozdrojovat linkem dole o nepřesnosti GPS
-a velká spousta motoristů nepřesnost systému zaznamenala třeba při využití navigace na silnicích, ale také není vůbec složité se 
-o zmiňované nepřesnosti přesvědčit jednoduchým pokusem. Stačí vzít do ruky mobilní telefon obsahující GPS modul a zobrazit si svou
-aktuální pozici. Tvůrci mapových aplikací svůj software implementují tak, aby ukazatel polohy opticky příliš neosciloval, přesto
-jde na mapě vidět určitá nepřesnost. Dále si lze povšimnout, že~ukazatel polohy ve spoustě mapových aplikací vyobrazuje oblast
-větší než je reálná velikost GPS modulu. Tato vlastnost je samozřejmě z uživatelského hlediska v pořádku -- ukazatel musí být 
-v~aplikaci vidět a uživateli tento grafický ukazatel nevadí. Tvůrcům aplikace navíc při chytré implementaci umožňuje větší 
-grafický ukazatel kompletně zakrýt odchylku měření GPS. Při řízení vozidla je ovšem důležité získat pozici s nepřesností v řádu
-nejvýše jednotek centimetrů, proto se nepřesnost GPS může projevit jako problematická.
+Fakt, že GPS nedosahuje milimetrové přesnosti, dnes nikoho nepřekvapí. Nejen že k tomuto tématu existuje velká spousta zdrojů 
+\cite{gps-inaccuracy-source}, a velká spousta motoristů nepřesnost systému zaznamenala třeba při využití navigace na silnicích,
+ale také není vůbec složité se o zmiňované nepřesnosti přesvědčit jednoduchým pokusem. Stačí vzít do ruky mobilní telefon
+obsahující GPS modul a zobrazit si svou aktuální pozici. Tvůrci mapových aplikací svůj software implementují tak, aby ukazatel
+polohy opticky příliš neosciloval, přesto jde na mapě vidět určitá nepřesnost. Dále si lze povšimnout, že~ukazatel polohy
+ve spoustě mapových aplikací vyobrazuje oblast větší než je reálná velikost GPS modulu. Tato vlastnost je samozřejmě
+z uživatelského hlediska v pořádku -- ukazatel musí být v~aplikaci vidět a uživateli tento grafický ukazatel nevadí. Tvůrcům
+aplikace navíc při chytré implementaci umožňuje větší grafický ukazatel kompletně zakrýt odchylku měření GPS. Při řízení vozidla
+je ovšem důležité získat pozici s nepřesností v řádu nejvýše jednotek centimetrů, proto se nepřesnost GPS může projevit jako
+problematická.
 
 \subsubsection{Problémy při prvním testování}
 
@@ -582,14 +634,14 @@ nepřesnosti při řízení a do jaké míry pomáhá v předchozím odstavci zm
 
 Za účelem testování GPS vznikla velmi jednoduchá aplikace pro mobilní operační systém Android. Aplikace byla naprogramována 
 v programovacím jazyce Kotlin -- oficiálně doporučeným jazykem pro~tvorbu aplikací pro zmiňovaný operační systém společnosti 
-Google. Samotná aplikace nebude v této publikaci příliš rozebírána, neboť skutečně odpovídá definici slova 'primitivní'. Aplikace
-obsahuje pouze jedno velké funkční tlačítko, kterým lze zapnout logování GPS souřadnic. Souřadnice jsou logovány jednou za sekundu
-do obyčejného textového souboru uloženého v paměti telefonu. Každý soubor je označen časem vytvoření -- tedy časem, kdy uživatel
-spustil logování geolokace. Soubor musí být po dokončení logování extrahován z paměti telefonu manuálně. Aplikace také byla 
-testována pouze na zařízení Samsung Galaxy Note 9 s nejnovější verzí softwaru, jež byla v době tvorby aplikace pro daný hardware
-dostupná. Výsledný program není publikován v žádném veřejném obchodě a~slouží skutečně spíše jako jednorázová utilita pro krátké
-a rychlé testování. Zdrojové kódy jsou ovšem volně dostupné na Githubu, %TODO: Github link
-a také jsou přiloženy k této práci.
+Google \cite{kotlin-android-source}. Samotná aplikace nebude v této publikaci příliš rozebírána, neboť skutečně odpovídá definici
+slova 'primitivní'. Aplikace obsahuje pouze jedno velké funkční tlačítko, kterým lze zapnout logování GPS souřadnic. Souřadnice
+jsou logovány jednou za sekundu do obyčejného textového souboru uloženého v paměti telefonu. Každý soubor je označen časem
+vytvoření -- tedy časem, kdy uživatel spustil logování geolokace. Soubor musí být po dokončení logování extrahován z paměti
+telefonu manuálně. Aplikace také byla testována pouze na zařízení Samsung Galaxy Note 9 s nejnovější verzí softwaru, jež byla
+v době tvorby aplikace pro daný hardware dostupná. Výsledný program není publikován v žádném veřejném obchodě a~slouží skutečně
+spíše jako jednorázová utilita pro krátké a rychlé testování. Zdrojové kódy jsou ovšem volně dostupné na Githubu
+\cite{geologger-source}, a také jsou přiloženy k této práci.
 
 Dokončení mobilní aplikace umožnilo následné vyražení do terénu a testování přesnosti GPS v praxi. Měření bylo prováděno na území
 obce Kobeřice a přineslo výsledky v určitých ohledech překvapivé, v jiných zase předpokládatelné. Naměřené hodnoty byly za účelem
@@ -736,7 +788,7 @@ aby hodnoty geografických souřadnic tvořily čtverec v~souřadnicích kartéz
 stejnou, a rozdíl lišící se geografické souřadnice byl pro všechny čtyři strany stejný. Již na první pohled lze vidět, že~body
 tvoří lichoběžník, ne čtverec, ačkoliv je lichoběžník také velmi zkreslený právě projekcí glóbu do 2D prostoru.
 
-Po odhalení nepřesnosti tohoto zjednodušení bylo tedy rozhodnuto, že bude vyzkoušen jiný způsob zjednodušení výpočtů.  Ačkoliv by
+Po odhalení nepřesnosti tohoto zjednodušení bylo tedy rozhodnuto, že bude vyzkoušen jiný způsob zjednodušení výpočtů. Ačkoliv by
 totiž správná práce s geografickými souřadnice elipsoidní planety byla nejpřesnější, pro relativně malý univerzitní kampus, který
 lze navíc v řídícím softwaru považovat za 2D plochu, je implementace tohoto řešení zbytečně časově náročná s ohledem na~relativně
 nízký benefit v daném měřítku. Proto momentální verze softwaru převádí geografické souřadnice na lokální kartézský systém. Tento
@@ -858,11 +910,12 @@ poznatků, ale také kódu z předchozího výzkumu.
 
 Bohužel, vývoj tohoto způsobu autonomního řízení je náročný a navazuje na předchozí výzkum, projekt bude vývoji ještě nějakou
 dobu, a přesahuje rozsah této publikace. Navíc byla práce na~projektu autonomního řízení negativně ovlivněna pandemií koronaviru
-SARS-CoV-2 a stoupající cenou kryptoměn. Pandemie koronaviru ztížila testování vozidla a práci s fyzickým vozidlem vynucení práce
-z domova, způsobila silný nedostatek webkamer, které byly na projektu potřeba kvůli snímání okolí, a kombinace vysokého zájmu
-těžařů o grafické karty, a snížené produkce grafických karet a počítačových čipů obecně, znemožnila získání hardwaru potřebného
-pro implementaci plně autonomního řízení. Práce však bude do budoucna stále pokračovat, pravděpodobně poté bude popsána v jiné
-publikaci.
+SARS-CoV-2 \cite{pandemic-source} a stoupající cenou kryptoměn \cite{bitcoin-rally-source}. Pandemie koronaviru ztížila testování 
+vozidla a práci s fyzickým vozidlem vynucení práce z domova, způsobila silný nedostatek webkamer, které byly na projektu potřeba 
+kvůli snímání okolí, a kombinace vysokého zájmu těžařů o grafické karty, a snížené produkce grafických karet a počítačových čipů 
+obecně, znemožnila získání hardwaru potřebného pro implementaci plně autonomního řízení 
+\cite{bitcoin-miners-gpu-source,webcam-shortage-source}. Práce však bude do budoucna stále pokračovat, pravděpodobně poté bude 
+popsána v jiné publikaci.
 
 \chapter{Práce s mapovými podklady} \label{osm-chapter}
 
@@ -923,7 +976,7 @@ cesty. Oba způsoby definice cesty jsou využity při~určování nejbližší s
 z libovolného bodu k libovolné silnici je úsečka kolmá k dané silnici, pokud taková úsečka existuje. V opačném případě
 je nejkratší cestou úsečka spojující daný bod s bližším koncem silnice.
 
-Pro určení nejbližší silnice využijeme výpočet průsečíků dvou přímek. %TODO: Reference SO answer
+Pro určení nejbližší silnice využijeme výpočet průsečíků dvou přímek \cite{line-line-intersection-source}.
 Jako první přímku uvažujeme přímku definovanou počátkem a koncem silnice. K získání druhé přímky je následně třeba vzít normálový
 vektor k vektoru definujícímu danou silnici. Získaný normálový vektor umístíme do~uvažovaného bodu, tedy například do aktuální
 pozice vozidla nebo neupravené pozice uživatelem definovaného waypointu. Tímto získáme přímku kolmou k dříve získané přímce.
@@ -936,7 +989,7 @@ by měl být umístěn waypoint.
 
 \section{Plánování cesty za využití mapových podkladů}
 
-%TODO: BFS (nebo variace) nad cestami, rád bych naprogramoval, jestli ne, okecat
+%TODO: BFS (nebo variace) nad cestami, rád bych naprogramoval, jestli nestihnu, okecat
 
 \chapter{Webová aplikace} \label{web-app}
 
@@ -983,13 +1036,15 @@ pouze je volán jiný endpoint backendu.
 Volba technologií na backendu je již zajímavější, už jen z důvodu vyššího výběru technologií použitelných pro vývoj backendu.
 Pro tvorbu serveru byl zvolen programovací jazyk Kotlin spárovaný s frameworkem \emph{Ktor}. 
 
-%TODO: Ozdrojovat kotlinlang.org, ozdrojovat Kotlin jako default lang pro Googlí shit
 Jazyk Kotlin je moderní, objektově orientovaný jazyk s prvky funkcionálního programování. Jazyk Kotlin je tvořen firmou JetBrains
 a je možné jej kompilovat pro více platform. Primárně je jazyk Kotlin kompilován pro platformu JVM, kde může využívat celého 
 ekosystému jazyka Java, dále však může být kompilován do nativního strojového kódu, nebo transpilován do jazyka Javascript. Jazyk
-Kotlin v současné době slouží jako oficiální jazyk pro tvorbu aplikací mobilního operačního systému Android.
+Kotlin v současné době slouží jako oficiální jazyk pro tvorbu aplikací mobilního operačního systému Android
+\cite{kotlin-android-source}.
 
-Framework \emph{Ktor} je technologie implementovaná v jazyce Kotlin, sloužící k implementaci asynchronních REST API. 
+Framework \emph{Ktor} je technologie implementovaná v jazyce Kotlin, sloužící k implementaci asynchronních REST API. Samotné API
+webové aplikace ovšem není vyvíjeno s důrazem na asynchronost, neboť požadavky na výkon rozhranní nikdy nebudou tak vysoké, aby
+odůvodnily čas strávený implementací asynchronního programu.
 
 Důvod volby těchto technologií byla snaha ukázat modularitu systému o více komponentách využívajících protokol HTTP 
 pro komunikaci, a možnost využití libovolné technologie a jazyka v~takto nadesignovaném systému. Pro uvažovanou aplikaci by 
@@ -1051,6 +1106,7 @@ ale také zjednodušší ladění výkonnostní stránky aplikace, díky možnos
 
 %TODO: Zhodnotit, jak moc za píču to stojí
 
+% Seznam literatury
 \renewcommand{\bibname}{Literatura}
 \begin{thebibliography}{20}
 
@@ -1092,14 +1148,77 @@ Jeff Barber: \textit{"Do GPS Units Always Overestimate Trail Distances?" No.} [o
 Dostupné z:
 \url{https://www.singletracks.com/mtb-gear/do-gps-units-always-overestimate-trail-distances-no/}
 
+\bibitem{kotlin-android-source} 
+Frederic Lardinois: \textit{Kotlin is now Google's preferred language for Android app development} [online],
+TechCrunch [cit. 2021-04-17], Dostupné z:
+\url{https://techcrunch.com/2019/05/07/kotlin-is-now-googles-preferred-language-for-android-app-development/}
+
+\bibitem{car-client-source} 
+Filip Peterek: \textit{car-client} [online], Filip Peterek [cit. 2021-04-17],
+Dostupné z:
+\url{https://github.com/fpeterek/car-client}
+
+\bibitem{car-webapp-source} 
+Filip Peterek: \textit{car-webapp} [online], Filip Peterek [cit. 2021-04-17],
+Dostupné z:
+\url{https://github.com/fpeterek/car-webapp}
+
+\bibitem{car-map-downloader-source} 
+Filip Peterek: \textit{car-map-downloader} [online], Filip Peterek [cit. 2021-04-17],
+Dostupné z:
+\url{https://github.com/fpeterek/car-map-downloader}
+
+\bibitem{car-can-source} 
+Filip Peterek: \textit{car-can} [online], Filip Peterek [cit. 2021-04-17],
+Dostupné z:
+\url{https://github.com/fpeterek/car-can}
+
+\bibitem{car-simulator-source} 
+Filip Peterek: \textit{car-simulator} [online], Filip Peterek [cit. 2021-04-17],
+Dostupné z:
+\url{https://github.com/fpeterek/car-simulator}
+
+\bibitem{geologger-source} 
+Filip Peterek: \textit{GeoLogger} [online], Filip Peterek [cit. 2021-04-17],
+Dostupné z:
+\url{https://github.com/fpeterek/GeoLogger}
+
 \end{thebibliography}
 
-% Seznam literatury
-\printbibliography[title={Literatura}, heading=bibintoc]
-% https://github.com/fpeterek %TODO: Můj github na místa, kde se hodí
-
 % Prilohy
+%TODO URGENT: VYHODIT PŘED ODEVZDÁNÍM JAKO BP
+% Já si za tím teda stojím, ale určití lidé by mě za tento názor zařízli jak psa
 \appendix
+\chapter{ELP záležitosti, co by se neměly dostat do finální verze BP}
+\begin{enumerate}
+  \item Skvělé jazyky
+    \begin{itemize}
+      \item Kotlin
+      \item Python
+      \item Kobeři-C
+      \item C
+      \item C++
+      \item Lisp
+    \end{itemize}
+  \item Použitelné jazyky
+    \begin{itemize}
+      \item Scala
+      \item Swift
+    \end{itemize}
+  \item Nepoužitelné pseudojazyky
+    \begin{itemize}
+      \item Java
+      \item Golang
+      \item C\#
+      \item PHP
+    \end{itemize}
+\end{enumerate}
+
+Výpočet vztlaku generovaného křídlem: $L = \frac {C_L \rho A V^2} 2$
+
+Zdroják:
+
+\lstinputlisting[label=src:imported-kotlin, caption={Zdroják zkopírovaný z nějakého nesmyslu}, language=Kotlin]{src/code.kt}
 % \input{Chapters/Appendix1.tex}
 % \input{Chapters/Appendix2.tex}
 
