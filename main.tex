@@ -7,6 +7,9 @@
 \usepackage{listings}
 \PassOptionsToPackage{usenames,dvipsnames}{xcolor}
 
+% A protože jsem namyšlený, pojmenuju to podle sebe
+\newcommand{\filipref}[1]{\ref{#1}\,--\,\nameref{#1}}
+
 % Propůjčeno z https://github.com/cansik/kotlin-latex-listing
 % Geniální člověk co používá skvělý jazyk
 \lstdefinelanguage{Kotlin}{
@@ -29,6 +32,23 @@
   sensitive=true,
   stringstyle=\color[RGB]{163,21,21}
   %stringstyle={\color{ForestGreen}\ttfamily},
+}
+
+\lstdefinelanguage{OstraJava}{
+  comment=[l]{//},
+  commentstyle={\color{gray}\ttfamily},
+  emph={fajront, banik, pyco, Ostrava, rynek, toz, naDryst, kantuje},
+  emphstyle=\color{orange},
+  identifierstyle=\color[RGB]{43,145,175},
+  keywords={fajne, nyt, chuj, kaj, kajtez, boinak, rubat, zdybat, dlabat, davaj, zrob, forant, tryda, fagan, od, ci, aj},
+  keywordstyle=\color{blue},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]",
+  morestring=[s]{"""*}{*"""},
+  ndkeywords={cyslo, bul, chachar, cyslo\_desetinne, Dryst, Bazmek, Citac, Konzola, Bafr},
+  ndkeywordstyle=\color{blue},
+  sensitive=true,
+  stringstyle=\color[RGB]{163,21,21}
 }
 
 \ThesisAuthor{Filip Peterek}
@@ -157,23 +177,23 @@ je schopen vozidlu předávat pokyny a zároveň vozidlo regulovat a monitorovat
 na vnější události ovlivňující vozidlo, dokáže však zpracovat interní chyby. Software tedy slouží čistě a pouze ke zpracování
 interních záležitostí vozidla.
 
-Architektura softwaru a důvod dělení na server a klient jsou podrobněji popsány v kapitole \nameref{software-architecture}.
+Architektura softwaru a důvod dělení na server a klient jsou podrobněji popsány v kapitole \filipref{software-architecture}.
 
 \section{Sběrnice CAN}
 
-Controller Area Network \cite{can-source}, zkráceně CAN, je standard poskytující určitý základ pro komunikaci na~sběrnici. 
+Controller Area Network \cite{can-source}, zkráceně CAN, je standard poskytující určitý základ pro komunikaci na~sběrnici.
 Standard definuje fyzické požadavky na sběrnici a formát zpráv. Součástí zprávy je~osm bytů vyhrazených pro data. Sběrnice CAN je,
 mimo jiné, hojně využívána právě v~automobilovém průmyslu.
 
 \subsection{Vlastní specifikace}
 Standard sice přiřazuje každé zprávě pole o velikosti osm bytů vyhrazené pro data, již však nedefinuje, jaká data mají zprávy
-obsahovat, v jakém formátu mají být data posílána, nebo jak se s~nimi má pracovat \cite{can-source}. Obsah zpráv tak musel být 
-vydefinován vlastní specifikací, která prošla hned několika iteracemi, a jejíž finální podoba je výsledkem úzké spolupráce 
+obsahovat, v jakém formátu mají být data posílána, nebo jak se s~nimi má pracovat \cite{can-source}. Obsah zpráv tak musel být
+vydefinován vlastní specifikací, která prošla hned několika iteracemi, a jejíž finální podoba je výsledkem úzké spolupráce
 konstruktérů fyzické platformy a tvůrců řídícího softwaru. Specifikace byla navrhována tak, aby umožnila dostatečně jemné řízení
 vozidla, poskytovala řídícímu softwaru všechna potřebná jízdní data a zahrnovala množství prostředků pro kontrolu integrity
-zprávy, rychlé zachycení chyb či reportování problémů. Na~chyby nebo problémy je samozřejmě důležité reagovat, v krajních 
+zprávy, rychlé zachycení chyb či reportování problémů. Na~chyby nebo problémy je samozřejmě důležité reagovat, v krajních
 případech až nouzovým zastavením vozidla. Software pro ovládání platformy byl již několikrát přepisován na základě upravené
-specifikace, nejaktuálnější verze softwaru však implementuje nejnovější verzi specifikace. Ukázku části specifikace si lze 
+specifikace, nejaktuálnější verze softwaru však implementuje nejnovější verzi specifikace. Ukázku části specifikace si lze
 prohlédnout v tabulce \ref{tab:can-spec-table}.
 
 \begin{table}
@@ -322,7 +342,7 @@ Server funguje na synchronní bázi a na zpracování probíhá pouze na~jednom 
 jeden klient, jenž posílá pouze relativně malé množství dotazů. Asynchronní nebo vícevláknová implementace tak není potřeba,
 pouze by~zapříčinila znepřehlednění kódu, a to s velmi nízkými až dokonce žádnými benefity. Server naslouchá na konfigurovatelném
 portu. Instanci rozhraní vozidla nebo port lze serveru předat parametrem při~inicializaci. Pokud tak uživatel neučinní, rozhraní
-vozidla je vytvořeno automaticky a číslo portu je~vyčteno z enviromentální proměnné \emph{SERVER\_PORT}.
+vozidla je vytvořeno automaticky a~číslo portu je~vyčteno z enviromentální proměnné \emph{SERVER\_PORT}.
 
 \subsection{Rozhraní vozidla}
 Rozhraní vozidla, v kódu třída \emph{Car}, představuje abstrakci nad sběrnicí CAN, a to aby samotný TCP server nemusel pracovat
@@ -377,9 +397,9 @@ cyklus zase opakuje.
 Tato softwarová komponenta tedy zastává primárně roli klienta, zejména v relaci k vozidlu, to~ovšem neznamená, že v roli klienta
 musí působit ve všech ohledech a všech aplikacích. Například pokud by došlo k implementaci monitorování pomocí technologie
 Prometheus, musel by software vystavit své metriky pomocí HTTP serveru. Dále komponenta implementuje jednoduché REST API, které
-umožňuje vzdálené ovládání za využití protokolu HTTP. API je podrobněji popsáno v~sekci \nameref{rest-api}.
+umožňuje vzdálené ovládání za využití protokolu HTTP. API je podrobněji popsáno v~sekci \filipref{rest-api}.
 
-Komunikace s Raspberry~Pi na vozidle probíhá pomocí vlastního binárního protokolu popsaného v části \nameref{server-methods}.
+Komunikace s Raspberry~Pi na vozidle probíhá pomocí vlastního binárního protokolu popsaného v části \filipref{server-methods}.
 Podobně je vlastní protokol využit také při komunikaci s analyzátorem okolního prostředí. V obou případech byl pro přenos dat
 zvolen protokol TCP, a~to~především z toho důvodu, že TCP dokáže zajistit doručení všech paketů do cílové destinace. Protokol UDP
 by byl vhodný například pokud by data z kamery byla streamována, nebo pokud by mezi softwarem pro plánování cesty a CAN
@@ -394,22 +414,22 @@ U autonomního neosazeného vozidla ovšem bezcílné pojíždění nedává ž�
 se má vozidlo dostat, podle kterého poté může plánovací software naplánovat cestu.
 
 K definici cíle slouží waypointy. Waypointy, tedy geografické body na mapě, lze zadat nejen pomocí grafického vizualizéru,
-viz podkapitola \nameref{visualizer}, ale také pomocí webové aplikace, která by v praxi měla být preferována. Webové aplikaci
-se podrobněji věnuje kapitola \nameref{web-app}.
+viz podkapitola \filipref{visualizer}, ale také pomocí webové aplikace, která by v praxi měla být preferována. Webové aplikaci
+se podrobněji věnuje kapitola \filipref{web-app}.
 
 Waypointů je možné zadat teoreticky neomezené množství, prakticky je samozřejmě množství omezeno pamětí, kterou může plánovací
 software využít.  Po zadání waypointu plánovací software nalezne nejkratší možnou cestu k danému místu na mapě a pokusí se vozidlo
 navigovat až k požadovanému cíli. Tento postup opakuje postupně pro každý waypoint, a to v takovém pořadí, v jakém je uživatel
 zadal. Při dosažení posledního waypointu se vozidlo zastaví a čeká na další pokyny. Pokud se uživatel při vytváření waypointu
 pokusí waypoint vytvořit mimo silnice definované mapovými podklady, je waypoint automaticky umístěn na nejbližší silnici.
-Práce s mapovými podklady je~podrobněji rozebrána v kapitole \nameref{osm-chapter}.
+Práce s mapovými podklady je~podrobněji rozebrána v kapitole \filipref{osm-chapter}.
 
 Jelikož je náročné zastavit přesně v určitém geografickém bodě, už jen kvůli nepřesnosti GPS, počítáme s určitou tolerancí
 v okruhu okolo uživatelem zadaného bodu. Přesná navigace pomocí technologie GPS byla vyzkoušena a je popsána v sekci
-\nameref{gps-failure}. Díky relativně vysoké nepřesnosti GPS se tento styl navigace projevil jako nepřesný a náročný na využití.
-Pro~přesnou navigaci vozidla a zastavení v přesném bodě by ovšem bylo možné využít vstupu z~kamer, a~po~dosažení geografického 
-cíle autonomní platformu navigovat pomocí vizuálních prvků, například čar definujících parkovací místo, nebo grafického kódu, 
-dovést do přesného bodu. Tato funkcionalita by následně umožnila například automatické strojové vykládání převáženého nákladu. 
+\filipref{gps-failure}. Díky relativně vysoké nepřesnosti GPS se tento styl navigace projevil jako nepřesný a náročný na využití.
+Pro~přesnou navigaci vozidla a zastavení v přesném bodě by ovšem bylo možné využít vstupu z~kamer, a~po~dosažení geografického
+cíle autonomní platformu navigovat pomocí vizuálních prvků, například čar definujících parkovací místo, nebo grafického kódu,
+dovést do přesného bodu. Tato funkcionalita by následně umožnila například automatické strojové vykládání převáženého nákladu.
 Ačkoliv sice není vyloučena, v současné době, především z časových důvodů, není vyvíjena.
 
 \section{Vizualizér} \label{visualizer}
@@ -436,7 +456,7 @@ Metoda POST se využívá k vytváření waypointů. Server v těle požadavku o
 a \emph{longitude}. Po přijetí dotazu je JSON rozparsován a na základě obsahu objektu je vozidlu přidán nový waypoint.
 
 Metoda DELETE je přirozeně využita k mazání waypointů. Jedním dotazem je možné smazat jeden waypoint. Metoda DELETE očekává jeden
-parametr, id, který značí unikátní identifikátor waypointu, který má být smazán. V případě metody DELETE je parametr očekáván již 
+parametr, id, který značí unikátní identifikátor waypointu, který má být smazán. V případě metody DELETE je parametr očekáván již
 v URI, obsah těla nebere API u této metody v potaz.
 
 \subsection{Endpoint \emph{/position}}
@@ -494,7 +514,7 @@ se nachází v souboru \emph{client.py}. Využití je velmi jednoduché, při p�
 z enviromentálních proměnných. Proto stačí pouze importovat daný soubor, nebo jen požadované funkce, a ty poté volat s případnými
 argumenty. Není třeba klienta konfigurovat v kódu, vytvářet instance, apod.
 
-Klient samozřejmě využívá vlastní protokol popsaný v sekci \nameref{server-methods}. K~volání funkcí serveru implementuje pět
+Klient samozřejmě využívá vlastní protokol popsaný v sekci \filipref{server-methods}. K~volání funkcí serveru implementuje pět
 metod, \emph{drive}, \emph{healthcheck}, \emph{info}, \emph{position} a \emph{ebrake}, které volají stejnojmenné funkce serveru.
 
 Dále implementuje funkci \emph{camera\_info}, jež se nedovolává na řídící server, ale na server provádějící analýzu vstupu
@@ -520,8 +540,8 @@ vizualizaci, nebo instanci třídy \emph{Map}, obsahující mapové podklady uni
 
 \emph{PathPlanner} poté rozhoduje o pohybu vozidla. Na základě poskytnutých informací, jako jsou například mapové podklady, vstup
 z GPS nebo detekce obrazu, apod., rozhoduje jak o okamžitých akcích, tak o dlouhodobém pohybu a dráze vozidla, za účelem dovedení
-vozidla do cíle. Za účelem plánování cesty bylo vyzkoušeno hned několik způsobů. Zkoušeným způsobům, poznatkům ze zkoušení
-postupů, nalezeným problémům a výsledkům výzkumu se podrobněji věnuje kapitola \nameref{driving-methods}.
+vozidla do cíle. Za~účelem plánování cesty bylo vyzkoušeno hned několik způsobů. Zkoušeným způsobům, poznatkům ze~zkoušení
+postupů, nalezeným problémům a výsledkům výzkumu se podrobněji věnuje kapitola \filipref{driving-methods}.
 
 \subsection{Využité knihovny}
 
@@ -537,7 +557,7 @@ naprosto dostačující přesnosti, využití goniometrických souřadnic pro v�
 
 Mikroframework \emph{Flask} není třeba žádnému zkušenějšímu Python programátorovi představovat. Jedná se o knihovnu umožňující
 tvorbu HTTP serveru a zpracování HTTP dotazů. Jako mikroframework je velmi jednoduchý na využití a relativně drobný. Není proto
-sám o sobě vhodný na~tvorbu webových aplikací, za tímto účelem je efektivnější využít technologií stavějících na Flasku, 
+sám o sobě vhodný na~tvorbu webových aplikací, za tímto účelem je efektivnější využít technologií stavějících na Flasku,
 pro~rychlou tvorbu API je ovšem \emph{Flask} velmi dobrá volba. Nevýhodou \emph{Flasku} je chybějící podpora asynchronního
 zpracování dotazů, proto se dnes často na úkor \emph{Flasku} využívá třeba \emph{Starlette}, nebo z něj vycházející
 \emph{FastAPI}, které díky své asynchronní povaze dokážou zpracovat podstatně vyšší množství dotazů. V současné aplikaci však
@@ -582,7 +602,7 @@ kombinace obojího.
 
 \subsection{Nepřesnost GPS} \label{gps-inaccuracy}
 
-Fakt, že GPS nedosahuje milimetrové přesnosti, dnes nikoho nepřekvapí. Nejen že k tomuto tématu existuje velká spousta zdrojů 
+Fakt, že GPS nedosahuje milimetrové přesnosti, dnes nikoho nepřekvapí. Nejen že k tomuto tématu existuje velká spousta zdrojů
 \cite{gps-inaccuracy-source}, a velká spousta motoristů nepřesnost systému zaznamenala třeba při využití navigace na silnicích,
 ale také není vůbec složité se o zmiňované nepřesnosti přesvědčit jednoduchým pokusem. Stačí vzít do ruky mobilní telefon
 obsahující GPS modul a zobrazit si svou aktuální pozici. Tvůrci mapových aplikací svůj software implementují tak, aby ukazatel
@@ -595,36 +615,36 @@ problematická.
 
 \subsubsection{Problémy při prvním testování}
 
-Ovládací software vozidla byl při implementaci nejprve testován za využití simulátoru, který pozici vozidla počítá z přesně 
+Ovládací software vozidla byl při implementaci nejprve testován za využití simulátoru, který pozici vozidla počítá z přesně
 definované pozice a rychlosti vozidla. Simulátor navíc aktualizoval pozici vozidla velmi často, v softwaru nebyla implementována
 žádná umělá odchylka, ani zpoždění. Při~testování tak simulované vozidlo jezdilo korektně a vždy včas zatáčelo a správně hledalo
 přímou cestu k cíli. Problém ovšem nastal při testování softwaru v praxi na fyzickém vozidle s reálným GPS modulem.
 
 První testovací trasy byly pomocí waypointů definovány tak, aby vozidlo nemuselo prudce zatáčet, aby nenarazilo na žádné překážky
-a aby nebyla ohrožena bezpečnost osob, majetku, ale také samotného vozdila. Vozidlo po spuštění ovládacího softwaru úspěšně 
-zahájilo pohyb. Po bezpečném a rovném rozjezdu bylo povoleno zatáčení (viz oddíl \nameref{directions-and-angles}), v tomto momentě
+a aby nebyla ohrožena bezpečnost osob, majetku, ale také samotného vozdila. Vozidlo po spuštění ovládacího softwaru úspěšně
+zahájilo pohyb. Po bezpečném a rovném rozjezdu bylo povoleno zatáčení (viz oddíl \filipref{directions-and-angles}), v tomto momentě
 však nastaly problémy. Autonomní platforma začala nepředvídatelně zatáčet a směřovat špatným směrem. Často při první příležitosti
 změnila trajektorii pohybu a snažila se najet do nejbližší překážky. Toto chování bylo nečekané, neboť na simulátoru fungoval
-software bezproblémově, a také nežádoucí, jelikož waypointy byly definováný tak, aby vozidlo jelo rovně a zatáčelo pouze 
+software bezproblémově, a také nežádoucí, jelikož waypointy byly definováný tak, aby vozidlo jelo rovně a zatáčelo pouze
 minimálně.
 
 Nepřesnost GPS se samozřejmě nabízela jako hlavní vinník této nepříjemné situace, proto byla přesnost GPS modulu přezkoušena hned
-na místě. Software byl upraven tak, aby naměřené GPS hodnoty logoval na standardní výstup programu. Naměřené hodnoty ihned 
-potvrdily pravdivost doměnky -- nepřesnost systému GPS byla na potřeby autonomního řízení s využitím GPS jako jediného vstupu 
-velmi vysoká. Modul často umisťoval vozidlo jinde, než kde se ve skutečnosti nacházelo. Špatná lokalizace vozidla následně 
-zapříčinila špatné určení směru pohybu autonomní platformy (viz oddíl \nameref{directions-and-angles} a software začal směrovat
+na místě. Software byl upraven tak, aby naměřené GPS hodnoty logoval na standardní výstup programu. Naměřené hodnoty ihned
+potvrdily pravdivost doměnky -- nepřesnost systému GPS byla na potřeby autonomního řízení s využitím GPS jako jediného vstupu
+velmi vysoká. Modul často umisťoval vozidlo jinde, než kde se ve skutečnosti nacházelo. Špatná lokalizace vozidla následně
+zapříčinila špatné určení směru pohybu autonomní platformy (viz oddíl \filipref{directions-and-angles} a software začal směrovat
 vozidlo špatným směrem.
 
 Zde se samozřejmě objevil velký problém z hlediska řízení vozidla. Cílem vědecko-výzkumného projektu ovšem nebylo zjistit, co
-implementovat nejde, ale zjistit, co implementovat jde a jak lze autonomní platformu ovládat. Software byl znovu upraven. 
+implementovat nejde, ale zjistit, co implementovat jde a jak lze autonomní platformu ovládat. Software byl znovu upraven.
 Tentokrát došlo k úpravě způsobu určování aktuální pozice vozidla. Pozice se samozřejmě stále získávala z GPS modulu, nově ovšem
-software přestal pracovat s nezpracovanými daty poskytovanými modulem. Místo využití pouze těch nejnovějších souřadnic software 
+software přestal pracovat s nezpracovanými daty poskytovanými modulem. Místo využití pouze těch nejnovějších souřadnic software
 nyní využíval vážený průměr posledních deseti naměřených hodnot. Vážený průměr byl zvolen především kvůli minimalizaci zpoždění,
-které by přineslo využití obyčejného aritmetického průměru při rychlém pohybu. Při výpočtu váženého průměru byla nejnovější 
-naměřené souřadnici přiřazena váha o hodnotě 1. Váha následujících hodnot poté odpovídala 0,9 násobku předchozí váhy. 
-Při vykreslení pozice získané pomocí váženého průměru nejnovějších deseti hodnot vypadala grafická vizualizace podstatně lépe 
+které by přineslo využití obyčejného aritmetického průměru při rychlém pohybu. Při výpočtu váženého průměru byla nejnovější
+naměřené souřadnici přiřazena váha o hodnotě 1. Váha následujících hodnot poté odpovídala 0,9 násobku předchozí váhy.
+Při vykreslení pozice získané pomocí váženého průměru nejnovějších deseti hodnot vypadala grafická vizualizace podstatně lépe
 vedle vizualizace nezpracovaných čistých dat poskytnutých GPS modulem. Při vyzkoušení na fyzickém vozidle se však nepřesnost GPS,
-zvlášť v kombinaci s pomalou odezvou (viz sekce \nameref{gps-low-polling-rate}), stále jevila jako nepřekonatelný problém. V tomto
+zvlášť v kombinaci s pomalou odezvou (viz sekce \filipref{gps-low-polling-rate}), stále jevila jako nepřekonatelný problém. V tomto
 momentě však stále ještě nedošlo k rezignaci vývojového týmu na tento způsob řízení vozidla.
 
 Následující výzkum se tedy věnoval právě nepřesnosti GPS a snaze zjistit, jak nepřesná GPS doopravdy je, jaké jsou reálné dopady
@@ -632,8 +652,8 @@ nepřesnosti při řízení a do jaké míry pomáhá v předchozím odstavci zm
 
 \subsubsection{Testování přesnosti GPS za pomocí mobilní aplikace}
 
-Za účelem testování GPS vznikla velmi jednoduchá aplikace pro mobilní operační systém Android. Aplikace byla naprogramována 
-v programovacím jazyce Kotlin -- oficiálně doporučeným jazykem pro~tvorbu aplikací pro zmiňovaný operační systém společnosti 
+Za účelem testování GPS vznikla velmi jednoduchá aplikace pro mobilní operační systém Android. Aplikace byla naprogramována
+v programovacím jazyce Kotlin -- oficiálně doporučeným jazykem pro~tvorbu aplikací pro zmiňovaný operační systém společnosti
 Google \cite{kotlin-android-source}. Samotná aplikace nebude v této publikaci příliš rozebírána, neboť skutečně odpovídá definici
 slova 'primitivní'. Aplikace obsahuje pouze jedno velké funkční tlačítko, kterým lze zapnout logování GPS souřadnic. Souřadnice
 jsou logovány jednou za sekundu do obyčejného textového souboru uloženého v paměti telefonu. Každý soubor je označen časem
@@ -647,11 +667,11 @@ Dokončení mobilní aplikace umožnilo následné vyražení do terénu a testo
 obce Kobeřice a přineslo výsledky v určitých ohledech překvapivé, v jiných zase předpokládatelné. Naměřené hodnoty byly za účelem
 vyhodnocení měření vykresleny do grafických mapových podkladů. Naměřené hodnoty jsou v obrázcích vyznačeny červenou barvou.
 
-Ze zajímavých výsledků lze zmínit například cestu středem rovné ulice. Měření bylo v tomto případě provedeno rovným pohybem 
-přesným středem silnice. Měření začalo i přestalo ve středu silnice. Naměřené hodnoty jsou graficky znázorněny na obrázku 
-\ref{fig:louky}. GPS modul v počátku měření naměřil hodnotu v cizím domě mimo vozovku, na které se ve skutečnosti nacházel. 
+Ze zajímavých výsledků lze zmínit například cestu středem rovné ulice. Měření bylo v tomto případě provedeno rovným pohybem
+přesným středem silnice. Měření začalo i přestalo ve středu silnice. Naměřené hodnoty jsou graficky znázorněny na obrázku
+\ref{fig:louky}. GPS modul v počátku měření naměřil hodnotu v cizím domě mimo vozovku, na které se ve skutečnosti nacházel.
 Po chvíli se~měření stabilizovalo. Zajímavé ovšem je, že na sebe naměřené hodnoty navazují. Předpoklad, že~budou naměřené hodnoty
-náhodně rozmístěny okolo středu vozovky tímto byl vyvrácen. Také tím byla vyvrácena doměnka, že aplikace váženého průměru 
+náhodně rozmístěny okolo středu vozovky tímto byl vyvrácen. Také tím byla vyvrácena doměnka, že aplikace váženého průměru
 na naměřené hodnoty zlepší přesnost. Ve~skutečnosti by přesnost zůstala přinejlepším podobná, neboť z obrázku můžeme vyčíst, že
 pokud se naměřené hodnoty odchylují od středu silnice, zůstávají vychýlené po delší dobu. Pokud by na tyto hodnoty byl aplikován
 vážený průměr, průměrná hodnota by zůstala pozadu za reálnou hodnotou, odchylka od středu by však odfiltrována nebyla.
@@ -670,14 +690,14 @@ povolené rychlosti na silnici, na níž bylo měření prováděno. Měření b
 jedna řídila vozidlo, zatímco druhá operovala mobilní telefon s aplikací. Nedošlo tak k žádnému ohrožení bezpečnosti provozu.
 Výsledek měření lze vidět na obrázku \ref{fig:olsinaautem}.
 
-Na obrázku \ref{fig:olsinaautem} je vidět, že při vyšší rychlosti již naměřené hodnoty nejsou spojité. Stále se však objevuje 
-určitá odchylka, tentokrát ovšem skoro konstantní. Lze odečíst, že směr a rychlost vozidla není velký problém vyhodnotit při 
+Na obrázku \ref{fig:olsinaautem} je vidět, že při vyšší rychlosti již naměřené hodnoty nejsou spojité. Stále se však objevuje
+určitá odchylka, tentokrát ovšem skoro konstantní. Lze odečíst, že směr a rychlost vozidla není velký problém vyhodnotit při
 vyšších rychlostech, kdy je projev odchylky relativně ke skutečné změně nízký. Ovládací software však vzniká za účelem řízení
-autonomní platformy menších rozměrů kampusem univerzity. V takovémto případě je rychlost 30 km/h nereálná. Pro~vozidlo a jeho 
-náklad nemusí být vhodná a pro bezpečnost provozu v areálu je příliš vysoká. Dále si lze povšimnout, že ačkoliv je odchylka 
+autonomní platformy menších rozměrů kampusem univerzity. V takovémto případě je rychlost 30 km/h nereálná. Pro~vozidlo a jeho
+náklad nemusí být vhodná a pro bezpečnost provozu v areálu je příliš vysoká. Dále si lze povšimnout, že ačkoliv je odchylka
 přijatelně nízká pro určení směru pohybu, přesně určit pozici vozidla není možné. GPS modul velmi často umístil osobní automobil
-do některého z domů stojících podél silnice. I přes takto vysokou odchylku lze jednoduše určit, po které silnici se vozidlo 
-momentálně pohybuje. Za účelem přesné navigace pouze pomocí GPS, což byl původní cíl výzkumu, je ovšem třeba přinejhorším 
+do některého z domů stojících podél silnice. I přes takto vysokou odchylku lze jednoduše určit, po které silnici se vozidlo
+momentálně pohybuje. Za účelem přesné navigace pouze pomocí GPS, což byl původní cíl výzkumu, je ovšem třeba přinejhorším
 centimetrové přesnosti, jež GPS momentálně dosáhnout nedokáže.
 
 \begin{figure}
@@ -687,25 +707,25 @@ centimetrové přesnosti, jež GPS momentálně dosáhnout nedokáže.
     \label{fig:olsinaautem}
 \end{figure}
 
-Výsledky ostatních měření jsou obsaženy v příloze publikace.
+Výsledky všech měření v plné velikosti jsou obsaženy v příloze publikace.
 
 \subsubsection{Návrhy řešení nepřesnosti GPS}
 
 Ve snaze vytvořit funkční řízení čistě pomocí vstupu z GPS padlo v týmu zabývajícím se vývojem vozidla několik návrhů, jak danou
 situaci vyřešit a odchylku odfiltrovat.
 
-Jedním z návrhů bylo vzít nejbližší bod na na nejbližší silnici vzhledem k naměřené pozici, a~předpokládat, že se autonomní 
+Jedním z návrhů bylo vzít nejbližší bod na na nejbližší silnici vzhledem k naměřené pozici, a~předpokládat, že se autonomní
 platforma po dané silnici pohybuje. Tento návrh byl rychle zavrhnut. Pokud by se vozidlo pohybovalo po trajektorii neparalelní
 se středem silnice, velmi rychle by opustilo silnici, ačkoliv by upravené hodnoty vykazovaly rovný pohyb po nadefinované cestě.
 
 Druhým ze zavrhnutých návrhů byl návrh naměřenou hodnotu validovat výpočtem. Pokud vozidlo popojíždí určitou rychlostí s určitým
 úhlem natočení kol, není reálné, aby náhle rychle změnilo svůj směr a začalo se pohybovat na opačnou stranu. Tato úvaha na první
-pohled působí logickým dojmem, má ovšem jeden veliký problém. Abychom mohli validovat novou pozici na základě pozice předchozí 
+pohled působí logickým dojmem, má ovšem jeden veliký problém. Abychom mohli validovat novou pozici na základě pozice předchozí
 a dopočítané očekávané změny pozice, museli bychom si být jistí přesností pozice předchozí. Díky nepřesnosti GPS touto jistotou
 ovšem nedisponujeme, a validace tak může být problematická a nepřesná.
 
-Mezi návrhy se zařadilo také řešení hrubou silou -- využití většího množství GPS modulů a práce s průměrem naměřených hodnot. 
-Tento návrh však také nebyl bezchybný. Pokud by nebyly moduly synchronizovány a neaktualizovaly by své naměřené hodnoty všechny 
+Mezi návrhy se zařadilo také řešení hrubou silou -- využití většího množství GPS modulů a práce s průměrem naměřených hodnot.
+Tento návrh však také nebyl bezchybný. Pokud by nebyly moduly synchronizovány a neaktualizovaly by své naměřené hodnoty všechny
 najednou v krátkém časovém rozmezí, nemusel by průměr být vypovídající, zejména díky využití starých hodnot. Dále toto řešení
 samozřejmě vyžaduje připojení většího množství GPS modulů k jednomu zařízení Raspberry~Pi. Nakonec však nedošlo k testování tohoto
 řešení, neboť řízení čistě pomocí vstupů z GPS bylo ještě před testováním zavrhnuto.
@@ -738,10 +758,10 @@ vždy dojde k naměření s určitou odchylkou, která musí být při práci s 
 vozidlo na mapě umístit jinam, než kde ve skutečnosti je. Při vysokých rychlostech, kdy dochází k velkým změnám souřadnic,
 je~odchylka relativně k absolutní změně zanedbatelná a odchylka mezi reálným a vypočítaným směrem pohybu dosahuje pouze
 zanedbatelných hodnot. Vozidlo, jež je subjektem této práce, ovšem dosahuje pouze relativně nízkých rychlostí, převážně kvůli
-bezpečnosti provozu. V nízkých rychlostech, ve~kterých absolutní změna pozice dosahuje nízkých hodnot, je odchylka způsobená 
+bezpečnosti provozu. V nízkých rychlostech, ve~kterých absolutní změna pozice dosahuje nízkých hodnot, je odchylka způsobená
 nepřesností GPS relativně o hodně vyšší, již není zanedbatelná, a odchylka mezi reálným a vypočítaným směrem pohybu je~schopná
 dosahovat hodnoty až $180^{\circ}$. Hodnoty s tak vysokými odchylkami jsou samozřejmě v~praxi nevyužitelné. Problematice
-nepřesnosti GPS se podrobněji věnuje sekce \nameref{gps-inaccuracy}.
+nepřesnosti GPS se podrobněji věnuje sekce \filipref{gps-inaccuracy}.
 
 Dalším problémem, který s sebou tento přístup určení směru přinesl, byla nemožnost určit směr natočení vozidla, když se vozidlo
 nehýbalo. Tento problém měl nežádoucí projevy zejména po startu vozidla, kdy nebylo možné určit, kterým směrem musí platforma jet,
@@ -752,10 +772,10 @@ dopředu. Z naměřeného pohybu byl dopočten směr, a teprve poté došlo k um
 Samotný výpočet směru pohybu vozidla je velmi jednoduchý. Za pomocí naměřených GPS souřadnic zjistíme, jaký pohyb vozidlo
 vykonalo. Z předchozí a nově naměřené hodnoty vyčteme rozdíl v zeměpisné šířce i délce. Pomocí knihovny \emph{geopy} převedeme
 rozdíl uvedený v zeměpisné šířce a délce na metry, a převedeme tak globální světové souřadnice na souřadnice kartézské. To nám
-umožní využít goniometrické funkce a zjednoduššit výpočty, viz sekce \nameref{cartesian-coordinates}. Dále za využití Pythagorovy
+umožní využít goniometrické funkce a zjednoduššit výpočty, viz sekce \filipref{cartesian-coordinates}. Dále za~využití Pythagorovy
 věty vypočteme celkovou vzdálenost, jakou vozidlo překonalo. Tímto získáme pravoúhlý trojúhelník, jehož přepona je dráha
 pohybu vozidla, odvěsny poté reprezentují rozdíly v zeměpisné šířce a v zeměpisné délce. Následně stačí rozdíl v zeměpisné šířce
-uvedený v metrech vydělit celkovou vzdáleností. Touto operací získáme kosinus úhlu. Na získaný kosinus aplikujeme funkci arkus
+uvedený v~metrech vydělit celkovou vzdáleností. Touto operací získáme kosinus úhlu. Na získaný kosinus aplikujeme funkci arkus
 kosinus, tedy funkci kosinu inverzní, čímž získáme úhel v rozsahu prvního a druhého kvadrantu. Jelikož však úhel může patřit do
 třetího nebo čtvrtého kvadrantu kruhu, je třeba zkontrolovat, jestli je vozidlo pohybovalo směrem na západ. Jestliže je nová
 lokalita vozidla západněji, provedla autonomní platforma pohyb vlevo v kartézských souřadnicích. V takovém případě pouze stačí
@@ -795,7 +815,7 @@ nízký benefit v daném měřítku. Proto momentální verze softwaru převád�
 systém se prokázal jako dostatečně přesný v měřítku kampusu Vysoké školy báňské, a ačkoliv samozřejmě není přesný a přináší
 s sebou také určitou chybu, díky využití lokálního kartézského systému je chyba dostatečně nízká.
 
-Převod do lokálního souřadnicového systému je řešen způsobem předestřeným dříve v sekci \nameref{directions-and-angles}. Dva
+Převod do lokálního souřadnicového systému je řešen způsobem předestřeným dříve v sekci \filipref{directions-and-angles}. Dva
 geografické body se považují za úhlopříčku obdélníku. Délky stran obdélníku vypočteme aplikací funkce
 \emph{geopy.distance.distance}. Dva body obdélníku již samozřejmě známe, zbylé dva body získáme tak, že vezmeme zeměpisné šířky
 známých bodů, a zkombinujeme je se zeměpisnými délkami opačného bodu.
@@ -819,9 +839,9 @@ Při navigaci vozidla, a zejména při práci s mapovými podklady, je univerzit
 považovat za vodorovný, zároveň jej ale nikdo nemůže nazvat kopcovitým, nebo dokonce hornatým. Výškové rozdíly napříč areálem jsou
 dostatečně nízké, aby se daly považovat za zanedbatelné. Při navigaci tedy není třeba plánovat cestu tak, aby vozidlo nemuselo
 podstupovat dlouhé stoupání do kopce a zbytečně plýtvat energií. Občasné krátké stoupání pak může způsobit zpomalení pohybu
-vozidla, za takovým účelem je ale na ovládacím serveru běžícím na autonomní platformě samotné implementován PI regulátor, který
+vozidla, za takovým účelem je ale na ovládacím serveru běžícím na~autonomní platformě samotné implementován PI regulátor, který
 právě v takovémto případě zaznamenaný pokles rychlosti vykompenzuje zvýšením kroutivého momentu elektromotoru, aby udržel rychlost
-na požadované hodnotě. PI regulace je probrána v sekci \nameref{pi-controller}.
+na požadované hodnotě. PI regulace je probrána v sekci \filipref{pi-controller}.
 
 \section{Řízení vozidla pomocí detekce grafických kódu}
 
@@ -877,10 +897,10 @@ způsobu řešení je také nutnost fyzicky přesunout grafické kódy při kaž
 Za problém lze považovat také fakt, že vozidlo při detekci kamery směřuje přímo k nejbližšímu kódu. Kódy samozřejmě musí být
 rozmístěny mimo silnici či chodník, aby neblokovaly cestu. Ovšem kódy umístěné mimo silnici dokážou vozidlo svést z cesty
 v lepším případě pouze na trávník, v~horším případě jej navedou přímo do nečekané překážky. Tento problém však je řešitelný,
-například vynucením určitého odstupu od kódu a udržování kódu v určité vzdálenosti od boku vozidla.  V tomto případě by ale musely
+například vynucením určitého odstupu od kódu a udržování kódu v určité vzdálenosti od boku vozidla.  V~tomto případě by ale musely
 všechny kódy být umístěny pouze po jedné straně vozidla. Druhým možným řešením je převod detekovaného grafického kódu na waypoint
 na mapě. Toto řešení ovšem vyžaduje využití mapových podkladů a vstupů z GPS pro řízení platformy, a zabíhá již do~podkapitoly
-\nameref{combination-of-driving-inputs}
+\filipref{combination-of-driving-inputs}
 
 \subsection{Možné využití v praxi}
 
@@ -910,11 +930,11 @@ poznatků, ale také kódu z předchozího výzkumu.
 
 Bohužel, vývoj tohoto způsobu autonomního řízení je náročný a navazuje na předchozí výzkum, projekt bude vývoji ještě nějakou
 dobu, a přesahuje rozsah této publikace. Navíc byla práce na~projektu autonomního řízení negativně ovlivněna pandemií koronaviru
-SARS-CoV-2 \cite{pandemic-source} a stoupající cenou kryptoměn \cite{bitcoin-rally-source}. Pandemie koronaviru ztížila testování 
-vozidla a práci s fyzickým vozidlem vynucení práce z domova, způsobila silný nedostatek webkamer, které byly na projektu potřeba 
-kvůli snímání okolí, a kombinace vysokého zájmu těžařů o grafické karty, a snížené produkce grafických karet a počítačových čipů 
-obecně, znemožnila získání hardwaru potřebného pro implementaci plně autonomního řízení 
-\cite{bitcoin-miners-gpu-source,webcam-shortage-source}. Práce však bude do budoucna stále pokračovat, pravděpodobně poté bude 
+SARS-CoV-2 \cite{pandemic-source} a stoupající cenou kryptoměn \cite{bitcoin-rally-source}. Pandemie koronaviru ztížila testování
+vozidla a práci s fyzickým vozidlem vynucení práce z domova, způsobila silný nedostatek webkamer, které byly na projektu potřeba
+kvůli snímání okolí, a kombinace vysokého zájmu těžařů o grafické karty, a snížené produkce grafických karet a počítačových čipů
+obecně, znemožnila získání hardwaru potřebného pro implementaci plně autonomního řízení
+\cite{bitcoin-miners-gpu-source,webcam-shortage-source}. Práce však bude do budoucna stále pokračovat, pravděpodobně poté bude
 popsána v jiné publikaci.
 
 \chapter{Práce s mapovými podklady} \label{osm-chapter}
@@ -951,7 +971,7 @@ Implementace separátního skriptu pro získání mapových podkladů s sebou p�
 spouštět jako cronjob, ať už přímo v operačním systému, nebo například jako kontejner v Kubernetes. Dále je možné část zpracování
 podkladů převést z~plánovacího softwaru do separátního programu, a tím zjednodušit logiku samotného plánovacího softwaru.
 A nakonec, využití vlastního formátu pro uložení dat nám umožní jednoduššeji přidat do~souboru vlastní data a dodatečný kontext,
-viz sekce \nameref{smarter-maps}.
+viz sekce \filipref{smarter-maps}.
 
 K načtení textového XML souboru je využita knihovna \emph{osmium}. Z tohoto souboru jsou přečteny uzly a cesty. Relace jsou
 ignorovány. Při zpracování cest jsou uloženy pouze cesty povolených typů, ostatní typy cest jsou ignorovány. Mezi ignorované typy
@@ -966,9 +986,9 @@ Zpracovaná data jsou dále skriptem naformátována a uložena ve formátu JSON
 \section{Vyhledání nejbližší silnice na mapě}
 
 Vyhledání nejbližší silnice je důležité nejen za účelem určení aktuální pozice vozidla na mapě, ale také při umisťování waypointů,
-které se vždy umisťují na silnici, viz sekce \nameref{target-definition}. Autonomní platforma se samozřejmě pohybuje po silnici,
+které se vždy umisťují na silnici, viz sekce \filipref{target-definition}. Autonomní platforma se samozřejmě pohybuje po silnici,
 a plánovací software musí vědět, kde se vozidlo momentálně nachází i v momentě, kdy nepřesná GPS (viz sekce
-\nameref{gps-inaccuracy}) umístí autonomní platformu mimo definovanou silnici. Dále samozřejmě musí plánovací software vědět,
+\filipref{gps-inaccuracy}) umístí autonomní platformu mimo definovanou silnici. Dále samozřejmě musí plánovací software vědět,
 na~které silnici se nachází daný waypoint, aby dokázal správně naplánovat cestu.
 
 Cestu lze v mapových podkladech definovat dvěma způsoby. Počátečním a koncovým bodem, nebo bodem a vektorem určujícím směr a délku
@@ -993,28 +1013,28 @@ by měl být umístěn waypoint.
 
 \chapter{Webová aplikace} \label{web-app}
 
-V kapitole \nameref{target-definition} bylo předestřeno využití webové aplikaci ke vzdálenému ovládání vozidla. V současné době 
+V kapitole \filipref{target-definition} bylo předestřeno využití webové aplikaci ke vzdálenému ovládání vozidla. V současné době
 lze autonomní platformu ovládat pomocí vizualizéru, jenž je součástí plánovacího softwaru. Toto řešení je ovšem dočasné a slouží
 především k ulehčení vývoje a zachytávání chyb. Při skutečném využití by bylo přinejlepším nepraktické. Využívání vizualizéru,
-mimo své negativní dopady na nároky ovládacího softwaru díky nutnosti vykreslovat vozidlo na mapu a vyobrazovat jeho pohyb, 
-znemožňuje kontejnerizaci softwaru pro plánování cesty a vynucuje spouštění ovládacího softwaru na zařízení, ze kterého chceme 
+mimo své negativní dopady na nároky ovládacího softwaru díky nutnosti vykreslovat vozidlo na~mapu a vyobrazovat jeho pohyb,
+znemožňuje kontejnerizaci softwaru pro plánování cesty a vynucuje spouštění ovládacího softwaru na zařízení, ze kterého chceme
 autonomní platformu ovládat. Za další nevýhodu lze považovat nutnost instalace interpreteru jazyka Python na cílovém stroji, nebo
 daný interpreter přibalit k distribuci plánovacího softwaru.
 
 Webová aplikace je v dnešní době již víceméně standardním řešením, jež řeší všechny dříve zmíněné problémy. Software pro plánování
-cesty vozidla může běžet nezávisle na uživatelském rozhraní v kontejnerizovaném prostředí a vystavovat své REST API 
+cesty vozidla může běžet nezávisle na uživatelském rozhraní v kontejnerizovaném prostředí a vystavovat své REST API
 pod nakonfigurovaným portem. Backend webové aplikace může běžet na stejném stroji či clusteru, jako plánovací software, nebo může
-být samozřejmě spuštěn kdekoliv jinde. Uživatel poté webovou aplikaci může využívat jednoduše za pomoci libovolného moderního 
+být samozřejmě spuštěn kdekoliv jinde. Uživatel poté webovou aplikaci může využívat jednoduše za pomoci libovolného moderního
 webového prohlížeče. Prohlížeč si od serveru vyžádá statické soubory a vykreslí webovou aplikaci, jež následně očekává vstup
-od uživatele a zároveň graficky vyobrazuje aktuální informace o vozidlu. Uživateli tak stačí mít k dispozici libovolný stroj 
-s moderním prohlížečem. Není třeba instalace žádného softwaru, může být využito libovolné zařízení, logika plánování cesty 
+od uživatele a zároveň graficky vyobrazuje aktuální informace o vozidlu. Uživateli tak stačí mít k dispozici libovolný stroj
+s moderním prohlížečem. Není třeba instalace žádného softwaru, může být využito libovolné zařízení, logika plánování cesty
 a logika grafického vyobrazování informací o vozidle je od sebe oddělená, a všechny potřebné aktualizace jsou proveditelné
 na straně backendu.
 
 \section{Implementace frontendu webové aplikace}
 
-Volba technologií využitých na frontendu určitě nikoho nepřekvapí. Pro práci s mapovými podklady je využíváno API mapové služby 
-Mapy.cz (viz kapitola \nameref{osm-chapter}), jež umožňuje nejen vykreslování vozidla a waypointů, ale také registrovat interakce
+Volba technologií využitých na frontendu určitě nikoho nepřekvapí. Pro práci s mapovými podklady je využíváno API mapové služby
+Mapy.cz (viz kapitola \filipref{osm-chapter}), jež umožňuje nejen vykreslování vozidla a waypointů, ale také registrovat interakce
 s mapou a implementovat ovládání vozidla a vytváření waypointů. Webová stránka je definována značkovacím jazykem HTML a logika
 webové aplikace je naprogramována v jazyce Javascript. Knihovna služby Mapy.cz je jediná závislost využitá v implementaci
 frontendu webové aplikace, s její výjimkou je využit pouze čistý Javascript.
@@ -1022,10 +1042,10 @@ frontendu webové aplikace, s její výjimkou je využit pouze čistý Javascrip
 Frontend webové aplikace po svém načtení prohlížečem začne periodicky obnovovat aplikaci pomocí HTTP requestu na backend aplikace.
 Po přijetí odpovědi serveru jsou automaticky aktualizovány mapové podklady.
 
-Dále frontend definuje vytváření a mazání waypointů, jež definují cíl cesty vozidla. 
+Dále frontend definuje vytváření a mazání waypointů, jež definují cíl cesty vozidla.
 
-Po kliknutí na mapu je poslán HTTP dotaz na API serveru. Server následně notifikuje plánovací software o uživatelově snaze 
-vytvořit waypoint. Software waypoint vytvoří a vloží jej na nejbližší cestu definovanou v mapových podkladech vozidla. 
+Po kliknutí na mapu je poslán HTTP dotaz na API serveru. Server následně notifikuje plánovací software o uživatelově snaze
+vytvořit waypoint. Software waypoint vytvoří a vloží jej na nejbližší cestu definovanou v mapových podkladech vozidla.
 Po vytvoření waypointu je vynucena aktualizace mapových podkladů, aby se nově vytvořený waypoint promítl na mapě.
 
 Kliknutím na waypoint je možné daný waypoint smazat. Mazání waypointu je provedeno způsobem analogickým k vytváření waypointu,
@@ -1034,10 +1054,10 @@ pouze je volán jiný endpoint backendu.
 \section{Implementace backendu webové aplikace}
 
 Volba technologií na backendu je již zajímavější, už jen z důvodu vyššího výběru technologií použitelných pro vývoj backendu.
-Pro tvorbu serveru byl zvolen programovací jazyk Kotlin spárovaný s frameworkem \emph{Ktor}. 
+Pro tvorbu serveru byl zvolen programovací jazyk Kotlin spárovaný s frameworkem \emph{Ktor}.
 
 Jazyk Kotlin je moderní, objektově orientovaný jazyk s prvky funkcionálního programování. Jazyk Kotlin je tvořen firmou JetBrains
-a je možné jej kompilovat pro více platform. Primárně je jazyk Kotlin kompilován pro platformu JVM, kde může využívat celého 
+a je možné jej kompilovat pro více platform. Primárně je jazyk Kotlin kompilován pro platformu JVM, kde může využívat celého
 ekosystému jazyka Java, dále však může být kompilován do nativního strojového kódu, nebo transpilován do jazyka Javascript. Jazyk
 Kotlin v současné době slouží jako oficiální jazyk pro tvorbu aplikací mobilního operačního systému Android
 \cite{kotlin-android-source}.
@@ -1046,16 +1066,16 @@ Framework \emph{Ktor} je technologie implementovaná v jazyce Kotlin, sloužíc�
 webové aplikace ovšem není vyvíjeno s důrazem na asynchronost, neboť požadavky na výkon rozhranní nikdy nebudou tak vysoké, aby
 odůvodnily čas strávený implementací asynchronního programu.
 
-Důvod volby těchto technologií byla snaha ukázat modularitu systému o více komponentách využívajících protokol HTTP 
-pro komunikaci, a možnost využití libovolné technologie a jazyka v~takto nadesignovaném systému. Pro uvažovanou aplikaci by 
-samozřejmě jazyk Python byl naprosto validní volba, v praxi je ovšem často vhodné využití většího množství jazyků a technologií, 
+Důvod volby těchto technologií byla snaha ukázat modularitu systému o více komponentách využívajících protokol HTTP
+pro komunikaci, a možnost využití libovolné technologie a jazyka v~takto nadesignovaném systému. Pro uvažovanou aplikaci by
+samozřejmě jazyk Python byl naprosto validní volba, v praxi je ovšem často vhodné využití většího množství jazyků a technologií,
 především díky lišících se předností různých jazyků, nebo dostupnosti knihoven či frameworků pro daný jazyk nebo platformu. Druhým
 důvodem volby jazyka Kotlin byla snaha vyzkoušet využití frameworku \emph{Ktor} v praxi.
 
-Backend definuje REST API, jež, kromě vydávání statických souborů, implementuje endpointy analogické REST API softwaru 
-pro plánování cesty, popsaném v podkapitole \nameref{rest-api}. Rozdíl mezi API plánovacího softwaru, a API backendu webové 
-aplikace, je ve validaci prováděné daným API. API plánovacího softwaru, z důvodů jednoduchosti implementuje pouze minimální 
-validaci, nemělo by být vystaveno veřejně a slouží pouze k internímu použití. REST API backendu webové aplikace je určeno 
+Backend definuje REST API, jež, kromě vydávání statických souborů, implementuje endpointy analogické REST API softwaru
+pro plánování cesty, popsaném v podkapitole \filipref{rest-api}. Rozdíl mezi API plánovacího softwaru, a API backendu webové
+aplikace, je ve validaci prováděné daným API. API plánovacího softwaru, z důvodů jednoduchosti implementuje pouze minimální
+validaci, nemělo by být vystaveno veřejně a slouží pouze k internímu použití. REST API backendu webové aplikace je určeno
 k veřejnému použití, a za tímto účelem také implementuje určitou validaci svých vstupů. Samozřejmě také z hlediska logické dělení
 funkcionality systému není vhodné, aby software pro plánování cesty vozidla uměl vydávat statické soubory.
 
@@ -1107,88 +1127,127 @@ ale také zjednodušší ladění výkonnostní stránky aplikace, díky možnos
 %TODO: Zhodnotit, jak moc za píču to stojí
 
 % Seznam literatury
-\renewcommand{\bibname}{Literatura}
+\renewcommand{\bibname}{Zdroje}
 \begin{thebibliography}{20}
 
 \bibitem{pid-controller-source}
-MATLAB: \textit{Understanding PID Control, Part 1: What Is PID Control?} [online], MATLAB [cit. 2021-04-17].
+MATLAB: \textit{Understanding PID Control, Part 1: What Is PID Control?} [online], MATLAB [cit. 2021-04-17]. \\
 Dostupné z: \url{https://www.youtube.com/watch?v=wkfEZmsQqiA}
 
 \bibitem{pandemic-source} % Actually the source of the pandemic was China, this is just the source for a paper about the pandemic
-Md~Tanveer Adil, Rumana Rahman, Douglas Whitelaw, Vigyan Jain, Omer Al-Taan, Farhan Rashid, Aruna Munasinghe, 
-Periyathambi Jambulingam: \textit{SARS-CoV-2 and the pandemic of COVID-19}.
+Md~Tanveer Adil, Rumana Rahman, Douglas Whitelaw, Vigyan Jain, Omer Al-Taan, Farhan Rashid, Aruna Munasinghe,
+Periyathambi Jambulingam: \textit{SARS-CoV-2 and the pandemic of COVID-19}. \\
 Dostupné z: \url{https://pmj.bmj.com/content/97/1144/110}, The Fellowship of Postgraduate Medicine, 2021
 
-\bibitem{can-source} 
-CSS Electronics: \textit{CAN Bus Explained - A Simple Intro} [online], CSS Electronics [cit. 2021-04-17].
+\bibitem{can-source}
+CSS Electronics: \textit{CAN Bus Explained - A Simple Intro} [online], CSS Electronics [cit. 2021-04-17]. \\
 Dostupné z: \url{https://www.csselectronics.com/screen/page/simple-intro-to-can-bus/language/en}
 
-\bibitem{bitcoin-rally-source} 
-Bloomberg: \textit{Bitcoin Touches \$64,000 High as Traders Eye Coinbase Listing} [online], Bloomberg [cit. 2021-04-17],
-Dostupné z: 
+\bibitem{bitcoin-rally-source}
+Bloomberg: \textit{Bitcoin Touches \$64,000 High as Traders Eye Coinbase Listing} [online], Bloomberg [cit. 2021-04-17]. \\
+Dostupné z:
 \url{https://www.bloomberg.com/news/articles/2021-04-13/bitcoin-rallies-to-all-time-high-as-traders-eye-coinbase-listing}
 
-\bibitem{bitcoin-miners-gpu-source} 
-Bloomberg: \textit{Crypto Miners Are Competing With Gamers for Nvidia Chips} [online], Bloomberg [cit. 2021-04-17],
-Dostupné z: 
+\bibitem{bitcoin-miners-gpu-source}
+Bloomberg: \textit{Crypto Miners Are Competing With Gamers for Nvidia Chips} [online], Bloomberg [cit. 2021-04-17]. \\
+Dostupné z:
 \url{https://www.bloomberg.com/news/newsletters/2021-04-14/crypto-miners-are-competing-with-gamers-for-nvidia-chips}
 
-\bibitem{webcam-shortage-source} 
-Bloomberg: \textit{The Global Auto Plants Now Idle as Chip Supplies Dry Up} [online], Bloomberg [cit. 2021-04-17],
+\bibitem{webcam-shortage-source}
+Bloomberg: \textit{The Global Auto Plants Now Idle as Chip Supplies Dry Up} [online], Bloomberg [cit. 2021-04-17]. \\
 Dostupné z:
 \url{https://www.bloomberg.com/news/articles/2021-03-24/the-global-auto-plants-now-idle-as-chip-supplies-dry-up}
 
-\bibitem{line-line-intersection-source} 
-Gabriel Eng: \textit{Intersection of two lines in Python} [online], Stack Overflow [cit. 2021-04-17],
+\bibitem{line-line-intersection-source}
+Gabriel Eng: \textit{Intersection of two lines in Python} [online], Stack Overflow [cit. 2021-04-17]. \\
 Dostupné z:
 \url{https://stackoverflow.com/questions/20677795/how-do-i-compute-the-intersection-point-of-two-lines/51127674\#51127674}
 
-\bibitem{gps-inaccuracy-source} 
-Jeff Barber: \textit{"Do GPS Units Always Overestimate Trail Distances?" No.} [online], Singletracks [cit. 2021-04-17],
+\bibitem{gps-inaccuracy-source}
+Jeff Barber: \textit{"Do GPS Units Always Overestimate Trail Distances?" No.} [online], Singletracks [cit. 2021-04-17]. \\
 Dostupné z:
 \url{https://www.singletracks.com/mtb-gear/do-gps-units-always-overestimate-trail-distances-no/}
 
-\bibitem{kotlin-android-source} 
+\bibitem{kotlin-android-source}
 Frederic Lardinois: \textit{Kotlin is now Google's preferred language for Android app development} [online],
-TechCrunch [cit. 2021-04-17], Dostupné z:
+TechCrunch [cit. 2021-04-17]. \\
+Dostupné z:
 \url{https://techcrunch.com/2019/05/07/kotlin-is-now-googles-preferred-language-for-android-app-development/}
 
-\bibitem{car-client-source} 
-Filip Peterek: \textit{car-client} [online], Filip Peterek [cit. 2021-04-17],
+\bibitem{car-client-source}
+Filip Peterek: \textit{car-client} [online], Filip Peterek [cit. 2021-04-17]. \\
 Dostupné z:
 \url{https://github.com/fpeterek/car-client}
 
-\bibitem{car-webapp-source} 
-Filip Peterek: \textit{car-webapp} [online], Filip Peterek [cit. 2021-04-17],
+\bibitem{car-webapp-source}
+Filip Peterek: \textit{car-webapp} [online], Filip Peterek [cit. 2021-04-17]. \\
 Dostupné z:
 \url{https://github.com/fpeterek/car-webapp}
 
-\bibitem{car-map-downloader-source} 
-Filip Peterek: \textit{car-map-downloader} [online], Filip Peterek [cit. 2021-04-17],
+\bibitem{car-map-downloader-source}
+Filip Peterek: \textit{car-map-downloader} [online], Filip Peterek [cit. 2021-04-17]. \\
 Dostupné z:
 \url{https://github.com/fpeterek/car-map-downloader}
 
-\bibitem{car-can-source} 
-Filip Peterek: \textit{car-can} [online], Filip Peterek [cit. 2021-04-17],
+\bibitem{car-can-source}
+Filip Peterek: \textit{car-can} [online], Filip Peterek [cit. 2021-04-17]. \\
 Dostupné z:
 \url{https://github.com/fpeterek/car-can}
 
-\bibitem{car-simulator-source} 
-Filip Peterek: \textit{car-simulator} [online], Filip Peterek [cit. 2021-04-17],
+\bibitem{car-simulator-source}
+Filip Peterek: \textit{car-simulator} [online], Filip Peterek [cit. 2021-04-17]. \\
 Dostupné z:
 \url{https://github.com/fpeterek/car-simulator}
 
-\bibitem{geologger-source} 
-Filip Peterek: \textit{GeoLogger} [online], Filip Peterek [cit. 2021-04-17],
+\bibitem{geologger-source}
+Filip Peterek: \textit{GeoLogger} [online], Filip Peterek [cit. 2021-04-17]. \\
 Dostupné z:
 \url{https://github.com/fpeterek/GeoLogger}
 
 \end{thebibliography}
 
 % Prilohy
+\appendix
+
+\chapter{Výsledky měření pomocí GPS} \label{gps-measuring-results-all}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\textwidth]{Figures/domzolsiny.png}
+    \caption{Krátká chůze zaznamenaná pomocí GPS}
+    \label{fig:domzolsiny-fullsize}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\textwidth]{Figures/hrbitov.png}
+    \caption{Delší chůze, vždy po chodníku nebo silnici, zaznamenaná pomocí GPS}
+    \label{fig:hrbitov-fullsize}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\textwidth]{Figures/louky.png}
+    \caption{Rovná chůze středem cesty zaznamenaná pomocí GPS}
+    \label{fig:louky-fullsize}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\textwidth]{Figures/olsinaautem.png}
+    \caption{Krátká jízda osobním automobilem zaznamenaná pomocí GPS}
+    \label{fig:olsinaautem-fullsize}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\textwidth]{Figures/olsinapesky.png}
+    \caption{Krátká chůze zaznamenaná pomocí GPS}
+    \label{fig:olsinapesky-fullsize}
+\end{figure}
+
 %TODO URGENT: VYHODIT PŘED ODEVZDÁNÍM JAKO BP
 % Já si za tím teda stojím, ale určití lidé by mě za tento názor zařízli jak psa
-\appendix
 \chapter{ELP záležitosti, co by se neměly dostat do finální verze BP}
 \begin{enumerate}
   \item Skvělé jazyky
@@ -1204,6 +1263,7 @@ Dostupné z:
     \begin{itemize}
       \item Scala
       \item Swift
+      \item OstraJava
     \end{itemize}
   \item Nepoužitelné pseudojazyky
     \begin{itemize}
@@ -1218,7 +1278,81 @@ Výpočet vztlaku generovaného křídlem: $L = \frac {C_L \rho A V^2} 2$
 
 Zdroják:
 
-\lstinputlisting[label=src:imported-kotlin, caption={Zdroják zkopírovaný z nějakého nesmyslu}, language=Kotlin]{src/code.kt}
+\lstinputlisting[label=src:imported-kotlin, caption={Zdroják v krásném jazyce vytáhnutý ze souboru}, language=Kotlin]{src/code.kt}
+
+% V klidu, nemusím nic vyhazovat z žádného zdrojáku, za OstraJavu vyhodí oni mě
+\begin{lstlisting}[label=src:ostrajava-listing, caption={Zdroják v ještě krásnějším jazyce}, language=OstraJava]
+
+banik pyco
+
+tryda Obdelnik {
+   toz cyslo delka pyco
+   toz cyslo vyska pyco
+
+   Obdelnik(cyslo delka, cyslo vyska) {
+      joch.delka = delka pyco
+      joch.vyska = vyska pyco
+   }
+}
+
+tryda Stverec fagan od Obdelnik {
+    Stverec(cyslo velikost) {
+       forant(velikost, velikost) pyco
+    }
+}
+
+tryda Ostrava {
+    rynek() {
+        toz Stverec s = zrob Stverec(5) pyco
+    }
+
+    test_bulu() {
+        toz bul a pyco
+        toz bul b pyco
+
+        //...
+
+        kaj (a == fajne ci b == fajne){
+            // ...
+        } kajtez (a == nyt aj b == fajne){
+            // ...
+        } boinak {
+            // ...
+        }
+    }
+
+    ukazka() {
+        toz cyslo i = 0 pyco
+        rubat (i < 5) {
+            kaj (i == 4) {
+                zdybat pyc
+            }
+            //...
+            i = i+1 pyco
+        }
+    }
+
+   nacti(Dryst nazevSouboru) {
+
+        toz Citac c = zrob Citac() pyco
+        c.otevr(nazevSouboru) pyco
+
+        toz Dryst radka pyco
+        radka = c.citajRadku() pyco
+
+        rubat (radka != chuj) {
+            // ...
+            radka = c.citajRadku() pyco
+        }
+        c.zavr() pyco
+    }
+}
+
+fajront pyco
+
+
+\end{lstlisting}
+
 % \input{Chapters/Appendix1.tex}
 % \input{Chapters/Appendix2.tex}
 
