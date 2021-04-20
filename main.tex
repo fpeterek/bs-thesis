@@ -4,52 +4,9 @@
 \usepackage{subfig}
 \usepackage{hyperref}
 \usepackage{xurl}
-\usepackage{listings}
-\PassOptionsToPackage{usenames,dvipsnames}{xcolor}
 
 % A protože jsem namyšlený, pojmenuju to podle sebe
 \newcommand{\filipref}[1]{\ref{#1}\,--\,\nameref{#1}}
-
-% Propůjčeno z https://github.com/cansik/kotlin-latex-listing
-% Geniální člověk co používá skvělý jazyk
-\lstdefinelanguage{Kotlin}{
-  comment=[l]{//},
-  commentstyle={\color{gray}\ttfamily},
-  emph={filter, first, firstOrNull, forEach, lazy, map, mapNotNull, println},
-  %emphstyle={\color{OrangeRed}},
-  emphstyle=\color{orange},
-  %identifierstyle=\color{black},
-  identifierstyle=\color[RGB]{43,145,175},
-  keywords={!in, !is, abstract, actual, annotation, as, as?, break, by, catch, class, companion, const, constructor, continue, crossinline, data, delegate, do, dynamic, else, enum, expect, external, false, field, file, final, finally, for, fun, get, if, import, in, infix, init, inline, inner, interface, internal, is, lateinit, noinline, null, object, open, operator, out, override, package, param, private, property, protected, public, receiveris, reified, return, return@, sealed, set, setparam, super, suspend, tailrec, this, throw, true, try, typealias, typeof, val, var, vararg, when, where, while},
-  %keywordstyle={\color{NavyBlue}\bfseries},
-  keywordstyle=\color{blue},
-  morecomment=[s]{/*}{*/},
-  morestring=[b]",
-  morestring=[s]{"""*}{*"""},
-  ndkeywords={@Deprecated, @JvmField, @JvmName, @JvmOverloads, @JvmStatic, @JvmSynthetic, Array, Byte, Double, Float, Int, Integer, Iterable, Long, Runnable, Short, String},
-  %ndkeywordstyle={\color{BurntOrange}\bfseries},
-  ndkeywordstyle=\color{blue},
-  sensitive=true,
-  stringstyle=\color[RGB]{163,21,21}
-  %stringstyle={\color{ForestGreen}\ttfamily},
-}
-
-\lstdefinelanguage{OstraJava}{
-  comment=[l]{//},
-  commentstyle={\color{gray}\ttfamily},
-  emph={fajront, banik, pyco, Ostrava, rynek, toz, naDryst, kantuje},
-  emphstyle=\color{orange},
-  identifierstyle=\color[RGB]{43,145,175},
-  keywords={fajne, nyt, chuj, kaj, kajtez, boinak, rubat, zdybat, dlabat, davaj, zrob, forant, tryda, fagan, od, ci, aj},
-  keywordstyle=\color{blue},
-  morecomment=[s]{/*}{*/},
-  morestring=[b]",
-  morestring=[s]{"""*}{*"""},
-  ndkeywords={cyslo, bul, chachar, cyslo\_desetinne, Dryst, Bazmek, Citac, Konzola, Bafr},
-  ndkeywordstyle=\color{blue},
-  sensitive=true,
-  stringstyle=\color[RGB]{163,21,21}
-}
 
 \ThesisAuthor{Filip Peterek}
 \ThesisSupervisor{Ing. Jan Gaura, Ph.D.}
@@ -1124,7 +1081,29 @@ ale také zjednodušší ladění výkonnostní stránky aplikace, díky možnos
 
 \chapter{Závěr}
 
-%TODO: Zhodnotit, jak moc za píču to stojí
+Cílem výzkumného projektu je nejen implementovat vlastní autonomní vozidlo, ale také vyzkoušet alternativní způsoby řízení. 
+
+Výstupem této práce je základ pro implementaci autonomního řízení. Důležitým výstupem jsou nejen zdrojové kódy, ale také poznatky
+a výsledky výzkumné práce. 
+
+Výstupem zkoušení různých alternativ ovšem není software schopný plně autonomního řízení -- za tímto účelem se zkoušené
+alternativy projevily jako nedostatečné. Přesto byl při zkoušení napsán zdrojový kód, jenž bude možné využít při budoucím vývoji
+vozidla. 
+
+Výstup v podobě zdrojových kódu představuje softwarový simulátor využitelný jako náhradu za fyzické vozidlo při testování 
+autonomního řízení, software pro zadávání příkazů vozidlu pomocí rozhraní CAN, základ softwaru plánujícího cestu autonomní 
+platformy, webová aplikace umožňující vzdálené zadávání cílů cesty a monitorování vozidla, utilita sloužící k periodickému
+stahování mapových podkladů, nebo také utilita pro zařízení využívající operační systém Android, jež lze využít k logování GPS 
+souřadnic za účelem jejich následné analýzy nebo využití při testování.
+
+Bohužel byl projekt částečně opožděn. Zpoždění bylo způsobeno převážně externími faktory, jež nepříjemným způsobem ztížily nebo
+znemožnily vývoj a testování nejen softwaru, ale celého vozidla. Přesto je díky velkému rozsahu projektu těžké říct, zda by vůbec
+projekt byl dokončen v době psaní této publikace, i pokud by podmínky pro vývoj byly optimální. Zpoždění také umožňilo věnovat se 
+tvorbě utility pro export mapových podkladů, nebo webové aplikace, na něž by za normálních okolností nemusel zbýt čas.
+
+Dále je třeba zmínit, že tato práce, i přes veškerou snahy vyvinout při tvorbě softwaru, nepřinesla nové poznatky na poli 
+autonomního řízení vozidel. Dokončením výzkumného projektu tak bude vyvinuto vozidlo s určitým komerčním potenciálem, finální 
+produkt však nebude představovat revoluci v oblasti akademické, ani komerční.
 
 % Seznam literatury
 \renewcommand{\bibname}{Zdroje}
@@ -1245,113 +1224,6 @@ Dostupné z:
     \caption{Krátká chůze zaznamenaná pomocí GPS}
     \label{fig:olsinapesky-fullsize}
 \end{figure}
-
-%TODO URGENT: VYHODIT PŘED ODEVZDÁNÍM JAKO BP
-% Já si za tím teda stojím, ale určití lidé by mě za tento názor zařízli jak psa
-\chapter{ELP záležitosti, co by se neměly dostat do finální verze BP}
-\begin{enumerate}
-  \item Skvělé jazyky
-    \begin{itemize}
-      \item Kotlin
-      \item Python
-      \item Kobeři-C
-      \item C
-      \item C++
-      \item Lisp
-    \end{itemize}
-  \item Použitelné jazyky
-    \begin{itemize}
-      \item Scala
-      \item Swift
-      \item OstraJava
-    \end{itemize}
-  \item Nepoužitelné pseudojazyky
-    \begin{itemize}
-      \item Java
-      \item Golang
-      \item C\#
-      \item PHP
-    \end{itemize}
-\end{enumerate}
-
-Výpočet vztlaku generovaného křídlem: $L = \frac {C_L \rho A V^2} 2$
-
-Zdroják:
-
-\lstinputlisting[label=src:imported-kotlin, caption={Zdroják v krásném jazyce vytáhnutý ze souboru}, language=Kotlin]{src/code.kt}
-
-% V klidu, nemusím nic vyhazovat z žádného zdrojáku, za OstraJavu vyhodí oni mě
-\begin{lstlisting}[label=src:ostrajava-listing, caption={Zdroják v ještě krásnějším jazyce}, language=OstraJava]
-
-banik pyco
-
-tryda Obdelnik {
-   toz cyslo delka pyco
-   toz cyslo vyska pyco
-
-   Obdelnik(cyslo delka, cyslo vyska) {
-      joch.delka = delka pyco
-      joch.vyska = vyska pyco
-   }
-}
-
-tryda Stverec fagan od Obdelnik {
-    Stverec(cyslo velikost) {
-       forant(velikost, velikost) pyco
-    }
-}
-
-tryda Ostrava {
-    rynek() {
-        toz Stverec s = zrob Stverec(5) pyco
-    }
-
-    test_bulu() {
-        toz bul a pyco
-        toz bul b pyco
-
-        //...
-
-        kaj (a == fajne ci b == fajne){
-            // ...
-        } kajtez (a == nyt aj b == fajne){
-            // ...
-        } boinak {
-            // ...
-        }
-    }
-
-    ukazka() {
-        toz cyslo i = 0 pyco
-        rubat (i < 5) {
-            kaj (i == 4) {
-                zdybat pyc
-            }
-            //...
-            i = i+1 pyco
-        }
-    }
-
-   nacti(Dryst nazevSouboru) {
-
-        toz Citac c = zrob Citac() pyco
-        c.otevr(nazevSouboru) pyco
-
-        toz Dryst radka pyco
-        radka = c.citajRadku() pyco
-
-        rubat (radka != chuj) {
-            // ...
-            radka = c.citajRadku() pyco
-        }
-        c.zavr() pyco
-    }
-}
-
-fajront pyco
-
-
-\end{lstlisting}
 
 % \input{Chapters/Appendix1.tex}
 % \input{Chapters/Appendix2.tex}
