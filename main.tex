@@ -72,15 +72,10 @@
 \AddAcronym{TX}{Transmitter}
 \AddAcronym{RX}{Receiver}
 \AddAcronym{RPC}{Remote Procedure Call}
-\AddAcronym{REST}{Representational state transfer}
+\AddAcronym{REST}{Representational State Transfer}
 \AddAcronym{OSM}{OpenStreetMap}
 \AddAcronym{URL}{Uniform Resource Locator}
-
-% Novy druh tabulkoveho sloupce, ve kterem jsou cisla zarovnana podle desetinne carky
-% Já jako chápu, jaký je význam tohoto, ale bylo to v šabloně od Dvorského, nikde to (momentálně) nevyužívám
-% Možná to zapomenu smazat
-% TODO: Smazat, jestli to nevyužiju.
-\newcolumntype{d}[1]{D{,}{,}{#1}}
+\AddAcronym{BFS}{Breadth First Search}
 
 \begin{document}
 
@@ -966,7 +961,34 @@ by měl být umístěn waypoint.
 
 \section{Plánování cesty za využití mapových podkladů}
 
-%TODO: BFS (nebo variace) nad cestami, rád bych naprogramoval, jestli nestihnu, okecat
+Ve finální verzi softwaru budou mapové podklady sloužit jako jeden ze vstupů při plánování cesty. Současné návrhy budoucí
+implementace počítají s nalezením optimální cesty v mapových podkladech, a jejím následováním za využití vstupů z kamer, GPS, 
+a v budoucnu případně také z Lidaru. Kamery budou při analýze okolí mimo jiné detekovat také silnice. Jakmile dojde k detekci
+křižovatky, na řadu nastoupí právě GPS v kombinaci s mapovými podklady. Software za využití mapových podkladů určí, o kterou
+křižovatku se~jedná, a kterým směrem má vozidlo pokračovat, a případně, zase pomocí vstupu z kamer, provede vozidlo zatáčkou.
+
+Kamerový systém i software pro~analýzu obrazu jsou v~době psaní publikace stále ve~vývoji. Navigaci za~využití grafických vstupů
+tak nebylo prozatím možné implementovat. Nic ovšem nebránilo paralelní implementaci vyhledávání cesty v~mapových podkladech.
+
+K účelu hledání nejkratší cesty univerzitním kampusem byl zvolen algoritmus prohledávání grafu do šířky (Breadth First Search).
+Důvodem volby tohoto algoritmu byla především jeho jednoduchost. Implementace průchodu grafu do šířky není složitá, zároveň však
+hledání cesty funguje dostatečně rychle. Algoritmus v dané implementaci nevyužívá heurestiku, jež na malém grafu není nutná.
+Zároveň nebere v~potaz délky jednotlivých cest, pouze počet cest detekovaných při~průchodu grafem. Mapu univerzity tedy lze 
+považovat za nevážený graf. Práce s~délkami cest by bezpochyby byla vhodná v~provozu v~předem neznámých oblastech, v~kampusu 
+univerzity při současné implementaci ovšem není třeba -- její benefit by byl zanedbatelný až nulový.
+
+Práce s váženým grafem však v~budoucnu může reálně být potřeba, a to v případě, pokud opravdu dojde k definici váhy cesty
+na~základě její frekventovanosti v~dané denní době, za předpokladu, že tato váha bude numerická (koeficient), ne binární 
+(cesta je buď průjezdná, nebo neprůjezdná), a dojde tak k násobení délky dané části silnice v podkladech definovaným koeficientem.
+Tato funkcionalita je momentálně uvažována pouze v teoretické rovině, při její možné implementaci však nebude současný algoritmus
+průchodu neváženým grafem stačit.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{Figures/bfs.png}
+    \caption{Nejkratší cesta nalezená za využití algoritmu BFS}
+    \label{fig:bfs}
+\end{figure}
 
 \chapter{Webová aplikace} \label{web-app}
 
@@ -1105,7 +1127,7 @@ Dále je třeba zmínit, že tato práce, i přes veškerou snahy vyvinout při 
 autonomního řízení vozidel. Dokončením výzkumného projektu tak bude vyvinuto vozidlo s určitým komerčním potenciálem, finální 
 produkt však nebude představovat revoluci v oblasti akademické, ani komerční.
 
-% Seznam literatury
+% Bibliography
 \renewcommand{\bibname}{Zdroje}
 \begin{thebibliography}{20}
 
@@ -1185,7 +1207,6 @@ Dostupné z:
 
 \end{thebibliography}
 
-% Prilohy
 \appendix
 
 \chapter{Výsledky měření pomocí GPS} \label{gps-measuring-results-all}
@@ -1224,9 +1245,6 @@ Dostupné z:
     \caption{Krátká chůze zaznamenaná pomocí GPS}
     \label{fig:olsinapesky-fullsize}
 \end{figure}
-
-% \input{Chapters/Appendix1.tex}
-% \input{Chapters/Appendix2.tex}
 
 \end{document}
 
