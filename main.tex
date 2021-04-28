@@ -6,7 +6,7 @@
 \usepackage{xurl}
 
 % A protože jsem namyšlený, pojmenuju to podle sebe
-\newcommand{\filipref}[1]{\ref{#1}\,--\,\nameref{#1}}
+\newcommand{\peteref}[1]{\ref{#1}\,--\,\nameref{#1}}
 
 \ThesisAuthor{Filip Peterek}
 \ThesisSupervisor{Ing. Jan Gaura, Ph.D.}
@@ -126,7 +126,7 @@ je schopen vozidlu předávat pokyny a zároveň vozidlo regulovat a monitorovat
 na vnější události ovlivňující vozidlo, dokáže však zpracovat interní chyby. Software tedy slouží čistě a pouze ke zpracování
 interních záležitostí vozidla.
 
-Architektura softwaru a důvod dělení na server a klient jsou podrobněji popsány v kapitole \filipref{software-architecture}.
+Architektura softwaru a důvod dělení na server a klient jsou podrobněji popsány v kapitole \peteref{software-architecture}.
 
 \section{Sběrnice CAN}
 
@@ -344,9 +344,9 @@ cyklus periodicky opakuje.
 Tato softwarová komponenta tedy zastává primárně roli klienta, zejména v relaci k vozidlu, to~ovšem neznamená, že v roli klienta
 musí působit ve všech ohledech a všech aplikacích. Například pokud by došlo k implementaci monitorování pomocí technologie
 Prometheus, musel by software vystavit své metriky pomocí HTTP serveru. Dále komponenta implementuje jednoduché REST API, které
-umožňuje vzdálené ovládání za využití protokolu HTTP. API je podrobněji popsáno v~sekci \filipref{rest-api}.
+umožňuje vzdálené ovládání za využití protokolu HTTP. API je podrobněji popsáno v~sekci \peteref{rest-api}.
 
-Komunikace s Raspberry~Pi na vozidle probíhá pomocí vlastního binárního protokolu popsaného v části \filipref{server-methods}.
+Komunikace s Raspberry~Pi na vozidle probíhá pomocí vlastního binárního protokolu popsaného v části \peteref{server-methods}.
 Podobně je vlastní protokol využit také při komunikaci s analyzátorem okolního prostředí. V obou případech byl pro přenos dat
 zvolen protokol TCP, a~to~především z toho důvodu, že TCP dokáže zajistit doručení všech paketů do cílové destinace. Protokol UDP
 by byl vhodný například pokud by data z kamery byla streamována, nebo pokud by mezi softwarem pro plánování cesty a CAN
@@ -359,19 +359,19 @@ extrémně důležité, aby nedocházelo ke ztrátě paketů a vozidlo dostalo v
 Aby mělo plánování cesty autonomní neosazené platformy nějaký smysl, musí být znám cíl cesty vozidla. V praxi může tento cíl
 představovat například 3D tiskárna sloužící jako zdroj materiálu, nebo destinace, do které má být naložený materiál dovezen.
 K logické definici těchto cílů slouží právě waypointy. Waypointy, tedy geografické body na mapě, lze zadat nejen pomocí grafického
-vizualizéru (viz podkapitola \filipref{visualizer}), ale také pomocí webové aplikace, která by v praxi měla být preferována.
-Webové aplikaci se podrobněji věnuje kapitola \filipref{web-app}.
+vizualizéru (viz podkapitola \peteref{visualizer}), ale také pomocí webové aplikace, která by v praxi měla být preferována.
+Webové aplikaci se podrobněji věnuje kapitola \peteref{web-app}.
 
 Waypointů je možné zadat teoreticky neomezené množství, prakticky je samozřejmě množství omezeno pamětí, kterou může plánovací
 software využít. Po zadání waypointu plánovací software nalezne nejkratší možnou cestu k danému místu na mapě a pokusí se vozidlo
 navigovat až k požadovanému cíli. Tento postup opakuje postupně pro každý waypoint, a to v takovém pořadí, v jakém je uživatel
 zadal. Při dosažení posledního waypointu se vozidlo zastaví a čeká na další pokyny. Pokud se uživatel při vytváření waypointu
 pokusí waypoint vytvořit mimo silnice definované mapovými podklady, je waypoint automaticky umístěn na nejbližší silnici.
-Práce s mapovými podklady je~podrobněji rozebrána v kapitole \filipref{osm-chapter}.
+Práce s mapovými podklady je~podrobněji rozebrána v kapitole \peteref{osm-chapter}.
 
 Jelikož je náročné zastavit přesně v určitém geografickém bodě, už jen kvůli nepřesnosti GPS, počítáme s určitou tolerancí
 v okruhu okolo uživatelem zadaného bodu. Přesná navigace pomocí technologie GPS byla vyzkoušena a je popsána v sekci
-\filipref{gps-failure}. Díky relativně vysoké nepřesnosti GPS se tento styl navigace projevil jako nepřesný a náročný na využití.
+\peteref{gps-failure}. Díky relativně vysoké nepřesnosti GPS se tento styl navigace projevil jako nepřesný a náročný na využití.
 Pro~přesnou navigaci vozidla a zastavení v přesném bodě by ovšem bylo možné využít vstupu z~kamer, a~po~dosažení geografického
 cíle autonomní platformu navigovat pomocí vizuálních prvků, například vodorovných čar definujících parkovací místo nebo
 grafického kódu, dovést do přesného bodu. Tato funkcionalita by následně umožnila například automatické strojové vykládání
@@ -452,7 +452,7 @@ se nachází v souboru \emph{client.py}. Využití je velmi jednoduché. Při p�
 z enviromentálních proměnných, proto stačí pouze importovat daný soubor, nebo jen požadované funkce, a ty poté volat s případnými
 argumenty. Není třeba klienta konfigurovat v kódu, vytvářet instance tříd, apod.
 
-Klient samozřejmě využívá vlastní protokol popsaný v sekci \filipref{server-methods}. K~volání funkcí serveru implementuje pět
+Klient samozřejmě využívá vlastní protokol popsaný v sekci \peteref{server-methods}. K~volání funkcí serveru implementuje pět
 metod, \emph{drive}, \emph{healthcheck}, \emph{info}, \emph{position} a \emph{ebrake}, které volají stejnojmenné funkce serveru.
 Dále také implementuje funkci \emph{camera\_info}, jež se nedovolává na řídící server, ale na server provádějící analýzu vstupu
 z kamery. V tomto případě ovšem server nevrací informace o okolním prostředí, tato funkce slouží pouze k získání pozice
@@ -478,7 +478,7 @@ obsahující mapové podklady univerzitního kampusu.
 \emph{PathPlanner} poté rozhoduje o pohybu vozidla. Na základě poskytnutých informací, jako jsou například mapové podklady, vstup
 z GPS nebo detekce obrazu, apod., rozhoduje jak o okamžitých akcích, tak o dlouhodobém pohybu a dráze vozidla, za účelem dovedení
 vozidla do cíle. Za~účelem plánování cesty bylo vyzkoušeno hned několik způsobů. Zkoušeným způsobům, poznatkům ze~zkoušení
-postupů, nalezeným problémům a výsledkům výzkumu se podrobněji věnuje kapitola \filipref{driving-methods}.
+postupů, nalezeným problémům a výsledkům výzkumu se podrobněji věnuje kapitola \peteref{driving-methods}.
 
 \subsection{Využité knihovny}
 
@@ -550,7 +550,7 @@ přímou cestu k cíli. Problém ovšem nastal při testování softwaru v praxi
 
 První testovací trasy byly pomocí waypointů definovány tak, aby vozidlo nemuselo prudce zatáčet, aby nenarazilo na žádné překážky
 a aby nebyla ohrožena bezpečnost osob, majetku, ale také samotného vozidla. Vozidlo po spuštění ovládacího softwaru úspěšně
-zahájilo pohyb. Po bezpečném a rovném rozjezdu bylo povoleno zatáčení (viz oddíl \filipref{directions-and-angles}), v tomto
+zahájilo pohyb. Po bezpečném a rovném rozjezdu bylo povoleno zatáčení (viz oddíl \peteref{directions-and-angles}), v tomto
 momentě však nastaly problémy. Autonomní platforma začala nepředvídatelně zatáčet a směřovat špatným směrem. Často při první
 příležitosti změnila trajektorii pohybu a snažila se najet do nejbližší překážky. Toto chování bylo nečekané, neboť na simulátoru
 fungoval software bezproblémově, a také nežádoucí, jelikož waypointy byly definovány tak, aby vozidlo jelo rovně a zatáčelo pouze
@@ -560,7 +560,7 @@ Nepřesnost GPS se samozřejmě nabízela jako hlavní viník této nepříjemn�
 na místě. Software byl upraven tak, aby naměřené GPS hodnoty logoval na standardní výstup programu. Naměřené hodnoty ihned
 potvrdily pravdivost doměnky -- nepřesnost systému GPS byla na potřeby autonomního řízení s využitím GPS jako jediného vstupu
 příliš vysoká. Modul často umisťoval vozidlo jinde, než kde se ve skutečnosti nacházelo. Špatná lokalizace vozidla následně
-zapříčinila špatné určení směru pohybu autonomní platformy (viz oddíl \filipref{directions-and-angles}) a software začal vozidlo
+zapříčinila špatné určení směru pohybu autonomní platformy (viz oddíl \peteref{directions-and-angles}) a software začal vozidlo
 směrovat špatným směrem.
 
 Zde se samozřejmě objevil velký problém z hlediska řízení vozidla. Možnost ovládání autonomní platformy za využití pouze vstupu
@@ -572,7 +572,7 @@ aritmetického průměru při rychlém pohybu. Při výpočtu váženého prům�
 o hodnotě 1. Váha následujících hodnot poté odpovídala 0,9 násobku předchozí váhy. Při vykreslení pozice získané pomocí váženého
 průměru nejnovějších deseti hodnot vypadala grafická vizualizace podstatně lépe vedle vizualizace nezpracovaných čistých dat
 poskytnutých GPS modulem. Při vyzkoušení na fyzickém vozidle se však nepřesnost GPS, zvlášť v kombinaci s pomalou odezvou (viz
-sekce \filipref{gps-low-polling-rate}), stále jevila jako veliký problém. Následující výzkum se tedy věnoval právě nepřesnosti GPS
+sekce \peteref{gps-low-polling-rate}), stále jevila jako veliký problém. Následující výzkum se tedy věnoval právě nepřesnosti GPS
 a snaze zjistit, jak nepřesná GPS doopravdy je, jaké jsou reálné dopady nepřesnosti při řízení a do jaké míry pomáhá v předchozím
 odstavci zmíněný vážený průměr nejnovějších deseti naměřených hodnot.
 
@@ -686,7 +686,7 @@ zanedbatelných hodnot. Vozidlo, jež je subjektem této práce, ovšem dosahuje
 bezpečnosti provozu. V nízkých rychlostech, ve~kterých absolutní změna pozice dosahuje nízkých hodnot, je odchylka způsobená
 nepřesností GPS relativně o hodně vyšší, již není zanedbatelná, a odchylka mezi reálným a vypočítaným směrem pohybu je~schopná
 dosahovat hodnoty až $180^{\circ}$. Hodnoty s tak vysokými odchylkami jsou samozřejmě v~praxi nevyužitelné. Problematice
-nepřesnosti GPS se podrobněji věnuje sekce \filipref{gps-inaccuracy}.
+nepřesnosti GPS se podrobněji věnuje sekce \peteref{gps-inaccuracy}.
 
 Dalším problémem, který s sebou tento přístup určení směru přinesl, byla nemožnost určit směr natočení vozidla, když se vozidlo
 nehýbalo. Tento problém měl nežádoucí projevy zejména po startu vozidla, kdy nebylo možné určit, kterým směrem musí platforma jet,
@@ -697,7 +697,7 @@ dopředu. Z naměřeného pohybu byl dopočten směr, a teprve poté došlo k um
 Samotný výpočet směru pohybu vozidla je velmi jednoduchý. Za pomocí naměřených GPS souřadnic zjistíme, jaký pohyb vozidlo
 vykonalo. Z předchozí a nově naměřené hodnoty vyčteme rozdíl v zeměpisné šířce i délce. Pomocí knihovny \emph{geopy} převedeme
 rozdíl uvedený v zeměpisné šířce a délce na metry a převedeme tak globální světové souřadnice na souřadnice kartézské. To nám
-umožní využít goniometrické funkce a zjednoduššit výpočty, viz sekce \filipref{cartesian-coordinates}. Dále za~využití Pythagorovy
+umožní využít goniometrické funkce a zjednoduššit výpočty, viz sekce \peteref{cartesian-coordinates}. Dále za~využití Pythagorovy
 věty vypočteme celkovou vzdálenost, kterou vozidlo překonalo. Tímto získáme pravoúhlý trojúhelník, jehož přepona je dráha
 pohybu vozidla, odvěsny poté reprezentují rozdíly v zeměpisné šířce a v zeměpisné délce. Následně stačí rozdíl v zeměpisné šířce
 uvedený v~metrech vydělit celkovou vzdáleností. Touto operací získáme kosinus úhlu. Na získaný kosinus aplikujeme funkci arkus
@@ -741,7 +741,7 @@ nízký benefit v daném měřítku. Proto momentální verze softwaru převád�
 systém se prokázal jako dostatečně přesný v měřítku kampusu Vysoké školy báňské, a ačkoliv samozřejmě není přesný a přináší
 s sebou také určitou chybu, díky využití lokálního kartézského systému je chyba přijatelně nízká.
 
-Převod do lokálního souřadnicového systému je řešen způsobem předestřeným dříve v sekci \filipref{directions-and-angles}. Dva
+Převod do lokálního souřadnicového systému je řešen způsobem předestřeným dříve v sekci \peteref{directions-and-angles}. Dva
 geografické body se považují za úhlopříčku obdélníku. Délky stran obdélníku vypočteme aplikací funkce
 \emph{geopy.distance.distance}. Dva body obdélníku již samozřejmě známe, zbylé dva body získáme tak, že vezmeme zeměpisné šířky
 známých bodů, a zkombinujeme je se zeměpisnými délkami opačného bodu.
@@ -766,7 +766,7 @@ areálem jsou dostatečně nízké, aby se daly považovat za zanedbatelné. Př
 nemuselo podstupovat dlouhé stoupání do kopce a zbytečně plýtvat energií. Občasné krátké stoupání pak může způsobit zpomalení
 pohybu vozidla, za takovým účelem je ale na ovládacím serveru běžícím na~autonomní platformě samotné implementován PI regulátor,
 který právě v takovémto případě zaznamenaný pokles rychlosti vykompenzuje zvýšením kroutivého momentu elektromotoru, aby udržel
-rychlost na požadované hodnotě. PI regulace je probrána v sekci \filipref{pi-controller}.
+rychlost na požadované hodnotě. PI regulace je probrána v sekci \peteref{pi-controller}.
 
 \section{Řízení vozidla pomocí detekce grafických kódu}
 
@@ -823,7 +823,7 @@ v lepším případě pouze na trávník, v~horším případě jej navedou př�
 například vynucením určitého odstupu od kódu a udržování kódu v určité vzdálenosti od boku vozidla.  V~tomto případě by ale musely
 všechny kódy být umístěny pouze po jedné straně vozidla. Druhým možným řešením je převod detekovaného grafického kódu na waypoint
 na mapě. Toto řešení ovšem vyžaduje využití mapových podkladů a vstupů z GPS pro řízení platformy, a zabíhá již do~podkapitoly
-\filipref{combination-of-driving-inputs}
+\peteref{combination-of-driving-inputs}
 
 \subsection{Možné využití v praxi}
 
@@ -891,7 +891,7 @@ Implementace separátního skriptu pro získání mapových podkladů s sebou p�
 spouštět jako cronjob, ať už přímo v operačním systému, nebo například jako kontejner v Kubernetes. Dále je možné část zpracování
 podkladů převést z~plánovacího softwaru do separátního programu, a tím zjednodušit logiku samotného plánovacího softwaru.
 A nakonec, využití vlastního formátu pro uložení dat nám umožní jednoduššeji přidat do~souboru vlastní data a dodatečný kontext,
-viz sekce \filipref{smarter-maps}.
+viz sekce \peteref{smarter-maps}.
 
 K načtení textového XML souboru je využita knihovna \emph{osmium}. Z tohoto souboru jsou přečteny uzly a cesty. Relace jsou
 ignorovány. Při zpracování cest jsou uloženy pouze cesty povolených typů, ostatní typy cest jsou ignorovány. Mezi ignorované typy
@@ -905,9 +905,9 @@ Zpracovaná data jsou dále skriptem naformátována a uložena ve formátu JSON
 \section{Vyhledání nejbližší silnice na mapě}
 
 Vyhledání nejbližší silnice je důležité nejen za účelem určení aktuální pozice vozidla na mapě, ale také při umisťování waypointů,
-které se vždy umisťují na nejbližší definovanou silnici (viz sekce \filipref{target-definition}). Autonomní platforma
+které se vždy umisťují na nejbližší definovanou silnici (viz sekce \peteref{target-definition}). Autonomní platforma
 se samozřejmě pohybuje po silnici, a plánovací software musí vědět, kde se vozidlo momentálně nachází i v momentě, kdy nepřesná
-GPS (viz sekce \filipref{gps-inaccuracy}) umístí autonomní platformu mimo definovanou silnici. Dále samozřejmě musí plánovací
+GPS (viz sekce \peteref{gps-inaccuracy}) umístí autonomní platformu mimo definovanou silnici. Dále samozřejmě musí plánovací
 software vědět, na~které silnici se nachází daný waypoint, aby dokázal správně naplánovat cestu.
 
 Cestu lze v mapových podkladech definovat dvěma způsoby. Počátečním a koncovým bodem, nebo bodem a vektorem určujícím směr a délku
@@ -960,7 +960,7 @@ průchodu neváženým grafem stačit.
 
 \chapter{Webová aplikace} \label{web-app}
 
-V kapitole \filipref{target-definition} bylo předestřeno využití webové aplikaci ke vzdálenému ovládání vozidla. V současné době
+V kapitole \peteref{target-definition} bylo předestřeno využití webové aplikaci ke vzdálenému ovládání vozidla. V současné době
 lze autonomní platformu ovládat pomocí vizualizéru, jenž je součástí plánovacího softwaru. Toto řešení je ovšem dočasné a slouží
 především k ulehčení vývoje a zachytávání chyb. Při skutečném využití by bylo přinejlepším nepraktické. Využívání vizualizéru,
 mimo své negativní dopady na nároky ovládacího softwaru díky nutnosti vykreslovat vozidlo na~mapu a vyobrazovat jeho pohyb,
@@ -980,7 +980,7 @@ na straně backendu.
 
 \section{Implementace frontendu webové aplikace}
 
-Pro práci s mapovými podklady je využíváno API mapové služby Mapy.cz (viz kapitola \filipref{osm-chapter}), jež umožňuje nejen
+Pro práci s mapovými podklady je využíváno API mapové služby Mapy.cz (viz kapitola \peteref{osm-chapter}), jež umožňuje nejen
 vykreslování vozidla a waypointů, ale také registrovat interakce s mapou a implementovat ovládání vozidla a vytváření waypointů.
 Webová stránka je samozřejmě definována značkovacím jazykem HTML a logika webové aplikace je naprogramována v jazyce Javascript.
 Knihovna služby Mapy.cz je jediná závislost využitá v implementaci frontendu webové aplikace, s její výjimkou je využit pouze
@@ -1014,7 +1014,7 @@ webové aplikace ovšem není vyvíjeno s důrazem na asynchronicitu, neboť po�
 odůvodnily čas strávený implementací asynchronního programu.
 
 Backend definuje REST API, jež, kromě vydávání statických souborů, implementuje endpointy analogické REST API softwaru
-pro plánování cesty, popsaném v podkapitole \filipref{rest-api}. Rozdíl mezi API plánovacího softwaru a API backendu webové
+pro plánování cesty, popsaném v podkapitole \peteref{rest-api}. Rozdíl mezi API plánovacího softwaru a API backendu webové
 aplikac, je ve validaci prováděné daným API. API plánovacího softwaru z důvodů jednoduchosti implementuje pouze minimální
 validaci, slouží pouze k internímu použití, a nemělo by tedy být vystaveno veřejně. REST API backendu webové aplikace je určeno
 k veřejnému použití, a za tímto účelem také implementuje určitou validaci svých vstupů. Samozřejmě také z hlediska logické dělení
@@ -1087,8 +1087,8 @@ však nebude představovat posun v oblasti autonomních vozidel.
 \begin{thebibliography}{20}
 
 \bibitem{pid-controller-source}
-MATLAB: \textit{Understanding PID Control, Part 1: What Is PID Control?} [online], MATLAB [cit. 2021-04-17]. \\
-Dostupné z: \url{https://www.youtube.com/watch?v=wkfEZmsQqiA}
+Tim Wescott: \textit{PID Without a PhD} \\
+Dostupné z: \url{https://www.wescottdesign.com/articles/pid/pidWithoutAPhd.pdf}, Wescott Design Services, 2018
 
 \bibitem{pandemic-source} % Actually the source of the pandemic was China, this is just the source for a paper about the pandemic
 Md~Tanveer Adil, Rumana Rahman, Douglas Whitelaw, Vigyan Jain, Omer Al-Taan, Farhan Rashid, Aruna Munasinghe,
@@ -1096,8 +1096,8 @@ Periyathambi Jambulingam: \textit{SARS-CoV-2 and the pandemic of COVID-19}. \\
 Dostupné z: \url{https://pmj.bmj.com/content/97/1144/110}, The Fellowship of Postgraduate Medicine, 2021
 
 \bibitem{can-source}
-CSS Electronics: \textit{CAN Bus Explained - A Simple Intro} [online], CSS Electronics [cit. 2021-04-17]. \\
-Dostupné z: \url{https://www.csselectronics.com/screen/page/simple-intro-to-can-bus/language/en}
+Steve Corrigan: \textit{Introduction to the Controller Area Network (CAN)} \\
+Dostupné z: \url{https://www.ti.com/lit/an/sloa101b/sloa101b.pdf}, Texas Instruments, 2016
 
 \bibitem{bitcoin-rally-source}
 Bloomberg: \textit{Bitcoin Touches \$64,000 High as Traders Eye Coinbase Listing} [online], Bloomberg [cit. 2021-04-17]. \\
@@ -1120,9 +1120,10 @@ Dostupné z:
 \url{https://stackoverflow.com/questions/20677795/how-do-i-compute-the-intersection-point-of-two-lines/51127674\#51127674}
 
 \bibitem{gps-inaccuracy-source}
-Jeff Barber: \textit{"Do GPS Units Always Overestimate Trail Distances?" No.} [online], Singletracks [cit. 2021-04-17]. \\
+Nyen Thin Li, Lau Ting, Nor Husna, Heikal Husin: \textit{GPS Systems Literature: Inaccuracy Factors And Effective Solutions}, \\
 Dostupné z:
-\url{https://www.singletracks.com/mtb-gear/do-gps-units-always-overestimate-trail-distances-no/}
+\url{https://www.researchgate.net/publication/300083844\_GPS\_Systems\_Literature\_Inaccuracy\_Factors\_And\_Effective\_Solutions},
+International journal of Computer Networks \& Communications, 2016
 
 \bibitem{kotlin-android-source}
 Frederic Lardinois: \textit{Kotlin is now Google's preferred language for Android app development} [online],
