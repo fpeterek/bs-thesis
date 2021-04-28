@@ -15,68 +15,71 @@
 \SubmissionYear{2021}
 
 \Acknowledgement {
-    Chtěl bych poděkovat vedoucímu mé práce, Janu Gaurovi, nejen za pomoc s tvorbou práce a~návrhem softwaru, ale především
-    za možnost se projevit a pracovat na skutečném a zajímavém projektu. Dále chci poděkovat svým kolegům z práce, kteří mě
-    naučili spoustu věcí, na které v~akademickém prostředí není čas nebo příležitost.
+    Chtěl bych poděkovat vedoucímu mé práce, Ing. Janu Gaurovi, PhD., nejen za pomoc s tvorbou práce a~návrhem softwaru, ale
+    především za možnost se projevit a pracovat na skutečném a zajímavém projektu. Dále chci poděkovat svým kolegům z práce, kteří
+    mě naučili spoustu věcí, na které v~akademickém prostředí není čas nebo příležitost.
 }
 
 \CzechAbstract {
     Tato práce se zabývá vývojem softwaru pro samořiditelnou platformu vznikající na VŠB-TUO. Po~dokončení by software měl být
-    schopen na základě vstupů ze softwaru pro analýzu obrazu, GPS, Lidaru a řídící jednotky vozidla bezpečně navigovat autonomní
+    schopen na základě vstupů ze softwaru pro analýzu obrazu, GPS, LiDARu a řídící jednotky vozidla bezpečně navigovat autonomní
     platformu univerzitním kampusem.
 
     Řídící software je rozdělen do dvou komponent. První komponenta zajišťuje komunikaci s řídící jednotkou vozidla pomocí
-    sběrnice CAN, na starosti má ovládání rychlosti vozidla a natáčení kol. Druhá komponenta má na starosti plánování cesty
-    na základě výše vyjmenovaných vstupů. První komponentě poté zadá pouze požadovanou rychlost vozidla a natáčení kol, samotné
-    posílání CAN zpráv však nemusí řešit. Komponenty mezi sebou komunikují pomocí protokolu TCP. K testování ovládacího softwaru
-    lze využít simulátor, který dokáže nasimulovat chování první komponenty. Pro~řízení vozidla jsou v hojné míře využívány PID
-    regulátory.
+    sběrnice CAN \cite{can-source}, na starosti má ovládání rychlosti vozidla a natáčení kol. Druhá komponenta má na starosti
+    plánování cesty na základě výše vyjmenovaných vstupů. První komponentě poté zadá pouze požadovanou rychlost vozidla a natáčení
+    kol, samotné posílání CAN zpráv však nemusí řešit. Komponenty mezi sebou komunikují pomocí protokolu TCP \cite{tcp-source}.
+    K testování ovládacího softwaru lze využít simulátor, který dokáže nasimulovat chování první komponenty. Pro~řízení vozidla
+    jsou v hojné míře využívány PID regulátory \cite{pid-controller-source}.
 
     V době odevzdání této práce ještě není software plně dokončený, jelikož se jedná o výzkumný projekt, který svým rozsahem
     přesahuje bakalářskou práci, a vývoj platformy bude dále pokračovat.
 }
 
 \CzechKeywords {
-    plánování cesty, client-server komunikace, sběrnice CAN, PID regulátor
+    plánování cesty, client-server komunikace, sběrnice CAN, PID regulátor, GPS
 }
 
 \EnglishAbstract {
     This thesis is focused on the development of software for a self-driving platform, which is being developed by the Technical
     University of Ostrava. Upon completion, the software should be capable of safely navigating an autonomous vehicle through
-    the university campus, taking inputs from image analysis software, GPS, Lidar, and the~vehicle's own controller unit.
+    the university campus, taking inputs from image analysis software, GPS, LiDAR, and the~vehicle's own controller unit.
 
     The software is split into two components. The first component handles communication with the~vehicle's controller
-    unit via a CAN bus. The second component then does all the path planning, taking into account the aforementioned inputs.
-    The second component then asks the first component to maintain a certain speed or steer the vehicles, however, it doesn't
-    have to handle CAN messages, including driving inputs or control checksums, by itself. The TCP protocol is~used
-    for communication between the components. The path planning software can be tested using a~simulator, capable of mocking
-    the CAN handling software, along with the entire vehicle. The~simulator honors the~TCP API, however, the vehicle physics
-    are simplified. PID controllers are used in~multiple parts of~the software.
+    unit via a CAN bus \cite{can-source}. The second component then does all the path planning, taking into account
+    the aforementioned inputs. The second component then asks the first component to maintain a certain speed or steer
+    the vehicles, however, it doesn't have to handle CAN messages, including driving inputs or control checksums, by itself.
+    The Transmission Control Protocol \cite{tcp-source} is~used for communication between the components. The path planning
+    software can be tested using a~simulator, capable of mocking the CAN handling software, along with the entire vehicle.
+    The~simulator honors the~TCP API, however, the vehicle physics are simplified. PID controllers are used in~multiple parts
+    of~the software \cite{pid-controller-source}.
 
     At the time of publishing this paper, the software is still unfinished, as the self-driving platform is an academic research
     project, which outspans this bachelor's thesis in scope, and the~development of~the~platform is set to continue.
 }
 
 \EnglishKeywords {
-    path planning, client-server communication, CAN bus, PID controller
+    autonomous driving, path planning, client-server communication, CAN bus, PID controller, GPS
 }
 
 \AddAcronym{CAN}{Controller Area Network}
 \AddAcronym{PID}{Proporcionální-integrační-derivační}
 \AddAcronym{TCP}{Transmission Control Protocol}
+\AddAcronym{UDP}{User Datagram Protocol}
 \AddAcronym{GPS}{Global Positioning System}
 \AddAcronym{API}{Application Programming Interface}
 \AddAcronym{XML}{Extensible Markup Language}
 \AddAcronym{JSON}{JavaScript Object Notation}
-\AddAcronym{YAML}{YAML Ain't a Markup Language}
+\AddAcronym{YAML}{YAML Ain't Markup Language}
 \AddAcronym{TX}{Transmitter}
 \AddAcronym{RX}{Receiver}
 \AddAcronym{RPC}{Remote Procedure Call}
 \AddAcronym{REST}{Representational State Transfer}
 \AddAcronym{OSM}{OpenStreetMap}
 \AddAcronym{URL}{Uniform Resource Locator}
-\AddAcronym{BFS}{Breadth First Search}
+\AddAcronym{BFS}{Breadth-First Search}
 \AddAcronym{ELK}{Elastisearch-Logstash-Kibana}
+\AddAcronym{DSL}{Domain Specific Language}
 
 \begin{document}
 
@@ -85,15 +88,15 @@
 \chapter{Úvod} \label{sec:Introduction}
 Tato práce se zabývá vývojem řídícího softwaru autonomního vozidla vyvíjeného na Vysoké škole báňské. Software bude sloužit 
 k~navigaci vozidla areálem univerzity, plánování cesty a zajištění bezpečnosti provozu. Pro tento účel řídící kód využívá vstupy
-z GPS, kamer, Lidaru a ovládací jednotky vozidla. Analýza obrazu a dat naměřených Lidarem není předmětem této práce, výsledek této
+z GPS, kamer, LiDARu a ovládací jednotky vozidla. Analýza obrazu a dat naměřených LiDARem není předmětem této práce, výsledek této
 analýzy je získáván z API komponenty určené právě k tomuto účelu, taktéž vyvíjené jako součást projektu autonomní platformy.
 
 Software, který je vyvíjen jako součást této práce, je tvořen převážně v Pythonu a je rozdělen do více komponent. Kromě řídícího
 softwaru byl vyvinut také jednoduchý simulátor, umožňující testování řízení. Dále řídící software obsahuje funkční vizualizér,
 pomocí kterého je možné sledovat pohyb vozidla. Při tvorbě řídících komponent byla využita řada open source knihoven a veřejných
-zdrojů, včetně map OpenStreetMap nebo Mapy.cz. Zdrojový kód, který je součástí této práce, je rovněž otevřený a veřejně dostupný
-na~Githubu \cite{car-client-source, car-webapp-source, car-map-downloader-source, car-can-source, car-simulator-source,
-geologger-source}.
+zdrojů, včetně map OpenStreetMap \cite{openstreetmap-source} nebo Mapy.cz \cite{mapycz-source}. Zdrojový kód, který je součástí
+této práce, je rovněž otevřený a veřejně dostupný na~Githubu \cite{car-client-source, car-webapp-source,
+car-map-downloader-source, car-can-source, car-simulator-source, geologger-source}.
 
 \chapter{Architektura řídícího softwaru} \label{software-architecture}
 Jak již bylo zmíněno, řídící software je rozdělen do dvou komponent, komunikujících mezi sebou pomocí protokolu TCP na bázi
@@ -114,9 +117,11 @@ V současné době existují dva různí klienti. První klient se~snaží vozid
 a z komponenty určené pro analýzu obrazu. Druhý klient umožňuje řídící pokyny zadávat manuálně do jednoduchého textového
 prostředí. Tento klient je určen pouze k~ověření funkčnosti komunikace pomocí sběrnice CAN.
 
-Virtualizace ovládacího softwaru také umožňuje zautomatizovat monitorování ovládání. Ačkoliv k~žádným pokusům o automatickou
-orchestraci a monitorování zatím nedošlo, bylo by možné například spouštět řídící software v~Kubernetes, nastavit kontinuální
-nasazování pomocí CI/CD pipeline a logy či metriky kontrolovat strojově pomocí nástrojů jako ELK stack nebo Prometheus.
+Případná virtualizace ovládacího softwaru \cite{virtualization-source} také umožní zautomatizovat monitorování řídícího programu
+\cite{prometheus-source, elk-source}. Ačkoliv k~žádným pokusům o automatickou orchestraci a monitorování zatím nedošlo, bylo by
+možné například spouštět řídící software v~Kubernetes \cite{virtualization-source}, nastavit kontinuální nasazování pomocí CI/CD
+pipeline \cite{cicd-source} a logy či metriky kontrolovat strojově pomocí nástrojů jako ELK stack \cite{elk-source} nebo 
+Prometheus \cite{prometheus-source}.
 
 \chapter{Server a CAN komunikace}
 
@@ -174,20 +179,21 @@ prohlédnout v tabulce \ref{tab:can-spec-table}.
 
 Specifikace, kromě formátu a obsahu dat, určuje také způsob kódování rychlosti vozidla nebo natočení předních kol. Tyto hodnoty
 jsou kódovány a uloženy v jednom bytu. Při práci s CAN sběrnicí tak je nutné data správně přepočíst a zakódovat, případně
-dekódovat a převést do formátu IEEE 754.
+dekódovat a převést do formátu IEEE 754 \cite{floating-point-source}.
 
 \section{TCP server a jeho metody} \label{server-methods}
 
-Za účelem zvýšení úrovně abstrakce a zjednoduššení ovládání vozidla, ale také aby bylo umožněno vzdálené ovládání platformy
+Za účelem zvýšení úrovně abstrakce a zjednodušení ovládání vozidla, ale také aby bylo umožněno vzdálené ovládání platformy
 a zjednodušila se výměna způsobů ovládání, je nízkoúrovňové řízení CAN zprávami abstrahováno a obaleno jednoduchým TCP serverem.
-Při vývoji serveru se přirozeně nabídla možnost implementace REST API a využití protokolu HTTP nebo využití jednoho z rozšířených
-RPC prokolů, jako jsou XMLRPC nebo gRPC. Ačkoliv validní, tyto způsoby, implementace se jevily jako neefektivní -- rozhraní
-poskytované serverem je velmi jednoduché, plaintextový protokol HTTP nebo variace protokolů RPC tak působily až zbytečně
-komplikovaně. Pro komunikaci byl nakonec použit vlastní binární protokol a jeho implementace přímo nad TCP sockety.
-Výhodou je rychlost a jednoduchost implementace, úspornost a výkonnost řešení v reálném provozu nebo také fakt, že toto řešení
-nevyžaduje žádné externí závislosti nad rámec standardní knihovny jazyka Python. Nevýhody současného řešení by se projevily
-pouze při výrazném nárůstu komplexity poskytovaného rozhraní. Tento scénář by mohl vést k znepřehlednění současného řešení.
-Nutnosti zvyšování komplexity rozhraní ovšem v současné době nic nenasvědčuje.
+Při vývoji serveru se přirozeně nabídla možnost implementace REST API \cite{rest-source} a využití protokolu HTTP 
+\cite{http-source} nebo využití jednoho z rozšířených RPC prokolů, jako jsou XMLRPC \cite{xmlrpc-source} nebo gRPC 
+\cite{grpc-source}. Ačkoliv validní, tyto způsoby, implementace se jevily jako neefektivní -- rozhraní poskytované serverem je
+velmi jednoduché, plaintextový protokol HTTP nebo variace protokolů RPC tak působily až zbytečně komplikovaně. Pro komunikaci byl
+nakonec použit vlastní binární protokol a jeho implementace přímo nad TCP sockety. Výhodou je rychlost a jednoduchost
+implementace, úspornost a výkonnost řešení v reálném provozu nebo také fakt, že toto řešení nevyžaduje žádné externí závislosti
+nad rámec standardní knihovny jazyka Python. Nevýhody současného řešení by se projevily pouze při výrazném nárůstu komplexity
+poskytovaného rozhraní. Tento scénář by mohl vést k znepřehlednění současného řešení. Nutnosti zvyšování komplexity rozhraní ovšem
+v současné době nic nenasvědčuje.
 
 Aktuální verze serveru implementuje celkem pět metod. Na vstupu přijímá celkem tři byty. První byte je vyhrazen pro identifikaci
 metody serveru. Následující dva byty dotazu obsahují data. Klient musí vždy poslat minimálně tři byty, na vstupu jsou, nezávisle
@@ -203,10 +209,10 @@ jako rychlost, druhý datový byte reprezentuje natočení předních kol. Oba d
 čísla.
 
 Fyzická změna rychlosti nebo natočení kol samozřejmě nemůže nastat okamžitě, rychlost změny je omezena fyzikálními vlastnostmi
-konstrukce i PI regulátorem, proto nelze vrátit klientu potvrzení o provedené změně. Odpovědí metody je ekvivalentní s metodou
-\emph{healthcheck}. \emph{Healthcheck} v odpovědi slouží jako potvrzení přijetí dotazu a schopnosti dotazu vyhovět. V případě,
-že klient potřebuje potvrzení o dosažení požadované rychlosti nebo úhlu natočení kol, je možné po zavolání metody \emph{drive}
-opakovaně volat metodu \emph{info}.
+konstrukce i PI regulátorem \cite{pid-controller-source}, proto nelze vrátit klientu potvrzení o provedené změně. Odpovědí metody
+je ekvivalentní s metodou \emph{healthcheck}. \emph{Healthcheck} v odpovědi slouží jako potvrzení přijetí dotazu a schopnosti
+dotazu vyhovět. V případě, že klient potřebuje potvrzení o dosažení požadované rychlosti nebo úhlu natočení kol, je možné
+po zavolání metody \emph{drive} opakovaně volat metodu \emph{info}.
 
 \subsection{Metoda \emph{healthcheck}}
 Metoda \emph{healthcheck} slouží k ověření \emph{živosti} systému. \emph{Živost} je binární stav, systém je buď \emph{živý}, nebo
@@ -277,8 +283,9 @@ jednoduchá.
 
 \section{Python implementace}
 
-Pro implementaci kódu byl zvolen jazyk Python 3.6. Server má pouze dvě externí závislosti, a~to knihovny \emph{python-can} a
-\emph{gpsd-py3}. Dále je samozřejmě extenzivně využívána standardní knihovna jazyka Python.
+Pro implementaci kódu byl zvolen jazyk Python 3.6. Server má pouze dvě externí závislosti, a~to knihovny \emph{python-can}
+a \cite{python-can-source} \emph{gpsd-py3} \cite{gpsd-py3-source}. Dále je samozřejmě extenzivně využívána standardní knihovna
+jazyka Python.
 
 \subsection{Konfigurace}
 Ke konfiguraci komponenty jsou využívány systémové enviromentální proměnné, a to zejména kvůli jednoduchosti řešení a konzistence
@@ -304,8 +311,8 @@ Za účelem práce s CAN sběrnicí byly implementovány třídy \emph{Transmitt
 zpráv. Interně třídy využívají prostředky poskytované modulem \emph{python-can}, zvenčí představují především abstrakci
 nad nízkoúrovňovými CAN záležitostmi. \emph{Transmitter} na~sběrnici vysílá zprávy \emph{DriveMessage} a \emph{ControlMessage}.
 \emph{Receiver} přijímá zprávu \emph{CarData}. Data po přijetí zpracuje a předá za pomocí callbacku třídě \emph{Car}. Ke konverzi
-mezi CAN hodnotami a~formátem IEEE 754 slouží pomocné třídy \emph{Driving} a \emph{Steering}. GPS souřadnice jsou z fyzického GPS
-modulu připojeného k Raspberry~Pi získávány za využití modulu \emph{gpsd-py3}.
+mezi CAN hodnotami a~formátem IEEE 754 \cite{floating-point-source} slouží pomocné třídy \emph{Driving} a \emph{Steering}. GPS
+souřadnice jsou z fyzického GPS modulu připojeného k Raspberry~Pi získávány za využití modulu \emph{gpsd-py3}.
 
 CAN zprávy jsou posílány periodicky. K zajištění periodicity je využita knihovna \emph{python-can}, která zvládne periodické
 zasílání zpráv zajistit. Zasílaná data lze libovolně měnit za využití rozhraní abstraktní třídy \emph{ModifiableCyclicTaskABC}
@@ -335,24 +342,26 @@ vozidla, tedy když realistická simulace není nutná a jednoduchá aproximace 
 
 Účelem klienta je plánovat cestu a rozhodovat o chování a pohybu vozidla na základě vysokoúrovňových informací a pomocí
 vysokoúrovňových příkazů. Komponenta funguje jako klient ve vztahu nejen k serveru zajišťujícímu CAN komunikaci, ale také
-softwaru zajišťujícímu analýzu okolního prostředí za pomocí soustavy kamer a lidaru. Důvodem volby této architektury bylo
+softwaru zajišťujícímu analýzu okolního prostředí za pomocí soustavy kamer a LiDARu. Důvodem volby této architektury bylo
 zjednodušení softwaru pro plánování cesty. Klient nemusí řešit frekvenci CAN zpráv, analýzu obrazu, ale ani implementovat
 asynchronní server nebo synchronizaci vláken -- nemůže se například stát, že by se v polovině výpočtu změnil vstup z kamery.
-Klient si všechny informace vyžádá až v momentě, kdy je doopravdy vyžaduje, provede rozhodnutí, a dokud nedosáhne cíle, rozhodovací
-cyklus periodicky opakuje.
+Klient si všechny informace vyžádá až v momentě, kdy je doopravdy vyžaduje, provede rozhodnutí, a dokud nedosáhne cíle,
+rozhodovací cyklus periodicky opakuje.
 
 Tato softwarová komponenta tedy zastává primárně roli klienta, zejména v relaci k vozidlu, to~ovšem neznamená, že v roli klienta
 musí působit ve všech ohledech a všech aplikacích. Například pokud by došlo k implementaci monitorování pomocí technologie
-Prometheus, musel by software vystavit své metriky pomocí HTTP serveru. Dále komponenta implementuje jednoduché REST API, které
-umožňuje vzdálené ovládání za využití protokolu HTTP. API je podrobněji popsáno v~sekci \peteref{rest-api}.
+Prometheus \cite{prometheus-source}, musel by software vystavit své metriky pomocí HTTP serveru. Dále komponenta implementuje
+jednoduché REST API, které umožňuje vzdálené ovládání za využití protokolu HTTP. API je podrobněji popsáno v~sekci 
+\peteref{rest-api}.
 
 Komunikace s Raspberry~Pi na vozidle probíhá pomocí vlastního binárního protokolu popsaného v části \peteref{server-methods}.
 Podobně je vlastní protokol využit také při komunikaci s analyzátorem okolního prostředí. V obou případech byl pro přenos dat
-zvolen protokol TCP, a~to~především z toho důvodu, že TCP dokáže zajistit doručení všech paketů do cílové destinace. Protokol UDP
-by byl vhodný například pokud by data z kamery byla streamována, nebo pokud by mezi softwarem pro plánování cesty a CAN
-komunikátorem existoval konstantní proud dat, tedy opět stream, v tomto případě však stream příkazů, ne grafických vstupů. K tomu
-ovšem nedochází, řídící software si data vyžaduje teprve v momentě, kdy je doopravdy potřebuje. Navíc je při řízení vozidla
-extrémně důležité, aby nedocházelo ke ztrátě paketů a vozidlo dostalo všechny odeslané pokyny a následně jejich přijetí potvrdilo.
+zvolen protokol TCP, a~to~především z toho důvodu, že TCP dokáže zajistit doručení všech paketů do cílové destinace
+\cite{tcp-source}. Protokol UDP \cite{udp-source} by byl vhodný například pokud by data z kamery byla streamována, nebo pokud by
+mezi softwarem pro plánování cesty a CAN komunikátorem existoval konstantní proud dat, tedy opět stream, v tomto případě však
+stream příkazů, ne grafických vstupů. K tomu ovšem nedochází, řídící software si data vyžaduje teprve v momentě, kdy je doopravdy
+potřebuje. Navíc je při řízení vozidla extrémně důležité, aby nedocházelo ke ztrátě paketů a vozidlo dostalo všechny odeslané
+pokyny a následně jejich přijetí potvrdilo.
 
 \section{Definice cílů cesty vozidla} \label{target-definition}
 
@@ -386,19 +395,19 @@ by měla být využívána především webová aplikace.
 
 \section{REST API} \label{rest-api}
 
-REST API slouží ke vzdálenému získávání informací a zadávání pokynů plánovacímu softwaru. API v současné době implementuje čtyři
-endpointy. Předávaná data jsou obsažena v těle dotazu klienta nebo odpovědi serveru a naformátována ve formátu JSON, případně jsou
-přímo součástí URI, pokud je tento přístup pro daný případ vhodnější.
+REST API \cite{rest-source} slouží ke vzdálenému získávání informací a zadávání pokynů plánovacímu softwaru. API v současné době 
+implementuje čtyři endpointy. Předávaná data jsou obsažena v těle dotazu klienta nebo odpovědi serveru a naformátována ve formátu
+JSON \cite{json-source}, případně jsou přímo součástí URI \cite{http-source}, pokud je tento přístup pro daný případ vhodnější.
 
 \subsection{Endpoint \emph{/waypoints}}
 
-Endpoint \emph{/waypoints} slouží k práci s waypointy. Podporuje tři metody standardu HTTP, konkrétně GET, POST a DELETE.  Metoda
-GET slouží k získání seznamu všech aktuálních waypointů. Server po přijetí požadavku naformátuje seznam waypointů a vrátí jej jako
-JSON pole ve své odpovědi. Metoda POST se využívá k vytváření waypointů. Server v těle požadavku očekává jeden JSON objekt se
-dvěma atributy, \emph{latitude} a \emph{longitude}. Po přijetí dotazu je JSON rozparsován a na základě obsahu objektu je vozidlu
-přidán nový waypoint. Metoda DELETE je přirozeně využita k mazání waypointů. Jedním dotazem je možné smazat jeden waypoint. Metoda
-DELETE očekává jeden parametr, id, který značí unikátní identifikátor waypointu, který má být smazán. V případě metody DELETE
-je parametr očekáván již v URI, obsah těla nebere API u této metody v potaz.
+Endpoint \emph{/waypoints} slouží k práci s waypointy. Podporuje tři metody standardu HTTP \cite{http-source}, konkrétně GET, POST
+a DELETE.  Metoda GET slouží k získání seznamu všech aktuálních waypointů. Server po přijetí požadavku naformátuje seznam
+waypointů a vrátí jej jako JSON pole ve své odpovědi. Metoda POST se využívá k vytváření waypointů. Server v těle požadavku
+očekává jeden JSON objekt se dvěma atributy, \emph{latitude} a \emph{longitude}. Po přijetí dotazu je JSON rozparsován a
+na základě obsahu objektu je vozidlu přidán nový waypoint. Metoda DELETE je přirozeně využita k mazání waypointů. Jedním dotazem
+je možné smazat jeden waypoint. Metoda DELETE očekává jeden parametr, id, který značí unikátní identifikátor waypointu, který má
+být smazán. V případě metody DELETE je parametr očekáván již v URI, obsah těla nebere API u této metody v potaz.
 
 \subsection{Endpoint \emph{/position}}
 
@@ -423,27 +432,29 @@ endpointů najednou.
 
 \subsection{Výhody a nevýhody REST API}
 
-Velkou výhodou architektonického stylu REST, zejména v porovnání s binárními RPC protokoly, vlastními protokoly, apod., je
-především jednoduchost jeho využití. Využití formátu JSON umožňuje jednodušší ladění a vyhledávání chyb, právě protože je formát
-lidsky čitelný. K využití a zavolání REST API stačí jakýkoliv HTTP klient, proto je jednoduché implementovat klienta v jakémkoliv
-seriózním jazyce. Není třeba doufat, že pro daný jazyk bude existovat implementace Protocol Buffers kompilátoru a gRPC klienta.
-Dokonce je možné REST API volat i z webového prohlížeče nebo třeba z terminálu za využití programu \emph{cURL}. Za nevýhodu lze
-považovat nižší výkon a vyšší nároky na~přenesený objem dat v porovnání s binárními protokoly, ovšem s nízkým množstvím požadavků
-v~současné aplikaci, v kombinaci s rychlostí moderních procesorů, není rychlost zpracování dotazu faktorem.
+Velkou výhodou architektonického stylu REST \cite{rest-source}, zejména v porovnání s binárními RPC protokoly \cite{grpc-source}, 
+vlastními protokoly, apod., je především jednoduchost jeho využití. Využití formátu JSON \cite{json-source} umožňuje jednodušší
+ladění a vyhledávání chyb, právě protože je formát lidsky čitelný. K využití a zavolání REST API stačí jakýkoliv HTTP 
+\cite{http-source} klient, proto je jednoduché implementovat klienta v jakémkoliv seriózním jazyce. Není třeba doufat, že pro daný
+jazyk bude existovat implementace Protocol Buffers \cite{protobuf-source} kompilátoru a gRPC \cite{grpc-source} klienta. Dokonce 
+je možné REST API volat i z webového prohlížeče nebo třeba z terminálu za využití programu \emph{cURL} \cite{curl-source}. 
+Za nevýhodu lze považovat nižší výkon a vyšší nároky na~přenesený objem dat v porovnání s binárními protokoly, ovšem s nízkým
+množstvím požadavků v~současné aplikaci, v kombinaci s rychlostí moderních procesorů, není rychlost zpracování dotazu faktorem.
 
 \section{Python implementace}
 
 Software je, konzistentně s ostatními komponentami, vyvíjen v programovacím jazyce Python verze 3.6. Kromě standardních modulů
-jazyka Python jsou zde využity knihovny \emph{Pygame}, \emph{Geopy}, \emph{Osmium} a \emph{Flask}.
+jazyka Python jsou zde využity knihovny \emph{Pygame} \cite{pygame-source}, \emph{Geopy} \cite{geopy-source}, \emph{Osmium}
+\cite{osmium-source} a \emph{Flask} \cite{flask-source}.
 
 \subsection{Konfigurace}
 
 Program lze konfigurovat pomocí enviromentálních proměnných operačního systému. V případě řídícího softwaru už lze diskutovat také
 o možné virtualizaci. V takovém případě je samozřejmě tento způsob konfigurace vhodný zejména kvůli své jednoduchosti v kombinaci
-s technologiemi jako jsou Docker nebo Kubernetes, které využití tohoto způsobu konfiguraci samy podporují. Samozřejmě v některých
-případech může být tento způsob konfigurace až příliš jednoduchý, a to třeba pokud potřebujeme vyjádřit například objekty
-se zanořenými atributy, seznamy, apod. V takovém případě by určitě bylo vhodnější využít například konfigurační mapy Kubernetes
-a pro konfiguraci využít třeba formát YAML nebo JSON.
+s technologiemi jako jsou Docker nebo Kubernetes \cite{virtualization-source}, které využití tohoto způsobu konfiguraci samy
+podporují. Samozřejmě v některých případech může být tento způsob konfigurace až příliš jednoduchý, a to třeba pokud potřebujeme
+vyjádřit například objekty se zanořenými atributy, seznamy, apod. V takovém případě by určitě bylo vhodnější využít například
+konfigurační mapy Kubernetes a pro konfiguraci využít třeba formát YAML \cite{yaml-source} nebo JSON \cite{json-source}.
 
 \subsection{TCP klient}
 
@@ -461,11 +472,11 @@ geografických waypointů.
 
 \subsection{REST API}
 
-REST API je implementováno jako velmi jednoduchá Flask aplikace. Narozdíl od klienta musí být API inicializováno zavoláním funkce
-\emph{init}, jíž je v argumentu předán ukazatel na instanci třídy \emph{CarController}, která zajišťuje řízení vozidla. Předání
-tohoto objektu je potřeba proto, aby API mohlo interagovat s řídícím kódem. API se spouští na separátním vlákně, třída
-\emph{CarController} proto musí být vláknově bezpečné (anglicky thread-safe). V opačném případě by mohlo dojít např. ke 
-konkurentnímu přístupu k atributům.
+REST API je implementováno jako velmi jednoduchá Flask \cite{flask-source} aplikace. Narozdíl od klienta musí být API
+inicializováno zavoláním funkce \emph{init}, jíž je v argumentu předán ukazatel na instanci třídy \emph{CarController}, která
+zajišťuje řízení vozidla. Předání tohoto objektu je potřeba proto, aby API mohlo interagovat s řídícím kódem. API se spouští
+na separátním vlákně, třída \emph{CarController} proto musí být vláknově bezpečné (anglicky thread-safe). V opačném případě
+by mohlo dojít např. ke konkurentnímu přístupu k atributům.
 
 \subsection{Řídící kód}
 
@@ -476,34 +487,35 @@ k získávání a sledování pozice vozidla, \emph{Visualizer}, třídu umožň
 obsahující mapové podklady univerzitního kampusu.
 
 \emph{PathPlanner} poté rozhoduje o pohybu vozidla. Na základě poskytnutých informací, jako jsou například mapové podklady, vstup
-z GPS nebo detekce obrazu, apod., rozhoduje jak o okamžitých akcích, tak o dlouhodobém pohybu a dráze vozidla, za účelem dovedení
-vozidla do cíle. Za~účelem plánování cesty bylo vyzkoušeno hned několik způsobů. Zkoušeným způsobům, poznatkům ze~zkoušení
+z GPS nebo detekce obrazu, apod., rozhoduje jak o okamžitých akcích, tak o dlouhodobém pohybu a dráze vozidla ve snaze dovést
+vozidlo do cíle. Za~účelem plánování cesty bylo vyzkoušeno hned několik způsobů. Zkoušeným způsobům, poznatkům ze~zkoušení
 postupů, nalezeným problémům a výsledkům výzkumu se podrobněji věnuje kapitola \peteref{driving-methods}.
 
 \subsection{Využité knihovny}
 
-Knihovna \emph{pygame} byla zvolena pro implementaci vizualizéru zejména díky jednoduchému využití a vykreslování grafických
-podkladů, mezi které patří nejen základní geometrické útvary, jako jsou třeba úsečka, kruh, ale také obrazové podklady a grafické
-sprity.
+Knihovna \emph{pygame} \cite{pygame-source} byla zvolena pro implementaci vizualizéru zejména díky jednoduchému využití a
+vykreslování grafických podkladů, mezi které patří nejen základní geometrické útvary, jako jsou třeba úsečka, kruh, ale také
+obrazové podklady a grafické sprity.
 
-Modul \emph{geopy} je využíván pro své možnosti práce s geografickými souřadnicemi. Důležitou, a~v~kódu často využívanou, funkcí
-knihovny \emph{geopy} je funkce \emph{geopy.distance.distance}, jež poskytuje funkcionalitu pro výpočet fyzické vzdálenosti mezi
-dvěma geografickými body. Získaná vzdálenost v~metrech se poté využívá například při hledání nejkratší cesty na mapě, nebo také
-při převodu geografických souřadnic na souřadnice kartézské, které následně umožňují zjednodušení výpočtů za~cenu nižší, ale stále
-dostačující přesnosti, využití goniometrických souřadnic pro výpočet úhlu, apod.
+Modul \emph{geopy} \cite{geopy-source} je využíván pro své možnosti práce s geografickými souřadnicemi. Důležitou, a~v~kódu často
+využívanou, funkcí knihovny \emph{geopy} je funkce \emph{geopy.distance.distance}, jež poskytuje funkcionalitu pro výpočet fyzické
+vzdálenosti mezi dvěma geografickými body. Získaná vzdálenost v~metrech se poté využívá například při hledání nejkratší cesty
+na mapě, nebo také při převodu geografických souřadnic na souřadnice kartézské, které následně umožňují zjednodušení výpočtů
+za~cenu nižší, ale stále dostačující přesnosti, využití goniometrických souřadnic pro výpočet úhlu, apod.
 
-Mikroframework \emph{Flask} je framework umožňující tvorbu HTTP serveru a zpracování HTTP dotazů. Jedná se o jeden z nejznámějších
-a nejrozšířenějších Python frameworků. Jako mikroframework je velmi jednoduchý na využití, ale také relativně drobný
-a minimalistický. Není proto sám o sobě vhodný na~tvorbu webových aplikací, za tímto účelem je efektivnější využít technologií
-stavějících na Flasku, pro~rychlou tvorbu API je ovšem \emph{Flask} velmi dobrá volba. Nevýhodou \emph{Flasku} je chybějící
-podpora asynchronního zpracování dotazů, proto se dnes často na úkor \emph{Flasku} využívá třeba \emph{Starlette} nebo z něj
-vycházející \emph{FastAPI}, které díky své asynchronní povaze dokážou zpracovat podstatně vyšší množství dotazů. V současné
-aplikaci však na API chodí maximálně jednotky dotazů za sekundu a \emph{Flask} stačí více než dostatečně.
+Mikroframework \emph{Flask} \cite{flask-source} je framework umožňující tvorbu HTTP serveru a zpracování HTTP dotazů. Jedná
+se o jeden z nejznámějších a nejrozšířenějších Python frameworků. Jako mikroframework je velmi jednoduchý na využití, ale také
+relativně drobný a minimalistický. Není proto sám o sobě vhodný na~tvorbu webových aplikací, za tímto účelem je efektivnější
+využít technologií stavějících na Flasku, pro~rychlou tvorbu API je ovšem \emph{Flask} velmi dobrá volba. Nevýhodou \emph{Flasku}
+je chybějící podpora asynchronního zpracování dotazů, proto se dnes často na úkor \emph{Flasku} využívá třeba \emph{Starlette}
+\cite{starlette-source} nebo z něj vycházející \emph{FastAPI} \cite{fastapi-source}, které díky své asynchronní povaze dokážou 
+zpracovat podstatně vyšší množství dotazů. V současné aplikaci však na API chodí maximálně jednotky dotazů za sekundu a 
+\emph{Flask} stačí více než dostatečně.
 
 \chapter{Testované způsoby řízení vozidla} \label{driving-methods}
 
 Při vývoji softwaru byly zkoušeny hned tři způsoby řízení vozidla, a to řízení čistě pomocí GPS, řízení pouze pomocí grafických
-kódů a nakonec kombinace řízení pomocí vstupů z GPS, kamery a případně také Lidaru. První dva způsoby se projevily jako v praxi
+kódů a nakonec kombinace řízení pomocí vstupů z GPS, kamery a případně také LiDARu. První dva způsoby se projevily jako v praxi
 téměř nevyužitelné, alespoň samy o sobě. I přesto výzkum těchto technik řízení přinesl spoustu poznatků, objevů, zkušeností, ale
 také technologického progresu a kódu, proto výzkum nelze považovat za neúspěšný. Ačkoliv jsou totiž techniky řízení nepraktické
 samy o sobě, lze je zkombinovat s jinými technikami, a tím vytvořit spolehlivý software schopný bezpečně řídit vozidlo. K tomuto
@@ -532,7 +544,7 @@ po spuštění vozidla nevadí, proto tato řešení nejsou nyní využívána v
 Druhý problém, nezaměřitelnost vozidla ve vnitřních prostorech je problém podstatně větší. Platforma stavěná za účelem rozvozu
 materiálu v industriálních prostorech pohybu uvnitř musí být schopna, v opačném případě bude její využití velmi omezené. A jelikož
 má vozidlo být co nejjednodušší na využití, a~nemělo by vyžadovat stavbu dodatečné infrastruktury umožňující zaměření ve vnitřních
-prostorech, bylo už v tomto momentě rozhodnuto o tom, že bude třeba implementovat také řízení pomocí systému kamer, Lidarů, nebo
+prostorech, bylo už v tomto momentě rozhodnuto o tom, že bude třeba implementovat také řízení pomocí systému kamer, LiDARů, nebo
 kombinace obojího.
 
 \subsection{Nepřesnost GPS} \label{gps-inaccuracy}
@@ -580,14 +592,13 @@ odstavci zmíněný vážený průměr nejnovějších deseti naměřených hodn
 
 Za účelem testování GPS vznikla velmi jednoduchá aplikace pro mobilní operační systém Android. Aplikace byla naprogramována
 v programovacím jazyce Kotlin -- oficiálně doporučeným jazykem pro~tvorbu aplikací pro zmiňovaný operační systém společnosti
-Google \cite{kotlin-android-source}. Samotná aplikace nebude v této práci příliš rozebírána, neboť skutečně odpovídá definici
-slova 'primitivní'. Aplikace obsahuje pouze jedno velké funkční tlačítko, kterým lze zapnout logování GPS souřadnic. Souřadnice
-jsou logovány jednou za sekundu do obyčejného textového souboru uloženého v paměti telefonu. Každý soubor je označen časem
-vytvoření -- tedy časem, kdy uživatel spustil logování geolokace. Soubor musí být po dokončení logování extrahován z paměti
-telefonu manuálně. Aplikace také byla testována pouze na zařízení Samsung Galaxy Note 9 s nejnovější verzí softwaru, jež byla
-v době tvorby aplikace pro daný hardware dostupná. Výsledný program není publikován v žádném veřejném obchodě a~slouží skutečně
-pouze jako jednorázová utilita pro krátké a rychlé testování. Zdrojové kódy jsou ovšem volně dostupné na Githubu
-\cite{geologger-source} a také jsou přiloženy k této práci.
+Google \cite{kotlin-android-source}. Samotná aplikace nebude v této práci kvůli své jednoduchosti podrobně rozebírána. Aplikace
+obsahuje pouze jedno velké funkční tlačítko, kterým lze zapnout logování GPS souřadnic. Souřadnice jsou logovány jednou za sekundu
+do obyčejného textového souboru uloženého v paměti telefonu. Každý soubor je označen časem vytvoření -- tedy časem, kdy uživatel
+spustil logování geolokace. Soubor musí být po dokončení logování extrahován z paměti telefonu manuálně. Aplikace také byla
+testována pouze na zařízení Samsung Galaxy Note 9 s nejnovější verzí softwaru, jež byla v době tvorby aplikace pro daný hardware
+dostupná. Výsledný program není publikován v žádném veřejném obchodě a~slouží skutečně pouze jako jednorázová utilita pro krátké
+a rychlé testování. Zdrojové kódy jsou ovšem volně dostupné na Githubu \cite{geologger-source} a také jsou přiloženy k této práci.
 
 Dokončení mobilní aplikace umožnilo následné testování přesnosti GPS v praxi. Měření GPS souřadnic pomocí mobilního telefonu bylo
 prováděno na území obce Kobeřice a přineslo výsledky v určitých ohledech překvapivé, v jiných zase předpokládatelné. Naměřené
@@ -665,7 +676,7 @@ má být vozidlo řízeno pouze vstupem z GPS, je frekvence jednoho hertze pří
 pohybovat rychlostí několika metrů za vteřinu, zvláště poté v kombinaci s nepřesnou GPS, která může naměřit lokaci s odchylkou
 více než jeden metr, mohlo by v praxi jednoduše dojít k situaci, kdy vozidlo například projede křižovatkou, na které mělo odbočit,
 nebo křižovatku detekuje příliš pozdě, pokusí se zatočit, ale narazí například na obrubník, který díky absenci vstupu z kamery
-nebo Lidaru v uvažovaném způsobu ovládání nedokáže detekovat.
+nebo LiDARu v uvažovaném způsobu ovládání nedokáže detekovat.
 
 Problém s rychlostí odezvy GPS je samozřejmě řešitelný investicí do GPS modulu s vyšší obnovovací frekvencí. V tomto momentě ovšem
 bylo jasné, že řízení vozidla pouze pomocí GPS je v~nejlepším případě velmi nepraktické, v nejhorším případě velmi nebezpečné
@@ -697,7 +708,7 @@ dopředu. Z naměřeného pohybu byl dopočten směr, a teprve poté došlo k um
 Samotný výpočet směru pohybu vozidla je velmi jednoduchý. Za pomocí naměřených GPS souřadnic zjistíme, jaký pohyb vozidlo
 vykonalo. Z předchozí a nově naměřené hodnoty vyčteme rozdíl v zeměpisné šířce i délce. Pomocí knihovny \emph{geopy} převedeme
 rozdíl uvedený v zeměpisné šířce a délce na metry a převedeme tak globální světové souřadnice na souřadnice kartézské. To nám
-umožní využít goniometrické funkce a zjednoduššit výpočty, viz sekce \peteref{cartesian-coordinates}. Dále za~využití Pythagorovy
+umožní využít goniometrické funkce a zjednodušit výpočty, viz sekce \peteref{cartesian-coordinates}. Dále za~využití Pythagorovy
 věty vypočteme celkovou vzdálenost, kterou vozidlo překonalo. Tímto získáme pravoúhlý trojúhelník, jehož přepona je dráha
 pohybu vozidla, odvěsny poté reprezentují rozdíly v zeměpisné šířce a v zeměpisné délce. Následně stačí rozdíl v zeměpisné šířce
 uvedený v~metrech vydělit celkovou vzdáleností. Touto operací získáme kosinus úhlu. Na získaný kosinus aplikujeme funkci arkus
@@ -727,12 +738,13 @@ Samozřejmě univerzitní kampus, pro který je autonomní platforma stavěna, n
 pracovat s geografickými souřadnicemi jako by byly ekvivalentní souřadnicím kartézským, a předpokládat, že chyba způsobená tímto
 zjednodušením bude zanedbatelná. Problémy s touto doměnkou ovšem byly odhaleny velmi rychle. Velikost chyby často přesahovala
 rozumné hodnoty. Projev chyby bylo možné zachytit nejen při testování softwaru, ale~také při pouhém umístění vlastních značek
-v libovolné veřejné mapové službě (při práci na projektu byly využívány služby OpenStreetMap a Mapy.cz). Samozřejmě bude umístění
-značek opticky zkreslené, protože dochází ke kreslení na 2D projekci sférické planety. Toto zkreslení vytváří optickou chybu, jež
-nebude mít na samotné výpočty vliv, i tak lze ale velmi dobře vidět nepřesnost námi využitého zjednodušení. Při umístění bodů
-na mapu tak, aby hodnoty geografických souřadnic tvořily čtverec v~souřadnicích kartézských, tedy dva sousedící body mají vždy
-jednu souřadnici stejnou, a rozdíl lišící se geografické souřadnice byl pro všechny čtyři strany stejný. Již na první pohled lze
-vidět, že body tvoří lichoběžník, ne čtverec, ačkoliv je lichoběžník také zkreslený právě projekcí glóbu do 2D prostoru.
+v libovolné veřejné mapové službě (při práci na projektu byly využívány služby OpenStreetMap \cite{openstreetmap-source} a Mapy.cz
+\cite{mapycz-source}). Samozřejmě bude umístění značek opticky zkreslené, protože dochází ke kreslení na 2D projekci sférické
+planety. Toto zkreslení vytváří optickou chybu, jež nebude mít na samotné výpočty vliv, i tak lze ale velmi dobře vidět nepřesnost
+námi využitého zjednodušení. Při umístění bodů na mapu tak, aby hodnoty geografických souřadnic tvořily čtverec v~souřadnicích
+kartézských, tedy dva sousedící body mají vždy jednu souřadnici stejnou, a rozdíl lišící se geografické souřadnice byl pro všechny
+čtyři strany stejný. Již na první pohled lze vidět, že body tvoří lichoběžník, ne čtverec, ačkoliv je lichoběžník také zkreslený
+právě projekcí glóbu do 2D prostoru.
 
 Po odhalení nepřesnosti tohoto zjednodušení bylo tedy rozhodnuto, že bude vyzkoušen jiný způsob zjednodušení výpočtů. Ačkoliv by
 totiž správná práce s geografickými souřadnice elipsoidní planety byla nejpřesnější, pro relativně malý univerzitní kampus, který
@@ -845,7 +857,7 @@ ale také přesné zaparkování v garáži nebo jiných vnitřních prostorech,
 \section{Řízení vozidla kombinací vstupů z GPS, kamery, a za využití mapových podkladů} \label{combination-of-driving-inputs}
 
 Jasným výsledkem předchozího výzkumu tedy je nutnost implementace řízení za pomocí kombinace více vstupů. Tato implentace tak bude
-kombinovat vyhledávání cesty pomocí mapových podkladů k nalezení správné cesty, a vstupy ze soustavy kamer a lidarů k zajištění
+kombinovat vyhledávání cesty pomocí mapových podkladů k nalezení správné cesty, a vstupy ze soustavy kamer a LiDARů k zajištění
 bezpečnosti provozu, vyhýbání se překážkám, udržování správné trajektorie, aby vozidlo např. odchylkou GPS nesjelo z~vozovky,
 ale také k vyhledávání zatáček a křižovatek, na kterých poté pomocí mapových podkladů proběhne rozhodnutí o následujícím pohybu
 autonomní platformy, aby bylo korektně dosaženo cíle. Cíl samozřejmě bude definován waypointy. Při vývoji bude využito nejen
@@ -862,12 +874,12 @@ popsána v jiné publikaci.
 
 \chapter{Práce s mapovými podklady} \label{osm-chapter}
 
-Při práci s mapovými podklady jsou využity hned dvě mapové služby, Mapy.cz společnosti Seznam.cz, a.s., a komunitní mapový projekt
-OpenStreetMap. Mapy.cz jsou využívány především pro grafické podklady. Dále je využíváno API Mapy.cz pro~implementaci webové
-aplikace. Důvody využití služby Mapy.cz souvisí především s extenzivním, avšak jednoduchým API, ale také s jejím českým původem.
-Vývojáři Mapy.cz spolupracují přímo s~českými úřady a často tak dokážou zaznamenat změny v silniční síti rychleji než zahraniční
-nebo komunitní mapové služby. Drobnou roli hraje také vlastenecký sentiment. OpenStreetMap poté slouží jako poskytovatel veřejně
-dostupných vektorových mapových podkladů.
+Při práci s mapovými podklady jsou využity hned dvě mapové služby, Mapy.cz \cite{mapycz-source} společnosti Seznam.cz, a.s., a
+komunitní mapový projekt OpenStreetMap \cite{openstreetmap-source}. Mapy.cz jsou využívány především pro grafické podklady. Dále
+je využíváno API Mapy.cz \cite{apimapycz-source} pro~implementaci webové aplikace. Důvody využití služby Mapy.cz souvisí především
+s extenzivním, avšak jednoduchým API, ale také s jejím českým původem. Vývojáři Mapy.cz spolupracují přímo s~českými úřady a často
+tak dokážou zaznamenat změny v silniční síti rychleji než zahraniční nebo komunitní mapové služby. Drobnou roli hraje také
+vlastenecký sentiment. OpenStreetMap poté slouží jako poskytovatel veřejně dostupných vektorových mapových podkladů.
 
 Při vývoji projektu byl věnován čas výběru správnému zdroji vektorových mapových podkladů. Mapy.cz působily jako primární kandidát
 na zdroj podkladů, a to především díky svých již dříve zmíněných časnějších aktualizací na základě změn v silniční síti.
@@ -879,19 +891,20 @@ projektem OpenStreetMap.
 
 \section{Stahování mapových podkladů a jejich zpracování}
 
-Projekt OpenStreetMap, zvolený poskytovatel mapových podkladů, umožňuje data exportovat mimo jiné také ve formátu XML. Pro získání
-souboru stačí vytvořit obyčejný HTTP GET požadavek a požadovanou exportovanou oblast specifikovat v parametrech URL. Server
-v odpovědi vrátí soubor s mapovými podklady. Soubor lze takto jednoduše získat například pomocí programu \emph{curl}.
+Projekt OpenStreetMap, zvolený poskytovatel mapových podkladů, umožňuje data exportovat mimo jiné také ve formátu XML \cite{
+openstreetmap-export-source, xml-source}. Pro získání souboru stačí vytvořit obyčejný HTTP GET \cite{http-source} požadavek a
+požadovanou exportovanou oblast specifikovat v parametrech URL. Server v odpovědi vrátí soubor s mapovými podklady. Soubor lze
+takto jednoduše získat například pomocí programu \emph{curl} \cite{curl-source}.
 
 Pro stahování a export mapových podkladů byl vytvořen separátní skript implementovaný v~jazyce Python. Tento skript dokáže
 stáhnout soubor s mapovými podklady, zpracovat jej, uložit zpracovaná data ve vlastním formátu, a následně smazat soubor
-s původními mapovými podklady ve formátu XML.
+s původními mapovými podklady ve formátu XML \cite{xml-source}.
 
 Implementace separátního skriptu pro získání mapových podkladů s sebou přinásí určité množství výhod. Skript je možné periodicky
-spouštět jako cronjob, ať už přímo v operačním systému, nebo například jako kontejner v Kubernetes. Dále je možné část zpracování
-podkladů převést z~plánovacího softwaru do separátního programu, a tím zjednodušit logiku samotného plánovacího softwaru.
-A nakonec, využití vlastního formátu pro uložení dat nám umožní jednoduššeji přidat do~souboru vlastní data a dodatečný kontext,
-viz sekce \peteref{smarter-maps}.
+spouštět jako cronjob \cite{cron-source}, ať už přímo v operačním systému, nebo například jako kontejner v Kubernetes
+\cite{virtualization-source}. Dále je možné část zpracování podkladů převést z~plánovacího softwaru do separátního programu, a tím
+zjednodušit logiku samotného plánovacího softwaru. A nakonec, využití vlastního formátu pro uložení dat nám umožní jednoduššeji
+přidat do~souboru vlastní data a dodatečný kontext, viz sekce \peteref{smarter-maps}.
 
 K načtení textového XML souboru je využita knihovna \emph{osmium}. Z tohoto souboru jsou přečteny uzly a cesty. Relace jsou
 ignorovány. Při zpracování cest jsou uloženy pouze cesty povolených typů, ostatní typy cest jsou ignorovány. Mezi ignorované typy
@@ -900,7 +913,7 @@ velmi nežádoucí, aby se vozidlo pokoušelo například projíždět chodbami 
 všech cest jsou nakonec z mapových podkladů odstraněny také uzly, ke kterým nevede žádná cesta. Uzly v reálném světě představují
 například křižovatky nebo spojení chodeb. Ovšem v případě například vnitřního uzlu, tedy spojení chodeb v budově, není třeba uzel
 ukládat v paměti softwaru a dále s ním pracovat, neboť chodby jsou již dříve z podkladů odstraněny a uzel by neměl reálné využití.
-Zpracovaná data jsou dále skriptem naformátována a uložena ve formátu JSON.
+Zpracovaná data jsou dále skriptem naformátována a uložena ve formátu JSON \cite{json-source}.
 
 \section{Vyhledání nejbližší silnice na mapě}
 
@@ -930,7 +943,7 @@ na dané silnici, ve~kterém se nachází vozidlo nebo ve kterém by měl být u
 
 Ve finální verzi softwaru budou mapové podklady sloužit jako jeden ze vstupů při plánování cesty. Současné návrhy budoucí
 implementace počítají s nalezením optimální cesty v mapových podkladech, a jejím následováním za využití vstupů z kamer, GPS, 
-a v budoucnu případně také z Lidaru. Kamery budou při analýze okolí mimo jiné detekovat také silnice. Jakmile dojde k detekci
+a v budoucnu případně také z LiDARu. Kamery budou při analýze okolí mimo jiné detekovat také silnice. Jakmile dojde k detekci
 křižovatky, na řadu nastoupí právě GPS v kombinaci s mapovými podklady. Software za využití mapových podkladů určí, o kterou
 křižovatku se~jedná, a kterým směrem má vozidlo pokračovat, a případně, zase pomocí vstupu z kamer, provede vozidlo zatáčkou.
 
@@ -938,12 +951,12 @@ Kamerový systém i software pro~analýzu obrazu jsou v~době psaní práce stá
 tak nebylo prozatím možné plně implementovat. Prozatím byl však alespoň implementován algoritmus sloužící k hledání optimální
 cesty areálem univerzity.
 
-K účelu hledání nejkratší cesty univerzitním kampusem byl zvolen algoritmus prohledávání grafu do šířky (Breadth First Search).
-Důvodem volby tohoto algoritmu byla především jeho jednoduchost. Implementace průchodu grafu do šířky není složitá, zároveň však
-hledání cesty funguje dostatečně rychle. Algoritmus v dané implementaci nevyužívá heurestiku, jež na malém grafu není nutná.
-Zároveň nebere v~potaz délky jednotlivých cest, pouze počet cest detekovaných při~průchodu grafem. Mapu univerzity tedy lze 
-považovat za nevážený graf. Práce s~délkami cest by bezpochyby byla vhodná v~provozu v~předem neznámých oblastech, v~kampusu 
-univerzity při současné implementaci ovšem není třeba -- její benefit by byl zanedbatelný až nulový.
+K účelu hledání nejkratší cesty univerzitním kampusem byl zvolen algoritmus prohledávání grafu do šířky (Breadth First Search)
+\cite{bfs-source}.  Důvodem volby tohoto algoritmu byla především jeho jednoduchost. Implementace průchodu grafu do šířky není
+složitá, zároveň však hledání cesty funguje dostatečně rychle. Algoritmus v dané implementaci nevyužívá heurestiku, jež na malém
+grafu není nutná. Zároveň nebere v~potaz délky jednotlivých cest, pouze počet cest detekovaných při~průchodu grafem. Mapu
+univerzity tedy lze považovat za nevážený graf. Práce s~délkami cest by bezpochyby byla vhodná v~provozu v~předem neznámých
+oblastech, v~kampusu univerzity při současné implementaci ovšem není třeba -- její benefit by byl zanedbatelný až nulový.
 
 Práce s váženým grafem však v~budoucnu může reálně být potřeba, a to v případě, pokud opravdu dojde k definici váhy cesty
 na~základě její frekventovanosti v~dané denní době, za předpokladu, že tato váha bude numerická (koeficient), ne binární 
@@ -954,7 +967,8 @@ průchodu neváženým grafem stačit.
 \begin{figure}
     \centering
     \includegraphics[width=0.8\textwidth]{Figures/bfs.png}
-    \caption{Nejkratší cesta nalezená za využití algoritmu BFS (Zdroj grafických podkladů: Seznam.cz, a.s.)}
+    \caption{Nejkratší cesta nalezená za využití algoritmu BFS (Zdroj mapových podkladů: Seznam.cz, a.s., zdroj grafiky
+    vozidla viz \cite{car-sprite-source})}
     \label{fig:bfs}
 \end{figure}
 
@@ -980,11 +994,11 @@ na straně backendu.
 
 \section{Implementace frontendu webové aplikace}
 
-Pro práci s mapovými podklady je využíváno API mapové služby Mapy.cz (viz kapitola \peteref{osm-chapter}), jež umožňuje nejen
-vykreslování vozidla a waypointů, ale také registrovat interakce s mapou a implementovat ovládání vozidla a vytváření waypointů.
-Webová stránka je samozřejmě definována značkovacím jazykem HTML a logika webové aplikace je naprogramována v jazyce Javascript.
-Knihovna služby Mapy.cz je jediná závislost využitá v implementaci frontendu webové aplikace, s její výjimkou je využit pouze
-čistý Javascript.
+Pro práci s mapovými podklady je využíváno API mapové služby Mapy.cz \cite{mapycz-source} (viz kapitola \peteref{osm-chapter}),
+jež umožňuje nejen vykreslování vozidla a waypointů, ale také registrovat interakce s mapou a implementovat ovládání vozidla
+a vytváření waypointů. Webová stránka je samozřejmě definována značkovacím jazykem HTML a logika webové aplikace je
+naprogramována v jazyce Javascript. Knihovna služby Mapy.cz je jediná závislost využitá v implementaci frontendu webové aplikace,
+s její výjimkou je využit pouze čistý Javascript.
 
 Frontend webové aplikace po svém načtení prohlížečem začne periodicky obnovovat aplikaci pomocí HTTP requestu na backend aplikace.
 Po přijetí odpovědi serveru jsou automaticky aktualizovány mapové podklady. Dále frontend definuje vytváření a mazání waypointů,
@@ -996,12 +1010,12 @@ analogickým k vytváření waypointu, pouze je volán jiný endpoint backendu.
 
 \section{Implementace backendu webové aplikace}
 
-Pro tvorbu backendu webové aplikace byl zvolen programovací jazyk Kotlin spárovaný s frameworkem \emph{Ktor}. Důvod volby těchto
-technologií byla snaha ukázat modularitu systému o více komponentách využívajících protokol HTTP pro komunikaci, a možnost využití
-libovolné technologie a jazyka v~takto nadesignovaném systému. Pro uvažovanou aplikaci by samozřejmě jazyk Python byl naprosto
-validní volba, v praxi je ovšem často vhodné využití většího množství jazyků a technologií, především díky lišících se předností
-různých jazyků, nebo dostupnosti knihoven či frameworků pro daný jazyk nebo platformu. Druhým důvodem volby jazyka Kotlin byla
-snaha vyzkoušet využití frameworku \emph{Ktor} v praxi.
+Pro tvorbu backendu webové aplikace byl zvolen programovací jazyk Kotlin spárovaný s frameworkem \emph{Ktor} \cite{ktor-source}. 
+Důvod volby těchto technologií byla snaha ukázat modularitu systému o více komponentách využívajících protokol HTTP
+pro komunikaci, a možnost využití libovolné technologie a jazyka v~takto nadesignovaném systému. Pro uvažovanou aplikaci
+by samozřejmě jazyk Python byl naprosto validní volba, v praxi je ovšem často vhodné využití většího množství jazyků a
+technologií, především díky lišících se předností různých jazyků, nebo dostupnosti knihoven či frameworků pro daný jazyk nebo
+platformu. Druhým důvodem volby jazyka Kotlin byla snaha vyzkoušet využití frameworku \emph{Ktor} v praxi.
 
 Programovací jazyk Kotlin je moderní objektově orientovaný jazyk s prvky funkcionálního programování. Jazyk Kotlin je tvořen
 firmou JetBrains a je možné jej kompilovat pro více platform. Primárně je jazyk Kotlin kompilován pro platformu JVM, kde tak může
@@ -1009,19 +1023,20 @@ využívat celý ekosystém jazyka Java. Dále však může být kompilován do 
 Javascript. Jazyk Kotlin v současné době slouží jako oficiální jazyk pro tvorbu aplikací mobilního operačního systému Android
 \cite{kotlin-android-source}.
 
-Framework \emph{Ktor} je technologie implementovaná v jazyce Kotlin, sloužící k implementaci asynchronních REST API. Samotné API
-webové aplikace ovšem není vyvíjeno s důrazem na asynchronicitu, neboť požadavky na výkon rozhranní nikdy nebudou tak vysoké, aby
-odůvodnily čas strávený implementací asynchronního programu.
+Framework \emph{Ktor} je technologie implementovaná v jazyce Kotlin, sloužící k implementaci asynchronních REST API 
+\cite{ktor-source}. Samotné API webové aplikace ovšem není vyvíjeno s důrazem na asynchronicitu, neboť požadavky na výkon
+rozhraní nikdy nebudou tak vysoké, aby odůvodnily čas strávený implementací asynchronního programu.
 
-Backend definuje REST API, jež, kromě vydávání statických souborů, implementuje endpointy analogické REST API softwaru
-pro plánování cesty, popsaném v podkapitole \peteref{rest-api}. Rozdíl mezi API plánovacího softwaru a API backendu webové
-aplikac, je ve validaci prováděné daným API. API plánovacího softwaru z důvodů jednoduchosti implementuje pouze minimální
+Backend definuje REST API \cite{rest-source}, jež, kromě vydávání statických souborů, implementuje endpointy analogické REST API
+softwaru pro plánování cesty, popsaném v podkapitole \peteref{rest-api}. Rozdíl mezi API plánovacího softwaru a API backendu
+webové aplikace, je ve validaci prováděné daným API. API plánovacího softwaru z důvodů jednoduchosti implementuje pouze minimální
 validaci, slouží pouze k internímu použití, a nemělo by tedy být vystaveno veřejně. REST API backendu webové aplikace je určeno
 k veřejnému použití, a za tímto účelem také implementuje určitou validaci svých vstupů. Samozřejmě také z hlediska logické dělení
 funkcionality systému není vhodné, aby software pro plánování cesty vozidla uměl vydávat statické soubory.
 
-Kromě frameworku \emph{Ktor} jsou na backendu využity také knihovny \emph{org.json:json} sloužící k~práci s~plaintextovým formátem
-JSON, a \emph{io.github.rybalkinsd:kohttp} implementující DSL pro jazyk Kotlin sloužící k vytváření HTTP dotazů.
+Kromě frameworku \emph{Ktor} jsou na backendu využity také knihovny \emph{org.json:json} \cite{jsonjava-source} sloužící k~práci
+s~plaintextovým formátem JSON \cite{json-source}, a \emph{io.github.rybalkinsd:kohttp} \cite{kohttp-source} implementující DSL pro
+jazyk Kotlin sloužící k vytváření HTTP dotazů.
 
 \chapter{Budoucí vývoj vozidla}
 
@@ -1029,10 +1044,10 @@ Jak již bylo zmíněno dříve, práce na projekt, jemuž se věnuje tato prác
 především autonomní řízení a navigaci vozidla. Dále se však nabízí velká škála vylepšení projektu, aby bylo umožněno platformu
 využívat v reálném provozu. Tato rozšíření a vylepšení nejsou v momentální době uvažována zejména z časových důvodů a restrikcí.
 
-\section{Vstup z Lidaru}
+\section{Vstup z LiDARu}
 
-Pro zpřesnění ovládání a zlepšení analýzy okolí by bylo vhodné vstup ze soustavy kamer doplnit soustavou Lidarů. Soustava Lidarů
-umožní softwaru lépe určit např. vzdálenosti překážek. Většina analýzy vstupu z Lidaru by ovšem s nejvyšší pravděpodobností byla
+Pro zpřesnění ovládání a zlepšení analýzy okolí by bylo vhodné vstup ze soustavy kamer doplnit soustavou LiDARů. Soustava LiDARů
+umožní softwaru lépe určit např. vzdálenosti překážek. Většina analýzy vstupu z LiDARu by ovšem s nejvyšší pravděpodobností byla
 provedena na stejném serveru, jenž analyzuje vstup z kamer. Server by informace zpracoval a na svém vstupu vrátil pouhou kompilaci
 již zpracovaných dat. Kód, jímž se zabývá tato práce, by tak nejspíše nebylo třeba příliš upravovat.
 
@@ -1047,19 +1062,20 @@ cesty méně využívané, a ještě více tak bylo zmírněno jakékoliv riziko
 
 \section{Metriky, chytřejší logování, monitorování}
 
-Automatizované monitorování logů a metrik může v práci velmi usnadnit provoz a ladění softwaru. Za účelem automatizace
-monitorování aplikací proto také vznikla velká spousta nástrojů, mezi něž se řadí například Prometheus, Grafana, Kibana nebo
-Logstash. V projektu autonomního řízení by bylo vhodné implementovat automatizované monitorování právě pomocí těchto nástrojů,
+Automatizované monitorování logů \cite{elk-source} a metrik \cite{prometheus-source} může v práci velmi usnadnit provoz a ladění
+softwaru. Za účelem automatizace monitorování aplikací proto také vznikla velká spousta nástrojů, mezi něž se řadí například
+Prometheus \cite{prometheus-source}, Grafana \cite{prometheus-source}, Kibana nebo Logstash \cite{elk-source}. V projektu
+autonomního řízení by bylo vhodné implementovat automatizované monitorování právě pomocí těchto nástrojů,
 ideálně dříve, než dojde k využití vozidla v~reálném provozu.
 
-Extenzivní logování zpráv ve formátu JSON by umožnilo automatizovat sledování logů nástrojem Kibana a notifikovat vývojáře
-platformy v případě zvýšeného výskytu chyb. Sledování logů poté lze doplnit nástrojem Prometheus, jež lze využít ke sběru
-programátorem poskytovaných metrik. Metriky sbírané Prometheem nejsou předem definované, vývojář metriky definuje sám, pomocí
-Promethea tak lze sledovat teoreticky cokoliv. Často se ovšem tato technologie používá například ke sledování počtu a trvání
-dotazů na externí komponenty, ke sledování počtu chyb, apod. Využití Promethea umožní například sbírat informace o počtu chyb
-na sběrnici CAN, délky trvání dotazů na server analyzující okolní prostředí, atd. Sesbírané metriky následně lze graficky zobrazit
-za využití technologie trefně pojmenované Grafana. Monitorování metrik umožní nejen odhalení chyb, ale také zjednodušší ladění
-výkonnostní stránky aplikace, díky možnosti sledování délky trvání dotazů.
+Extenzivní logování zpráv ve formátu JSON by umožnilo automatizovat sledování logů nástrojem Kibana \cite{elk-source} a
+notifikovat vývojáře platformy v případě zvýšeného výskytu chyb. Sledování logů poté lze doplnit nástrojem Prometheus 
+\cite{prometheus-source}, jež lze využít ke sběru programátorem poskytovaných metrik. Metriky sbírané Prometheem nejsou předem
+definované, vývojář metriky definuje sám, pomocí Promethea tak lze sledovat teoreticky cokoliv. Často se ovšem tato technologie
+používá například ke sledování počtu a trvání dotazů na externí komponenty, ke sledování počtu chyb, apod. Využití Promethea
+umožní například sbírat informace o počtu chyb na sběrnici CAN, délky trvání dotazů na server analyzující okolní prostředí, atd.
+Sesbírané metriky následně lze graficky zobrazit za využití technologie trefně pojmenované Grafana. Monitorování metrik umožní
+nejen odhalení chyb, ale také zjednoduší ladění výkonnostní stránky aplikace, díky možnosti sledování délky trvání dotazů.
 
 \chapter{Závěr}
 
@@ -1084,40 +1100,47 @@ však nebude představovat posun v oblasti autonomních vozidel.
 
 % Bibliography
 \renewcommand{\bibname}{Zdroje}
-\begin{thebibliography}{20}
+\begin{thebibliography}{50}
 
 \bibitem{pid-controller-source}
 Tim Wescott: \textit{PID Without a PhD} \\
-Dostupné z: \url{https://www.wescottdesign.com/articles/pid/pidWithoutAPhd.pdf}, Wescott Design Services, 2018
+Dostupné z: \url{https://www.wescottdesign.com/articles/pid/pidWithoutAPhd.pdf}, 
+Wescott Design Services, 2018
 
 \bibitem{pandemic-source} % Actually the source of the pandemic was China, this is just the source for a paper about the pandemic
 Md~Tanveer Adil, Rumana Rahman, Douglas Whitelaw, Vigyan Jain, Omer Al-Taan, Farhan Rashid, Aruna Munasinghe,
 Periyathambi Jambulingam: \textit{SARS-CoV-2 and the pandemic of COVID-19}. \\
-Dostupné z: \url{https://pmj.bmj.com/content/97/1144/110}, The Fellowship of Postgraduate Medicine, 2021
+Dostupné z: \url{https://pmj.bmj.com/content/97/1144/110}, 
+The Fellowship of Postgraduate Medicine, 2021
 
 \bibitem{can-source}
 Steve Corrigan: \textit{Introduction to the Controller Area Network (CAN)} \\
-Dostupné z: \url{https://www.ti.com/lit/an/sloa101b/sloa101b.pdf}, Texas Instruments, 2016
+Dostupné z: \url{https://www.ti.com/lit/an/sloa101b/sloa101b.pdf}, 
+Texas Instruments, 2016
 
 \bibitem{bitcoin-rally-source}
-Bloomberg: \textit{Bitcoin Touches \$64,000 High as Traders Eye Coinbase Listing} [online], Bloomberg [cit. 2021-04-17]. \\
+Bloomberg: \textit{Bitcoin Touches \$64,000 High as Traders Eye Coinbase Listing} [online, cit. 2021-04-17]. \\
 Dostupné z:
-\url{https://www.bloomberg.com/news/articles/2021-04-13/bitcoin-rallies-to-all-time-high-as-traders-eye-coinbase-listing}
+\url{https://www.bloomberg.com/news/articles/2021-04-13/bitcoin-rallies-to-all-time-high-as-traders-eye-coinbase-listing},
+Bloomberg, 2021
 
 \bibitem{bitcoin-miners-gpu-source}
-Bloomberg: \textit{Crypto Miners Are Competing With Gamers for Nvidia Chips} [online], Bloomberg [cit. 2021-04-17]. \\
+Bloomberg: \textit{Crypto Miners Are Competing With Gamers for Nvidia Chips} [onlin, cit. 2021-04-17]. \\
 Dostupné z:
-\url{https://www.bloomberg.com/news/newsletters/2021-04-14/crypto-miners-are-competing-with-gamers-for-nvidia-chips}
+\url{https://www.bloomberg.com/news/newsletters/2021-04-14/crypto-miners-are-competing-with-gamers-for-nvidia-chips},
+Bloomberg, 2021
 
 \bibitem{webcam-shortage-source}
-Bloomberg: \textit{The Global Auto Plants Now Idle as Chip Supplies Dry Up} [online], Bloomberg [cit. 2021-04-17]. \\
+Bloomberg: \textit{The Global Auto Plants Now Idle as Chip Supplies Dry Up} [online, cit. 2021-04-17]. \\
 Dostupné z:
-\url{https://www.bloomberg.com/news/articles/2021-03-24/the-global-auto-plants-now-idle-as-chip-supplies-dry-up}
+\url{https://www.bloomberg.com/news/articles/2021-03-24/the-global-auto-plants-now-idle-as-chip-supplies-dry-up},
+Bloomberg, 2021
 
 \bibitem{line-line-intersection-source}
-Gabriel Eng: \textit{Intersection of two lines in Python} [online], Stack Overflow [cit. 2021-04-17]. \\
+Gabriel Eng: \textit{Intersection of two lines in Python} [online, cit. 2021-04-17]. \\
 Dostupné z:
-\url{https://stackoverflow.com/questions/20677795/how-do-i-compute-the-intersection-point-of-two-lines/51127674\#51127674}
+\url{https://stackoverflow.com/questions/20677795/how-do-i-compute-the-intersection-point-of-two-lines/51127674\#51127674},
+Stack Overflow, 2018
 
 \bibitem{gps-inaccuracy-source}
 Nyen Thin Li, Lau Ting, Nor Husna, Heikal Husin: \textit{GPS Systems Literature: Inaccuracy Factors And Effective Solutions}, \\
@@ -1125,41 +1148,253 @@ Dostupné z:
 \url{https://www.researchgate.net/publication/300083844\_GPS\_Systems\_Literature\_Inaccuracy\_Factors\_And\_Effective\_Solutions},
 International journal of Computer Networks \& Communications, 2016
 
-\bibitem{kotlin-android-source}
-Frederic Lardinois: \textit{Kotlin is now Google's preferred language for Android app development} [online],
-TechCrunch [cit. 2021-04-17]. \\
+\bibitem{prometheus-source}
+KC Kecheng: \textit{Performance Monitoring with Prometheus and Grafana}, \\
 Dostupné z:
-\url{https://techcrunch.com/2019/05/07/kotlin-is-now-googles-preferred-language-for-android-app-development/}
+\url{https://performance-monitoring-with-prometheus.readthedocs.io/\_/downloads/en/latest/pdf/},
+KC Kecheng, 2020
+
+\bibitem{elk-source}
+Pranita Bavaskar, Onkar Kemker, Aditya Sinha: \textit{Log Analysis with ELK Stack Tool}, \\
+Dostupné z:
+\url{https://www.researchgate.net/publication/343775739\_A\_SURVEY\_ON\_LOG\_ANALYSIS\_WITH\_ELK\_STACK\_TOOL},
+Sandip University, 2019
+
+\bibitem{cicd-source}
+S.A.I.B.S. Arachchi, Indika Perera: \textit{Continuous Integration and Continuous Delivery Pipeline Automation for Agile Software
+Project Management}, \\
+Dostupné z:
+\url{https://www.researchgate.net/publication/326406017\_Continuous\_Integration\_and\_Continuous\_Delivery\_Pipeline\_Automation\_for\_Agile\_Software\_Project\_Management},
+University of Moratuwa, 2018
+
+\bibitem{virtualization-source}
+Vitor Silva, Marite Kirikova, Gundars Alksnis: \textit{Containers for Virtualization: An Overview}
+Dostupné z:
+\url{https://www.researchgate.net/publication/325534952\_Containers\_for\_Virtualization\_An\_Overview},
+Riga Technical University, 2018
+
+\bibitem{rest-source}
+Otávio Freitas Ferreira Filho, Maria Alice Grigas Varella Ferreira: \textit{Semantic Web Services: A RESTful Approach}
+Dostupné z:
+\url{https://github.com/otaviofff/restful-grounding/blob/master/papers/official-paper-icwi.pdf},
+University of São Paulo, Polytechnic School, 2009
+
+\bibitem{xmlrpc-source}
+Mark Allman: \textit{An Evaluation of XML-RPC}
+Dostupné z:
+\url{https://www.icir.org/mallman/pubs/All03b/All03b.pdf},
+ACM Performance Evaluation Review, 2003
+
+\bibitem{floating-point-source}
+IEEE: \textit{IEEE-754, Standard for Floating-Point Arithmetic}
+Dostupné z:
+\url{https://standards.ieee.org/standard/60559-2020.html},
+IEEE, 2008
+
+\bibitem{http-source}
+R. Fielding, J. Gettys, J. Mogul, H. Frystyk, L. Masinter, P. Leach, and T. Berners-Lee: \textit{RFC2616: Hypertext Transfer
+Protocol -- HTTP/1.1}
+Dostupné z:
+\url{https://www.rfc-editor.org/rfc/pdfrfc/rfc2616.txt.pdf},
+RFC Editor, 1999
+
+\bibitem{flask-source}
+Flask: \textit{Flask -- web development, one drop at a time}
+Dostupné z:
+\url{https://buildmedia.readthedocs.org/media/pdf/flask/latest/flask.pdf},
+Flask, 2017
+
+\bibitem{yaml-source}
+Oren Ben-Kiki, Clark Evans, Ingy döt Net: \textit{YAML Ain't Markup Language (YAML\textsuperscript{TM}), Version 1.2}
+Dostupné z:
+\url{https://yaml.org/spec/1.2/spec.pdf},
+Oren Ben-Kiki, Clark Evans, Ingy döt Net, 2009
+
+\bibitem{json-source}
+ECMA International: \textit{ECMA-404: The JSON Data Interchange Syntax}
+Dostupné z:
+\url{https://www.ecma-international.org/wp-content/uploads/ECMA-404\_2nd\_edition\_december\_2017.pdf},
+ECMA International, 2017
+
+\bibitem{xml-source}
+World Wide Web Consortium: \textit{Extensible Markup Language (XML) 1.0 (Fifth Edition)}
+Dostupné z:
+\url{https://www.w3.org/TR/2008/REC-xml-20081126/},
+World Wide Web Consortium, 2008
+
+\bibitem{bfs-source}
+Jason J Holdsworth: \textit{The Nature of Breadth-First Search}
+Dostupné z:
+\url{https://www.researchgate.net/publication/2727226\_The\_Nature\_of\_Breadth-First\_Search},
+James Cook University, 1999
+
+\bibitem{cron-source}
+A. Kishore/Sachin: \textit{Crontab: Everything You Want To Know}
+Dostupné z:
+\url{http://www.appsdba.info/docs/oracle\_apps/R12/Crontab.pdf},
+APPS DBA, 2011
+
+\bibitem{tcp-source}
+Information Sciences Institute, University of Southern California: \textit{RFC 793: Transmission Control Protocol}
+Dostupné z:
+\url{https://tools.ietf.org/pdf/rfc793.pdf},
+Information Sciences Institute, University of Southern California, 1981
+
+\bibitem{udp-source}
+J. Postel: \textit{User Datagram Protocol}
+Dostupné z:
+\url{https://tools.ietf.org/pdf/rfc768.pdf},
+Information Sciences Institute, University of Southern California, 1980
+
+\bibitem{apimapycz-source}
+Seznam.cz, a.s.: \textit{Mapy.cz API} [online], \\
+Dostupné z:
+\url{https://api.mapy.cz/},
+Seznam.cz, a.s., 2021
+
+\bibitem{openstreetmap-export-source}
+Overpass: \textit{Overpass API} [online], \\
+Dostupné z:
+\url{https://dev.overpass-api.de/overpass-doc/en/},
+Overpass, 2021
+
+\bibitem{grpc-source}
+gRPC: \textit{gRPC} [online], \\
+Dostupné z:
+\url{https://grpc.io/},
+gRPC Authors, 2021
+
+\bibitem{geopy-source}
+GeoPy: \textit{GeoPy} [online], \\
+Dostupné z:
+\url{https://geopy.readthedocs.io/en/stable/},
+GeoPy, 2021
+
+\bibitem{gpsd-py3-source}
+Martijn Braam: \textit{gpsd-py3} [online], \\
+Dostupné z:
+\url{https://github.com/MartijnBraam/gpsd-py3},
+Martijn Braam, 2017
+
+\bibitem{protobuf-source}
+Google Inc.: \textit{Protocol Buffers - Google's data interchange format} [online], \\
+Dostupné z:
+\url{https://github.com/protocolbuffers/protobuf},
+Google Inc., 2021
+
+\bibitem{osmium-source}
+OpenStreetMap: \textit{PyOsmium -- Python bindings to Osmium Library} [online], \\
+Dostupné z:
+\url{https://osmcode.org/pyosmium/},
+OpenStreetMap, 2021
+
+\bibitem{pygame-source}
+PyGame: \textit{PyGame} [online], \\
+Dostupné z:
+\url{https://www.pygame.org/},
+PyGame, 2021
+
+\bibitem{python-can-source}
+Brian Thorne: \textit{python-can} [online], \\
+Dostupné z:
+\url{https://github.com/hardbyte/python-can},
+Brian Thorne, 2021
+
+\bibitem{fastapi-source}
+Sebastián Ramírez: \textit{FastAPI} [online], \\
+Dostupné z:
+\url{https://fastapi.tiangolo.com/},
+Sebastián Ramírez, 2021
+
+\bibitem{starlette-source}
+Encode: \textit{Starlette} [online], \\
+Dostupné z:
+\url{https://www.starlette.io/},
+Encode, 2021
+
+\bibitem{kotlin-android-source}
+Maxim Shafirov: \textit{Kotlin on Android. Now official} [online, cit. 2021-04-29], \\
+Dostupné z:
+\url{https://blog.jetbrains.com/kotlin/2017/05/kotlin-on-android-now-official/},
+Jetbrains s.r.o., 2017
+
+\bibitem{mapycz-source}
+Seznam.cz, a.s.: \textit{Mapy.cz} [online], \\
+Dostupné z:
+\url{https://en.mapy.cz/},
+Seznam.cz, a.s., 2021
+
+\bibitem{curl-source}
+Daniel Stenberg: \textit{curl} [online], \\
+Dostupné z:
+\url{https://curl.se/},
+Daniel Stenberg, 2021
+
+\bibitem{openstreetmap-source}
+OpenStreetMap: \textit{OpenStreetMap} [online], citováno \\
+Dostupné z:
+\url{https://www.openstreetmap.org/},
+OpenStreetMap, 2021
+
+\bibitem{ktor-source}
+JetBrains s.r.o.: \textit{Ktor} [online], \\
+Dostupné z:
+\url{https://ktor.io/},
+JetBrains s.r.o., 2021
+
+\bibitem{jsonjava-source}
+Sean Leary: \textit{JSON in Java} [online], \\
+Dostupné z:
+\url{https://github.com/stleary/JSON-java},
+Sean Leary, 2021
+
+\bibitem{kohttp-source}
+Sergei Rybalkin: \textit{kohttp -- Kotlin DSL http client} [online], \\
+Dostupné z:
+\url{https://github.com/rybalkinsd/kohttp},
+Sergei Rybalkin, 2021
+
+\bibitem{car-sprite-source}
+Nora Nure: \textit{Car Top View} [online, cit. 2021-04-29], \\
+Dostupné z:
+\url{https://www.clipartkey.com/view/moxobx\_car-top-view-png/},
+Nora Nure
 
 \bibitem{car-client-source}
-Filip Peterek: \textit{car-client} [online], Filip Peterek [cit. 2021-04-17]. \\
+Filip Peterek: \textit{car-client} [online], \\
 Dostupné z:
-\url{https://github.com/fpeterek/car-client}
+\url{https://github.com/fpeterek/car-client},
+Filip Peterek, 2021
 
 \bibitem{car-webapp-source}
-Filip Peterek: \textit{car-webapp} [online], Filip Peterek [cit. 2021-04-17]. \\
+Filip Peterek: \textit{car-webapp} [online], \\
 Dostupné z:
-\url{https://github.com/fpeterek/car-webapp}
+\url{https://github.com/fpeterek/car-webapp},
+Filip Peterek, 2021
 
 \bibitem{car-map-downloader-source}
-Filip Peterek: \textit{car-map-downloader} [online], Filip Peterek [cit. 2021-04-17]. \\
+Filip Peterek: \textit{car-map-downloader} [online], \\
 Dostupné z:
-\url{https://github.com/fpeterek/car-map-downloader}
+\url{https://github.com/fpeterek/car-map-downloader},
+Filip Peterek, 2021
 
 \bibitem{car-can-source}
-Filip Peterek: \textit{car-can} [online], Filip Peterek [cit. 2021-04-17]. \\
+Filip Peterek: \textit{car-can} [online], \\
 Dostupné z:
-\url{https://github.com/fpeterek/car-can}
+\url{https://github.com/fpeterek/car-can},
+Filip Peterek, 2021
 
 \bibitem{car-simulator-source}
-Filip Peterek: \textit{car-simulator} [online], Filip Peterek [cit. 2021-04-17]. \\
+Filip Peterek: \textit{car-simulator} [online], \\
 Dostupné z:
-\url{https://github.com/fpeterek/car-simulator}
+\url{https://github.com/fpeterek/car-simulator},
+Filip Peterek, 2021
 
 \bibitem{geologger-source}
-Filip Peterek: \textit{GeoLogger} [online], Filip Peterek [cit. 2021-04-17]. \\
+Filip Peterek: \textit{GeoLogger} [online], \\
 Dostupné z:
-\url{https://github.com/fpeterek/GeoLogger}
+\url{https://github.com/fpeterek/GeoLogger},
+Filip Peterek, 2021
 
 \end{thebibliography}
 
